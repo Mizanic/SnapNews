@@ -60,3 +60,9 @@ Based upon you OS choose one of the following:
 ### Running the project
 
 1. Run the following command:
+
+
+## Pre Commit Checks - To be configured
+
+1. Prettier
+2. ESLint
