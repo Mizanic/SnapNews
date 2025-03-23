@@ -3,7 +3,9 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "christian-kohler.npm-intellisense",
-        "astro-build.astro-vscode"
+        "astro-build.astro-vscode",
+        "Boto3typed.boto3-ide"
     ],
-    "unwantedRecommendations": []
+    "unwantedRecommendations": [],
+    
 }
