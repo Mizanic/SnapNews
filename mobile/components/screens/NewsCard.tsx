@@ -1,21 +1,3 @@
-// import { View } from "react-native";
-// import ImageSection from "./ImageSection";
-// import Header from "./Header";
-// import Summary from "./Summary";
-// const NewsCard = ({ title, description, image, label }: any) => (
-//   <View
-//     className="bg-white dark:bg-gray-800 rounded-2xl shadow mb-4"
-//     style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-//   >
-//     <ImageSection image={image} label={label} />
-//     <View className="p-4">
-//       <Header title={title} />
-//       <Summary description={description} />
-//     </View>
-//   </View>
-// );
-
-// export default NewsCard;
 import { View, StyleSheet } from "react-native";
 import ImageSection from "./ImageSection";
 import Header from "./Header";
@@ -24,9 +6,13 @@ import ActionBar from "./ActionBar";
 
 const NewsCard = ({ title, description, image, label }: any) => (
   <View style={styles.card}>
-    <ImageSection image={image} label={label} />
+    <View style={styles.imageWrapper}>
+      <ImageSection image={image} label={label} />
+      <View style={styles.overlay}>
+        <Header title={title} />
+      </View>
+    </View>
     <View style={styles.content}>
-      <Header title={title} />
       <Summary description={description} />
     </View>
     <ActionBar />
@@ -37,16 +23,28 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 4,
-    overflow: "hidden", // To clip the rounded corners
+    overflow: "hidden",
     marginBottom: 12,
-    elevation: 5, // For Android shadow
-    shadowColor: "#000", // For iOS shadow
+    elevation: 5,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
   },
+  imageWrapper: {
+    position: "relative",
+  },
+  overlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 12,
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // Dark overlay background
+  },
   content: {
     padding: 16,
+    color: "white",
   },
 });
 

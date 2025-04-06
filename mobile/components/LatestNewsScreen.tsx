@@ -27,8 +27,6 @@ const LatestNewsScreen = () => {
     fetchNews();
   }, [activeTab]);
 
-  // const renderContent = () => <NewsList data={newsData} loading={loading} />;
-  console.info("LatestNewsScreen", newsData);
   return (
     <View style={styles.container}>
       <NewsList data={newsData} loading={loading} />
