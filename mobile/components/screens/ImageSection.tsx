@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
   },
   labelContainer: {
     position: "absolute",
-    bottom: 8,
-    left: 8,
+    top: 8,
+    right: 8,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     paddingHorizontal: 6,
     paddingVertical: 2,
