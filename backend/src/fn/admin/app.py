@@ -32,8 +32,6 @@ table = dynamodb.Table(TABLE_NAME)
 
 cors_config = CORSConfig(
     allow_origin="*",
-    # allow_origin=f"https://{DOMAIN_NAME}",
-    # extra_origins=[f"https://www.{DOMAIN_NAME}", "http://localhost:3000"],
     allow_headers=["*", 'Authorization'],  # noqa: Q000
 )
 
