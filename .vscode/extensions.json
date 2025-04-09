@@ -4,8 +4,13 @@
         "dbaeumer.vscode-eslint",
         "christian-kohler.npm-intellisense",
         "astro-build.astro-vscode",
-        "Boto3typed.boto3-ide"
+        "Boto3typed.boto3-ide",
+        "formulahendry.auto-rename-tag",
+        "ms-python.python",
+        "njpwerner.autodocstring",
+        "ms-python.black-formatter",
+        "charliermarsh.ruff",
+        "redhat.vscode-yaml"
     ],
-    "unwantedRecommendations": [],
-    
+    "unwantedRecommendations": []
 }
