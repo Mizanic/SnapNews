@@ -5,15 +5,18 @@ help:
 	@echo "  deploy-api - Deploy the API"
 	@echo "  deploy-admin - Deploy the admin portal"
 	@echo "  config-env - Get the environment variables"
-
+	@echo "  layers - Create the layers"
 
 deploy-api:
-	./scripts/deploy-api.sh
+	./.scripts/deploy-api.sh
 
 deploy-admin:
-	./scripts/deploy-admin.sh
+	./.scripts/deploy-admin.sh
 
 config-env:
-	./scripts/config-env.sh
+	./.scripts/config-env.sh
 
-.PHONY: help deploy-api deploy-admin config-env
+layers:
+	./.scripts/create-layers.sh
+
+.PHONY: help deploy-api deploy-admin config-env layers

@@ -3,3 +3,7 @@ node_modules/
 # local env files
 .env*.local
 .env
+.env/
+
+# layers
+.layers/
