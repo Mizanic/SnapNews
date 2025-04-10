@@ -7,6 +7,10 @@ help:
 	@echo "  config-env - Get the environment variables"
 	@echo "  layers - Create the layers"
 
+dev:
+	npm run --prefix ./admin/ dev
+
+
 config-env:
 	./.scripts/config-env.sh
 
@@ -25,4 +29,8 @@ destroy-all:
 layers:
 	./.scripts/create-layers.sh
 
-.PHONY: help deploy-api deploy-admin config-env layers
+
+create-user:
+	./.scripts/create-user.sh
+
+.PHONY: help dev deploy-api deploy-admin config-env layers create-user

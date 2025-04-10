@@ -10,8 +10,12 @@ region=$(aws configure get region)
 
 
 echo "PUBLIC_USER_POOL_ID=${userPoolId}" > ./.env.web.local
-echo "PUBLIC_USER_POOL_CLIENT_ID=${appClientId}" >> ./.env.web.local
+echo "PUBLIC_APP_CLIENT_ID=${appClientId}" >> ./.env.web.local
 echo "PUBLIC_ACCOUNT_ID=${accountId}" >> ./.env.web.local
 
-echo "CDK_ACCOUNT_ID=${accountId}" > ./.env.cdk.local
-echo "CDK_REGION=${region}" >> ./.env.cdk.local
+
+
+echo "SECRET_CDK_AWS_ACCOUNT=${accountId}" > ./.env.cdk.local
+echo "PUBLIC_CDK_AWS_REGION=${region}" >> ./.env.cdk.local
+
+mise set
