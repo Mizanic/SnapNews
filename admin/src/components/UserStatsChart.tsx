@@ -1,7 +1,14 @@
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-const data = [
+// Define the interface for our chart data points
+interface ChartData {
+    name: string;
+    activeUsers: number;
+    installs: number;
+}
+
+const data: ChartData[] = [
     { name: "Jan", activeUsers: 400, installs: 240 },
     { name: "Feb", activeUsers: 300, installs: 139 },
     { name: "Mar", activeUsers: 200, installs: 980 },
@@ -17,10 +24,11 @@ const data = [
 ];
 
 // Basic styling adjustments for dark theme
-const chartTextStyle = { fill: "rgba(255, 255, 255, 0.7)" }; // Lighter text for dark background
+const chartTextStyle: React.CSSProperties = { fill: "rgba(255, 255, 255, 0.7)" }; // Lighter text for dark background
 const gridStrokeColor = "rgba(255, 255, 255, 0.1)"; // Subtle grid lines
+const tooltipContentStyle: React.CSSProperties = { backgroundColor: "rgba(30, 30, 30, 0.8)", border: "none" }; // Dark tooltip
 
-const UserStatsChart = () => {
+const UserStatsChart: React.FC = () => {
     return (
         <ResponsiveContainer width="100%" height={300}>
             <LineChart
@@ -33,12 +41,9 @@ const UserStatsChart = () => {
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3" stroke={gridStrokeColor} />
-                <XAxis dataKey="name" tick={chartTextStyle} />
-                <YAxis tick={chartTextStyle} />
-                <Tooltip
-                    contentStyle={{ backgroundColor: "rgba(30, 30, 30, 0.8)", border: "none" }} // Dark tooltip
-                    itemStyle={chartTextStyle}
-                />
+                <XAxis dataKey="name" tick={{ fill: chartTextStyle.fill }} />
+                <YAxis tick={{ fill: chartTextStyle.fill }} />
+                <Tooltip contentStyle={tooltipContentStyle} itemStyle={chartTextStyle} />
                 <Legend wrapperStyle={chartTextStyle} />
                 <Line type="monotone" dataKey="activeUsers" name="Active Users" stroke="#8884d8" activeDot={{ r: 8 }} />
                 <Line type="monotone" dataKey="installs" name="Installs" stroke="#82ca9d" />
