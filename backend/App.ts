@@ -1,8 +1,9 @@
 import { App } from "aws-cdk-lib";
 import { CommonStack } from "./src/Common";
 import { AdminStack } from "./src/Admin";
+import config from "../config.json";
 
-const APP_NAME = "SnapNews";
+const APP_NAME = config.PROJECT_NAME.trim().replace(/ /g, "");
 
 const LAYERS = {
     POWERTOOLS: "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:11",
