@@ -6,24 +6,14 @@ import * as config from "@root/config.json";
 const { projectName = config.PROJECT_NAME } = Astro.props;
 ---
 
-<nav class="navbar shadow-2xl max-w-screen-xl mx-auto items-center">
+<nav class="navbar shadow-2xl mx-auto items-center">
     <div class="navbar-start">
         <a href="/" class="btn btn-ghost text-base items-center">
             <MainLogo height={40} width={40} />
             <span>{projectName}</span>
         </a>
     </div>
-
-    <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal p-0 items-center">
-            <li>
-                <a href="/item1/" class={Astro.url.pathname.startsWith("/item1") ? "active" : ""}><span class="font-bold">Item 1</span></a>
-            </li>
-            <li>
-                <a href="/item2/" class={Astro.url.pathname.startsWith("/item2") ? "active" : ""}><span class="font-bold">Item 2</span></a>
-            </li>
-        </ul>
-    </div>
+    <div class="navbar-center hidden lg:flex"></div>
     <div class="navbar-end">
         <div class="flex items-center">
             <div class="w-32">
