@@ -30,7 +30,7 @@ export class AdminStack extends Stack {
             mfa: cognito.Mfa.OFF,
             accountRecovery: cognito.AccountRecovery.NONE,
             selfSignUpEnabled: false,
-
+            email: cognito.UserPoolEmail.withCognito(),
             removalPolicy: RemovalPolicy.DESTROY,
         });
 
