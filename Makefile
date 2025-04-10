@@ -7,14 +7,20 @@ help:
 	@echo "  config-env - Get the environment variables"
 	@echo "  layers - Create the layers"
 
+config-env:
+	./.scripts/config-env.sh
+
 deploy-api:
 	./.scripts/deploy-api.sh
 
 deploy-admin:
 	./.scripts/deploy-admin.sh
+	make config-env
 
-config-env:
-	./.scripts/config-env.sh
+destroy-all:
+	./.scripts/destroy-all.sh
+	rm ./.env.web.local
+	rm ./.env.cdk.local
 
 layers:
 	./.scripts/create-layers.sh
