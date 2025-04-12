@@ -1,0 +1,16 @@
+{
+    "Sources": [
+        {
+            "Name": "NDTV",
+            "Url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+            "Country": "India",
+            "Language": "English"
+        },
+        {
+            "Name": "TimesOfIndia",
+            "Url": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
+            "Country": "India",
+            "Language": "English"
+        }
+    ]
+}

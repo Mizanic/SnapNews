@@ -29,6 +29,8 @@ destroy-all:
 layers:
 	./.scripts/create-layers.sh
 
+set-sources:
+	python3 ./.scripts/set_sources.py
 
 create-user:
 	./.scripts/create-user.sh

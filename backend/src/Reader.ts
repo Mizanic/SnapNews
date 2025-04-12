@@ -1,21 +1,30 @@
-import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { Stack, StackProps } from "aws-cdk-lib";
+import {
+    aws_lambda as lambda,
+    aws_s3 as s3,
+    aws_events as events,
+    aws_logs as logs,
+    aws_events_targets as targets,
+    Duration,
+    RemovalPolicy,
+    CfnOutput,
+} from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { aws_lambda as lambda, aws_s3 as s3, aws_logs as logs } from "aws-cdk-lib";
+import { readFileSync } from "fs";
 import { join } from "path";
 
 export interface ReaderStackProps extends StackProps {
     appName: string;
-    readerName: string;
     bucketName: string;
     layers: Record<string, string>;
+    readSchedule: number;
 }
 
 export class ReaderStack extends Stack {
-    public readonly ReaderFunction: lambda.Function;
     constructor(scope: Construct, id: string, props: ReaderStackProps) {
         super(scope, id, props);
 
-        // Configure the Admin Lambda
+        // Configure the Reader Lambda
         const readerLayer = new lambda.LayerVersion(this, `${props.appName}-ReaderLayer`, {
             compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
             code: lambda.Code.fromAsset(join(__dirname, "../../.layers/reader")),
@@ -24,7 +33,7 @@ export class ReaderStack extends Stack {
 
         const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
 
-        this.ReaderFunction = new lambda.Function(this, `${props.appName}-Reader`, {
+        const readerFn = new lambda.Function(this, `${props.appName}-Reader`, {
             functionName: `${props.appName}-Reader`,
             runtime: lambda.Runtime.PYTHON_3_12,
             handler: "app.main",
@@ -36,7 +45,25 @@ export class ReaderStack extends Stack {
         });
 
         const bucket = s3.Bucket.fromBucketName(this, `${props.appName}-NewsFeedBucket`, props.bucketName);
-        bucket.grantReadWrite(this.ReaderFunction);
+        bucket.grantReadWrite(readerFn);
+
+        const rule = new events.Rule(this, `${props.appName}-ReaderSchedulerRule`, {
+            ruleName: `${props.appName}-ReaderSchedulerRule`,
+            schedule: events.Schedule.rate(Duration.hours(props.readSchedule)),
+        });
+
+        const newsSources = JSON.parse(readFileSync(join(__dirname, "../../NewsSources.json"), "utf8"));
+
+        for (const source of newsSources.Sources) {
+            rule.addTarget(
+                new targets.LambdaFunction(readerFn, {
+                    event: events.RuleTargetInput.fromObject({
+                        NewsSource: source.Name,
+                        NewsUrl: source.Url,
+                    }),
+                })
+            );
+        }
 
         new logs.LogGroup(this, `${props.appName}-ReaderLogGroup`, {
             logGroupName: `/aws/lambda/${props.appName}-Reader`,
