@@ -3,19 +3,25 @@ import ImageSection from "./ImageSection";
 import Header from "./Header";
 import Summary from "./Summary";
 import ActionBar from "./ActionBar";
+import { NewsItem } from "@/model/newsItem";
 
-const NewsCard = ({ title, description, image, label }: any) => (
+interface NewsCardProps {
+  news: NewsItem;
+  isBookmarked : boolean;
+}
+
+const NewsCard = ({ news ,isBookmarked}: NewsCardProps) => (
   <View style={styles.card}>
     <View style={styles.imageWrapper}>
-      <ImageSection image={image} label={label} />
+      <ImageSection image={news.media.image_url} label={news.source} />
       <View style={styles.overlay}>
-        <Header title={title} />
+        <Header title={news.headline} />
       </View>
     </View>
     <View style={styles.content}>
-      <Summary description={description} />
+      <Summary description={news.summary} />
     </View>
-    <ActionBar />
+    <ActionBar news={news} isBookmarked={isBookmarked}/>
   </View>
 );
 

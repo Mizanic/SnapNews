@@ -11,6 +11,9 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AppHeader from "@/components/screens/AppHeader";
+import { Provider } from "react-redux";
+import store from "../dux/store";
+import NewsCard from "@/components/screens/NewsCard";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,9 +35,9 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <Provider store={store}>
       <AppHeader />
       <Navigation />
-    </>
+    </Provider>
   );
 }

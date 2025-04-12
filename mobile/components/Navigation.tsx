@@ -1,15 +1,15 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, Animated } from "react-native";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import TopNewsScreen from "../components/TopNewsScreen";
-import LatestNewsScreen from "../components/LatestNewsScreen";
-import FavoritesScreen from "../components/FavoritesScreen";
+import { MaterialCommunityIcons, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import TopNewsScreen from "./TopNewsScreen";
+import LatestNewsScreen from "./LatestNewsScreen";
+import BookmarkScreen from "./BookmarkScreen";
 
 type TabParamList = {
   "Top News": undefined;
   "Latest News": undefined;
-  Favorites: undefined;
+  Bookmark: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -21,7 +21,7 @@ const MainTabs: React.FC = () => {
         const icons: Record<string, { name: string; lib: any }> = {
           "Top News": { name: "newspaper", lib: MaterialCommunityIcons },
           "Latest News": { name: "flash", lib: Ionicons },
-          Favorites: { name: "heart-outline", lib: Ionicons },
+          Bookmark: { name: "bookmark-added", lib: MaterialIcons },
         };
 
         const { name, lib: IconComponent } = icons[route.name];
@@ -63,7 +63,7 @@ const MainTabs: React.FC = () => {
     >
       <Tab.Screen name="Top News" component={TopNewsScreen} />
       <Tab.Screen name="Latest News" component={LatestNewsScreen} />
-      <Tab.Screen name="Favorites" component={FavoritesScreen} />
+      <Tab.Screen name="Bookmark" component={BookmarkScreen} />
     </Tab.Navigator>
   );
 };

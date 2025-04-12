@@ -1,20 +1,22 @@
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
+import ShareButton from "./ShareButton";
+import BookmarkButton from "./BookmarkButton";
+import { NewsItem } from "../../model/newsItem";
 
-const ActionBar = () => {
+interface ActionBarProps {
+  news: NewsItem;
+  isBookmarked : boolean;
+}
+
+const ActionBar = ({news,isBookmarked}:ActionBarProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
     if (isDisliked) setIsDisliked(false);
-  };
-
-  const handleDislike = () => {
-    setIsDisliked(!isDisliked);
-    if (isLiked) setIsLiked(false);
   };
 
   return (
@@ -26,23 +28,8 @@ const ActionBar = () => {
           color="#555"
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleDislike()}>
-        <MaterialIcons
-          name={isDisliked ? "thumb-down-alt" : "thumb-down-off-alt"}
-          size={24}
-          color="#555"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)}>
-        <MaterialIcons
-          name={isFavorite ? "favorite" : "favorite-outline"}
-          size={24}
-          color="#555"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <MaterialIcons name="share" size={24} color="#555" />
-      </TouchableOpacity>
+      <BookmarkButton news={news} isBookmarked={isBookmarked}/>
+      <ShareButton newsSourceUrl={news.news_url}/>
     </View>
   );
 };
