@@ -1,0 +1,10 @@
+[
+    {
+        "NewsSource": "NDTV",
+        "NewsUrl": "https://feeds.feedburner.com/ndtvnews-top-stories"
+    },
+    {
+        "NewsSource": "TimesOfIndia",
+        "NewsUrl": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"
+    }
+]

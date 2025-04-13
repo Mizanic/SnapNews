@@ -2,12 +2,13 @@
 # --*-- coding: utf-8 --*--
 # This module is used to read RSS feeds
 """
+
 # ==================================================================================================
 # Python imports
 import os
 
 # ==================================================================================================
-# Powertools imports
+# AWS imports
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
 from aws_lambda_powertools.utilities.typing import LambdaContext
@@ -25,7 +26,6 @@ logger = Logger()
 BUCKET_NAME = os.environ["NEWS_FEED_BUCKET"]
 
 
-@tracer.capture_lambda_handler
 @event_source(data_class=EventBridgeEvent)
 def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     """

@@ -7,7 +7,6 @@ import {
     aws_events_targets as targets,
     Duration,
     RemovalPolicy,
-    CfnOutput,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { readFileSync } from "fs";
@@ -24,21 +23,18 @@ export class ReaderStack extends Stack {
     constructor(scope: Construct, id: string, props: ReaderStackProps) {
         super(scope, id, props);
 
-        // Configure the Reader Lambda
-        const readerLayer = new lambda.LayerVersion(this, `${props.appName}-ReaderLayer`, {
-            compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
-            code: lambda.Code.fromAsset(join(__dirname, "../../.layers/reader")),
-            removalPolicy: RemovalPolicy.RETAIN,
-        });
-
+        // Configure the Powertools Layer
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, props.layers.COMMON);
         const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
 
+        // Configure the Reader Lambda
         const readerFn = new lambda.Function(this, `${props.appName}-Reader`, {
             functionName: `${props.appName}-Reader`,
             runtime: lambda.Runtime.PYTHON_3_12,
             handler: "app.main",
             code: lambda.Code.fromAsset(join(__dirname, "fn/reader")),
-            layers: [readerLayer, powertoolsLayer],
+            layers: [commonLayer, powertoolsLayer],
+            timeout: Duration.seconds(120),
             environment: {
                 NEWS_FEED_BUCKET: props.bucketName,
             },

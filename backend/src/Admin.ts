@@ -51,14 +51,8 @@ export class AdminStack extends Stack {
          */
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Configure the Admin Lambda
-        const adminLayer = new lambda.LayerVersion(this, `${props.appName}-AdminLayer`, {
-            compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
-            code: lambda.Code.fromAsset(join(__dirname, "../../.layers/admin")),
-            removalPolicy: RemovalPolicy.RETAIN,
-        });
-
         // Configure the Powertools Layer
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, props.layers.COMMON);
         const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
 
         // Configure the Admin Lambda
@@ -67,7 +61,7 @@ export class AdminStack extends Stack {
             runtime: lambda.Runtime.PYTHON_3_12,
             handler: "app.main",
             code: lambda.Code.fromAsset(join(__dirname, "fn/admin")),
-            layers: [adminLayer, powertoolsLayer],
+            layers: [commonLayer, powertoolsLayer],
             environment: {
                 TABLE_NAME: props.tableName,
             },

@@ -1,6 +1,7 @@
-import { Stack, StackProps, RemovalPolicy } from "aws-cdk-lib";
-import { aws_dynamodb as dynamodb } from "aws-cdk-lib";
+import { Stack, StackProps } from "aws-cdk-lib";
+import { aws_dynamodb as dynamodb, aws_lambda as lambda, RemovalPolicy, aws_sqs as sqs, Duration } from "aws-cdk-lib";
 import { Construct } from "constructs";
+import { join } from "path";
 
 export interface CommonStackProps extends StackProps {
     appName: string;
@@ -8,6 +9,9 @@ export interface CommonStackProps extends StackProps {
 
 export class CommonStack extends Stack {
     public readonly TableName: string;
+    public readonly CommonLayer: lambda.LayerVersion;
+    public readonly ProcessedQueueArn: string;
+
     constructor(scope: Construct, id: string, props: CommonStackProps) {
         super(scope, id, props);
 
@@ -17,7 +21,7 @@ export class CommonStack extends Stack {
             sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
             timeToLiveAttribute: "ttl",
-            removalPolicy: RemovalPolicy.DESTROY,
+            removalPolicy: RemovalPolicy.RETAIN,
         });
 
         Table.addLocalSecondaryIndex({
@@ -26,5 +30,21 @@ export class CommonStack extends Stack {
         });
 
         this.TableName = Table.tableName;
+
+        // Create a Common Layer
+        const CommonLayer = new lambda.LayerVersion(this, `${props.appName}-CommonLayer`, {
+            compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
+            code: lambda.Code.fromAsset(join(__dirname, "../../.layers/common")),
+            removalPolicy: RemovalPolicy.RETAIN,
+        });
+
+        this.CommonLayer = CommonLayer;
+
+        // Create a Processed Queue
+        const ProcessedQueue = new sqs.Queue(this, `${props.appName}-ProcessedQueue`, {
+            visibilityTimeout: Duration.seconds(180),
+        });
+
+        this.ProcessedQueueArn = ProcessedQueue.queueArn;
     }
 }

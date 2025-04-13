@@ -14,12 +14,13 @@ import requests.exceptions
 # ==================================================================================================
 # Module imports
 from . import parsers
-from .logger import logger # Import the Powertools logger
+from .logger import logger  # Import the Powertools logger
 
 # ==================================================================================================
 
 SUCCESS_STATUS_CODE = 200
-HEADERS = {'User-Agent': 'SnapNewsReader/1.0 (+http://example.com/your-bot-info)'} # It's good practice to identify your bot
+HEADERS = {"User-Agent": "SnapNewsReader/1.0"}  # It's good practice to identify your bot
+
 
 def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
     """
@@ -71,7 +72,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
         parser_class = getattr(parsers, feed_source)
         # Instantiate the parser and parse the feed
         feed = parser_class().parse_feed(xml_root)
-        return feed
+        return feed  # noqa: RET504
     except AttributeError as e:
         logger.error(f"Parser class '{feed_source}' not found in parsers module.", exc_info=e)
         return []

@@ -20,12 +20,13 @@ from botocore.exceptions import ClientError
 
 # ==================================================================================================
 
+
 def upload_feed_to_s3(feed: list[dict], news_source: str, bucket_name: str) -> None:
     """
     This function uploads the feed to S3
     """
-    temp_file_name = Path(f"/tmp/{news_source}-latest.json")  # noqa: S108
-    s3_object_name = Path(f"{news_source}-latest.json")
+    temp_file_name = f"/tmp/{news_source}-latest.json"  # noqa: S108
+    s3_object_name = f"{news_source}-latest.json"
 
     # Write the feed to a temporary file
     with Path(temp_file_name).open("w", encoding="utf-8") as outfile:
