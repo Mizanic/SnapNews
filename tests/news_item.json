@@ -1,0 +1,50 @@
+[
+    {
+        "pk": "NEWS#TOP",
+        "sk": "1743682400",
+        "headline": "When LinkedIn co-founder said: Go home, have dinner, then open laptops...",
+        "media": { "image_url": "https://static.toiimg.com/photo/msid-119933469,imgsize-17734.cms", "video_url": null },
+        "news_url": "https://timesofindia.indiatimes.com/technology/tech-news/when-linkedin-co-founder-told-employees-go-home-have-dinner-with-family-and-then-open-laptops-to-/articleshow/119933491.cms",
+        "published": 1743682400,
+        "source": "TimesOfIndia",
+        "summary": "LinkedIn co-founder Reid Hoffman believes a relentless work ethic is essential for startup success, even if it means sacrificing work-life balance. He suggests employees should continue working after family dinner, a stance he defends by highlighting the financial rewards for early employees. Hoffman argues that those prioritizing balance misunderstand the intense nature of the startup game.",
+        "ttl": 1744892000,
+        "url_hash": "0afad6fab0a917e4998b415c8f102376b1325d370cf40cfaecf4f7e7d28ed606"
+    },
+    {
+        "pk": "NEWS#TOP",
+        "sk": "1744244654",
+        "headline": "US: We will Revoke or Deny Visa if your Facebook, Twitter posts are in Support of ...",
+        "media": { "image_url": "https://static.toiimg.com/photo/msid-120137648,imgsize-276588.cms", "video_url": null },
+        "news_url": "https://timesofindia.indiatimes.com/technology/tech-news/us-makes-it-clear-be-ready-we-will-revoke-or-deny-visa-if-your-facebook-twitter-or-instagram-posts-are-in-support-of-/articleshow/120137664.cms",
+        "published": 1744244654,
+        "source": "TimesOfIndia",
+        "summary": "USCIS has officially declared that social media posts, particularly those deemed anti-Semitic or supportive of designated terrorist groups like Hamas and Hezbollah, can lead to US visa rejection or revocation. This policy, effective immediately, impacts student visas and Green Card applications. The Trump administration, through Secretary of State Marco Rubio, has already revoked visas of hundreds of international students.",
+        "ttl": 1745454254,
+        "url_hash": "b67b9682248893e3851ef13f525f0dc1d0f6f57945251ac323187bb5a4d0d486"
+    },
+    {
+        "pk": "NEWS#TOP",
+        "sk": "1744504636",
+        "headline": "Mother gets death sentence for 'ritual sacrifice' of 7-month-old baby",
+        "media": { "image_url": "https://static.toiimg.com/photo/msid-120246058,imgsize-21544.cms", "video_url": null },
+        "news_url": "https://timesofindia.indiatimes.com/city/hyderabad/woman-gets-death-for-killing-daughter-in-ritual-sacrifice/articleshow/120241023.cms",
+        "published": 1744504636,
+        "source": "TimesOfIndia",
+        "summary": "In a shocking verdict, a Suryapet court sentenced B Bharathi to death for the 2021 ritualistic murder of her infant daughter. Bharathi sacrificed her child to supposedly eliminate her 'sarpa dosham,' an astrological belief. This conviction was influenced by her prior imprisonment for assaulting her husband with a stone.",
+        "ttl": 1745714236,
+        "url_hash": "3879e2b9b27e162021f85a553a554b6dbb13c4917ae22c32dd3871c93f8c49d8"
+    },
+    {
+        "pk": "NEWS#TOP",
+        "sk": "1744530888",
+        "headline": "When Steve Jobs explained to Barack Obama why iPhones can’t be made in US",
+        "media": { "image_url": "https://static.toiimg.com/photo/msid-120246118,imgsize-9824.cms", "video_url": null },
+        "news_url": "https://timesofindia.indiatimes.com/technology/tech-news/when-steve-jobs-explained-to-president-barack-obama-why-iphones-cant-be-made-in-the-us/articleshow/120246122.cms",
+        "published": 1744530888,
+        "source": "TimesOfIndia",
+        "summary": "Amidst Trump's push for US manufacturing, Apple faces pressure to shift iPhone production domestically. Despite a commitment to invest in the US, Apple's past CEO, Steve Jobs, cited scale, speed, and specialized skills as reasons for manufacturing in China. To mitigate potential tariff impacts, Apple expedited iPhone shipments from India to China.",
+        "ttl": 1745740488,
+        "url_hash": "e402283cef1fe3445ede40ea8585c3ebfd06d646dbd3f84e552d3834f705c19d"
+    }
+]

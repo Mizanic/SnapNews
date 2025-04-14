@@ -79,5 +79,6 @@ def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
     except Exception as e:
         # Catching general Exception is broad, but useful for unexpected errors within a specific parser
         logger.error(f"Error during parsing feed '{feed_source}' from {feed_url}", exc_info=True)
+        logger.error(f"Error: {e}")
         # exc_info=True adds traceback to the log
         return []

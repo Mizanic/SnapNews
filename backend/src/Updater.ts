@@ -9,6 +9,7 @@ import {
     aws_lambda as lambda,
     aws_dynamodb as dynamodb,
     aws_logs as logs,
+    aws_ssm as ssm,
     RemovalPolicy,
     aws_lambda_event_sources as lambdaEventSources,
 } from "aws-cdk-lib";
@@ -19,8 +20,8 @@ export interface UpdaterStackProps extends StackProps {
     tableName: string;
     processedQueueArn: string;
     layers: {
-        COMMON: string;
-        POWERTOOLS: string;
+        COMMON_SSM_PARAMETER_NAME: string;
+        POWERTOOLS_ARN: string;
     };
     ttlDays: number;
 }
@@ -39,10 +40,16 @@ export class UpdaterStack extends Stack {
             grantIndexPermissions: true,
         });
 
-        // Configure the Powertools Layer
-        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, props.layers.COMMON);
-        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
-
+        // Configure the Layer
+        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.appName}-CommonLayerArn`, {
+            parameterName: props.layers.COMMON_SSM_PARAMETER_NAME,
+        });
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, commonLayerArn.stringValue);
+        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            `${props.appName}-PowertoolsLayer`,
+            props.layers.POWERTOOLS_ARN
+        );
         // Create a lambda function to process the rss items
         const updaterFn = new lambda.Function(this, `${props.appName}-Updater`, {
             functionName: `${props.appName}-Updater`,

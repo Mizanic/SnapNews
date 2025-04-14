@@ -5,6 +5,7 @@ import {
     aws_events as events,
     aws_logs as logs,
     aws_events_targets as targets,
+    aws_ssm as ssm,
     Duration,
     RemovalPolicy,
 } from "aws-cdk-lib";
@@ -15,7 +16,10 @@ import { join } from "path";
 export interface ReaderStackProps extends StackProps {
     appName: string;
     bucketName: string;
-    layers: Record<string, string>;
+    layers: {
+        COMMON_SSM_PARAMETER_NAME: string;
+        POWERTOOLS_ARN: string;
+    };
     readSchedule: number;
 }
 
@@ -23,9 +27,16 @@ export class ReaderStack extends Stack {
     constructor(scope: Construct, id: string, props: ReaderStackProps) {
         super(scope, id, props);
 
-        // Configure the Powertools Layer
-        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, props.layers.COMMON);
-        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
+        // Configure the Layer
+        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.appName}-CommonLayerArn`, {
+            parameterName: props.layers.COMMON_SSM_PARAMETER_NAME,
+        });
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, commonLayerArn.stringValue);
+        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            `${props.appName}-PowertoolsLayer`,
+            props.layers.POWERTOOLS_ARN
+        );
 
         // Configure the Reader Lambda
         const readerFn = new lambda.Function(this, `${props.appName}-Reader`, {

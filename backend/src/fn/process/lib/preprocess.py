@@ -14,8 +14,8 @@ from pydantic import ValidationError
 
 # ==================================================================================================
 # Module imports
-from .news_model import NewsItemModel
-from .url_hasher import hasher
+from shared.news_model import NewsItemModel
+from shared.url_hasher import hasher
 
 # ==================================================================================================
 # Global declarations

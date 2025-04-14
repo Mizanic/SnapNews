@@ -2,13 +2,14 @@ import { Stack, StackProps } from "aws-cdk-lib";
 import {
     aws_s3 as s3,
     aws_sqs as sqs,
-    Duration,
     aws_dynamodb as dynamodb,
     aws_lambda as lambda,
     aws_events as events,
     aws_events_targets as targets,
     aws_logs as logs,
+    aws_ssm as ssm,
     RemovalPolicy,
+    Duration,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { join } from "path";
@@ -17,7 +18,10 @@ export interface ProcessStackProps extends StackProps {
     appName: string;
     bucketName: string;
     tableName: string;
-    layers: Record<string, string>;
+    layers: {
+        COMMON_SSM_PARAMETER_NAME: string;
+        POWERTOOLS_ARN: string;
+    };
     processedQueueArn: string;
 }
 
@@ -52,10 +56,16 @@ export class ProcessStack extends Stack {
         // Create a SQS queue to store individual rss items
         const processedNewsQueue = sqs.Queue.fromQueueArn(this, `${props.appName}-ProcessedQueue`, props.processedQueueArn);
 
-        // Configure the Powertools Layer
-        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, props.layers.COMMON);
-        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
-
+        // Configure the Layer
+        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.appName}-CommonLayerArn`, {
+            parameterName: props.layers.COMMON_SSM_PARAMETER_NAME,
+        });
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, commonLayerArn.stringValue);
+        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            `${props.appName}-PowertoolsLayer`,
+            props.layers.POWERTOOLS_ARN
+        );
         // Create a lambda function to process the rss items
         const processFn = new lambda.Function(this, "ProcessFn", {
             functionName: `${props.appName}-Processor`,

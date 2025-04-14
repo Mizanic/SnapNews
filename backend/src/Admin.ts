@@ -1,13 +1,21 @@
 import { Stack, StackProps, RemovalPolicy, Size } from "aws-cdk-lib";
-import { aws_cognito as cognito, aws_dynamodb as dynamodb } from "aws-cdk-lib";
-import { aws_apigateway as apigateway, aws_lambda as lambda } from "aws-cdk-lib";
+import {
+    aws_cognito as cognito,
+    aws_dynamodb as dynamodb,
+    aws_ssm as ssm,
+    aws_apigateway as apigateway,
+    aws_lambda as lambda,
+} from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { join } from "path";
 
 export interface AdminStackProps extends StackProps {
     appName: string;
     tableName: string;
-    layers: Record<string, string>;
+    layers: {
+        COMMON_SSM_PARAMETER_NAME: string;
+        POWERTOOLS_ARN: string;
+    };
 }
 
 export class AdminStack extends Stack {
@@ -51,9 +59,16 @@ export class AdminStack extends Stack {
          */
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Configure the Powertools Layer
-        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, props.layers.COMMON);
-        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-PowertoolsLayer`, props.layers.POWERTOOLS);
+        // Configure the Layers
+        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.appName}-CommonLayerArn`, {
+            parameterName: props.layers.COMMON_SSM_PARAMETER_NAME,
+        });
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, commonLayerArn.stringValue);
+        const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            `${props.appName}-PowertoolsLayer`,
+            props.layers.POWERTOOLS_ARN
+        );
 
         // Configure the Admin Lambda
         const adminLambda = new lambda.Function(this, `${props.appName}-AdminLambda`, {

@@ -13,7 +13,7 @@ const APP_NAME = config.PROJECT_NAME.trim().replace(/ /g, "");
 const READ_SCHEDULE_HOURS = defaults.READ_SCHEDULE_HOURS;
 const NEWS_TTL_DAYS = defaults.NEWS_TTL_DAYS;
 const NEWS_FEED_BUCKET = defaults.NEWS_FEED_BUCKET;
-
+const POWERTOOLS_LAYER_ARN = "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:11";
 ////////////////////////////////////////////////////////////
 // STACKS
 ////////////////////////////////////////////////////////////
@@ -22,11 +22,12 @@ const app = new App();
 
 const common = new CommonStack(app, `${APP_NAME}-CommonStack`, {
     appName: APP_NAME,
+    powertoolsLayerArn: POWERTOOLS_LAYER_ARN,
 });
 
 const LAYERS = {
-    POWERTOOLS: "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:11",
-    COMMON: common.CommonLayer.layerVersionArn,
+    POWERTOOLS_ARN: POWERTOOLS_LAYER_ARN,
+    COMMON_SSM_PARAMETER_NAME: `/${APP_NAME}/layers/common-layer-arn`,
 };
 
 const admin = new AdminStack(app, `${APP_NAME}-AdminStack`, {

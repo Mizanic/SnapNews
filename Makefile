@@ -9,6 +9,10 @@ help:
 
 
 # CDK Related Commands
+deploy-all:
+	make deploy-api
+	make deploy-admin
+
 deploy-api:
 	./.scripts/deploy-api.sh
 
@@ -41,4 +45,4 @@ config-env:
 create-user:
 	./.scripts/create-user.sh
 
-.PHONY: help dev deploy-api deploy-admin config-env layers create-user
+.PHONY: help dev deploy-api deploy-admin config-env layers create-user deploy-all destroy-all test-reader
