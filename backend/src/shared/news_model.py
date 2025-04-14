@@ -34,7 +34,7 @@ class NewsItemModel(BaseModel):
     headline: str
     published: int
     summary: str
-    # content: str #This will be added later. Not being used to save space in DynamoDB
+    # content: str #This will be added later. Not being used to save space in DynamoDB  # noqa: ERA001
     media: NewsMediaModel
 
 
