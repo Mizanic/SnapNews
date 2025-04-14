@@ -53,9 +53,6 @@ select = [
     #flake8-raise (RSE)
     "RSE",
 
-    #flake8-return (RET)
-    "RET",
-
     #flake8-self (SLF)
     "SLF",
 

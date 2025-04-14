@@ -7,12 +7,11 @@ help:
 	@echo "  config-env - Get the environment variables"
 	@echo "  layers - Create the layers"
 
-dev:
-	npm run --prefix ./admin/ dev
 
-
-config-env:
-	./.scripts/config-env.sh
+# CDK Related Commands
+deploy-all:
+	make deploy-api
+	make deploy-admin
 
 deploy-api:
 	./.scripts/deploy-api.sh
@@ -29,8 +28,21 @@ destroy-all:
 layers:
 	./.scripts/create-layers.sh
 
+test-reader:
+	./.scripts/test_reader.sh
+
+
+
+# Admin Related Commands
+
+dev:
+	npm run --prefix ./admin/ dev
+
+
+config-env:
+	./.scripts/config-env.sh
 
 create-user:
 	./.scripts/create-user.sh
 
-.PHONY: help dev deploy-api deploy-admin config-env layers create-user
+.PHONY: help dev deploy-api deploy-admin config-env layers create-user deploy-all destroy-all test-reader

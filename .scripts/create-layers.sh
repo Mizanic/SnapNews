@@ -2,12 +2,34 @@
 shopt -s expand_aliases
 alias echo="echo -e"
 
-
+# Layers directory
+LAYERS_DIR=.layers
+# Main requirements file
 MAIN_REQUIREMENTS_FILE=backend/requirements.txt
-ADMIN_REQUIREMENTS_FILE=backend/src/fn/admin/requirements.txt
-ADMIN_OUTPUT_DIR=.layers/admin/python
+# Common requirements file
+COMMON_REQUIREMENTS_FILE=backend/src/fn/requirements.txt
+COMMON_OUTPUT_DIR=${LAYERS_DIR}/common/python
 
-mkdir -p ${ADMIN_OUTPUT_DIR}
+# Create the layers directory
+rm -rf ${LAYERS_DIR}
+mkdir -p ${LAYERS_DIR}
 
-pip install -r ${ADMIN_REQUIREMENTS_FILE} --target ${ADMIN_OUTPUT_DIR}
-pip install -r ${MAIN_REQUIREMENTS_FILE}
+# Create the output directories
+mkdir -p ${COMMON_OUTPUT_DIR}
+
+# Download the dependencies for layers
+pip install -r ${COMMON_REQUIREMENTS_FILE} --target ${COMMON_OUTPUT_DIR} --upgrade
+
+# Install all the dependencies for offline development users
+pip install -r ${MAIN_REQUIREMENTS_FILE} --upgrade
+
+
+
+## Libs
+SHARED_LIB_CODE_DIR=backend/src/shared
+# SHARED_LIB_OUTPUT_DIR_NAME=shared
+
+# mkdir -p ${COMMON_OUTPUT_DIR}/${SHARED_LIB_OUTPUT_DIR_NAME}
+
+# Copy the shared lib code
+cp -r ${SHARED_LIB_CODE_DIR} ${COMMON_OUTPUT_DIR}/

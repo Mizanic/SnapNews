@@ -1,0 +1,5 @@
+{
+    "READ_SCHEDULE_HOURS": 24,
+    "NEWS_TTL_DAYS": 14,
+    "NEWS_FEED_BUCKET": "news-feed-bucket"
+}
