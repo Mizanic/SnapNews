@@ -23,31 +23,21 @@ from . import parsers
 class FeedError(Exception):
     """Base exception for feed handling errors."""
 
-    pass
-
 
 class FeedFetchError(FeedError):
     """Error during feed fetching."""
-
-    pass
 
 
 class FeedParseError(FeedError):
     """Error during XML parsing."""
 
-    pass
-
 
 class ParserNotFoundError(FeedError):
     """Parser class for the source not found."""
 
-    pass
-
 
 class ParserExecutionError(FeedError):
     """Error occurred within a specific feed parser."""
-
-    pass
 
 
 SUCCESS_STATUS_CODE = 200
