@@ -24,11 +24,11 @@
             },
             "FEEDS": [
                 {
-                    "CRICKET": "http://timesofindia.indiatimes.com/rssfeeds/54829575.cms",
-                    "INDIA": "http://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
-                    "LATEST": "http://timesofindia.indiatimes.com/rssfeedmostrecent.cms",
-                    "TOP": "http://timesofindia.indiatimes.com/rssfeedstopstories.cms",
-                    "TRENDING": "http://timesofindia.indiatimes.com/rssfeedmostread.cms"
+                    "CRICKET": "https://timesofindia.indiatimes.com/rssfeeds/54829575.cms",
+                    "INDIA": "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
+                    "LATEST": "https://timesofindia.indiatimes.com/rssfeedmostrecent.cms",
+                    "TOP": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
+                    "TRENDING": "https://timesofindia.indiatimes.com/rssfeedmostread.cms"
                 }
             ]
         }

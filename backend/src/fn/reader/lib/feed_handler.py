@@ -22,7 +22,7 @@ SUCCESS_STATUS_CODE = 200
 HEADERS = {"User-Agent": "SnapNewsReader/1.0"}  # It's good practice to identify your bot
 
 
-def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
+def get_feed_from_rss(feed_source: str, feed_url: list[dict]) -> list[dict]:
     """
     Fetches and parses an RSS feed with error handling.
 

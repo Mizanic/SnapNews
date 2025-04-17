@@ -2,5 +2,5 @@
 Controllers package
 """
 
-from .times_of_india import TimesOfIndia
-from .ndtv import NDTV
+from .ndtv import NDTV  # noqa: F401
+from .toi import TOI  # noqa: F401
