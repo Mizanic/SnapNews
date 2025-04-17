@@ -7,6 +7,7 @@
 # ==================================================================================================
 # Python imports
 import json
+import os
 from pathlib import Path
 
 # ==================================================================================================
@@ -38,3 +39,21 @@ def upload_feed_to_s3(feed: list[dict], news_source: str, bucket_name: str) -> N
         s3_client.upload_file(temp_file_name, bucket_name, s3_object_name)
     except ClientError as s3_error:
         raise s3_error
+
+
+def get_news_url(news_source: str) -> str:
+    """
+    This function gets the news url for the given news source
+    """
+
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table(os.environ["NEWS_TABLE_NAME"])
+
+    response = table.get_item(Key={"pk": f"SOURCE#{news_source}", "sk": f"SOURCE#{news_source}"})
+    item = response.get("Item")
+
+    if item:
+        return item.get("url")
+
+    msg = f"News source {news_source} not found"
+    raise ValueError(msg)

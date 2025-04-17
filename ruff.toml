@@ -39,7 +39,7 @@ select = [
     "PIE",
 
     #flake8-print (T20)
-    "T20",
+    #"T20",
 
     #flake8-pyi (PYI)
     "PYI",

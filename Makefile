@@ -29,20 +29,25 @@ layers:
 	./.scripts/create-layers.sh
 
 test-reader:
-	./.scripts/test_reader.sh
+	./.scripts/test-reader.sh
 
-
+hotswap:
+	npm run --prefix ./backend/ cdk deploy --hotswap
 
 # Admin Related Commands
 
 dev:
 	npm run --prefix ./admin/ dev
 
-
 config-env:
 	./.scripts/config-env.sh
 
 create-user:
 	./.scripts/create-user.sh
+
+set-sources:
+	python3 ./.scripts/set_sources.py
+
+
 
 .PHONY: help dev deploy-api deploy-admin config-env layers create-user deploy-all destroy-all test-reader

@@ -15,7 +15,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
 # Module imports
-from lib.aws_utils import upload_feed_to_s3
+from lib.aws_utils import get_news_url, upload_feed_to_s3
 from lib.feed_handler import get_feed_from_rss
 
 # ==================================================================================================
@@ -34,16 +34,17 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     logger.info(f"Context: {context}")
 
     news_source: str = event["NewsSource"]
-    news_url: str = event["NewsUrl"]
+    news_url: str = get_news_url(news_source)
 
+    logger.info(f"News URL: {news_url}")
     ## Get the json feed
-    logger.info(f"Getting feed for {news_source}")
-    feed = get_feed_from_rss(news_source, news_url)
-    logger.info(f"Feed for {news_source} is {feed}")
+    # logger.info(f"Getting feed for {news_source}")
+    # feed = get_feed_from_rss(news_source, news_url)
+    # logger.info(f"Feed for {news_source} is {feed}")
 
-    ## Upload the json feed to S3
-    logger.info("Uploading feed to S3")
-    upload_feed_to_s3(feed, news_source, BUCKET_NAME)
-    logger.info("Uploaded feed to S3 successfully")
+    # ## Upload the json feed to S3
+    # logger.info("Uploading feed to S3")
+    # upload_feed_to_s3(feed, news_source, BUCKET_NAME)
+    # logger.info("Uploaded feed to S3 successfully")
 
     return {"statusCode": 200, "body": "Success"}

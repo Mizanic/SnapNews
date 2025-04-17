@@ -15,44 +15,58 @@ import {
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { join } from "path";
+import { ConstantsType, ParamsType } from "../constants";
+
 export interface UpdaterStackProps extends StackProps {
-    appName: string;
-    tableName: string;
-    processedQueueArn: string;
-    layers: {
-        COMMON_SSM_PARAMETER_NAME: string;
-        POWERTOOLS_ARN: string;
-    };
-    ttlDays: number;
+    constants: ConstantsType;
+    params: ParamsType;
 }
 
 export class UpdaterStack extends Stack {
     constructor(scope: Construct, id: string, props: UpdaterStackProps) {
         super(scope, id, props);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // SSM parameters
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        const processedQueueArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-ProcessedQueueArn`, {
+            parameterName: props.params.PROCESSED_QUEUE_ARN,
+        });
+
+        const tableName = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-TableName`, {
+            parameterName: props.params.TABLE_NAME,
+        });
+
+        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-CommonLayerArn`, {
+            parameterName: props.params.COMMON_LAYER_ARN,
+        });
+
         // Get the processed queue
-        const processedQueue = sqs.Queue.fromQueueArn(this, `${props.appName}-ProcessedQueue`, props.processedQueueArn);
+        const processedQueue = sqs.Queue.fromQueueArn(this, `${props.constants.APP_NAME}-ProcessedQueue`, processedQueueArn.stringValue);
 
         // Fetch dynamodb main table and local index
         const NewsTable = dynamodb.Table.fromTableAttributes(this, "NewsTable", {
-            tableName: props.tableName,
+            tableName: tableName.stringValue,
             localIndexes: ["byUrlHash"],
             grantIndexPermissions: true,
         });
 
         // Configure the Layer
-        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.appName}-CommonLayerArn`, {
-            parameterName: props.layers.COMMON_SSM_PARAMETER_NAME,
-        });
-        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, commonLayerArn.stringValue);
+
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            `${props.constants.APP_NAME}-CommonLayer`,
+            commonLayerArn.stringValue
+        );
         const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(
             this,
-            `${props.appName}-PowertoolsLayer`,
-            props.layers.POWERTOOLS_ARN
+            `${props.constants.APP_NAME}-PowertoolsLayer`,
+            props.constants.ARN_POWERTOOLS_LAYER
         );
         // Create a lambda function to process the rss items
-        const updaterFn = new lambda.Function(this, `${props.appName}-Updater`, {
-            functionName: `${props.appName}-Updater`,
+        const updaterFn = new lambda.Function(this, `${props.constants.APP_NAME}-Updater`, {
+            functionName: `${props.constants.APP_NAME}-Updater`,
             runtime: lambda.Runtime.PYTHON_3_12,
             handler: "app.main",
             code: lambda.Code.fromAsset(join(__dirname, "fn/updater")),
@@ -63,7 +77,7 @@ export class UpdaterStack extends Stack {
             },
         });
 
-        new logs.LogGroup(this, "UpdaterFnLogGroup", {
+        new logs.LogGroup(this, `${props.constants.APP_NAME}-UpdaterFnLogGroup`, {
             logGroupName: `/aws/lambda/${updaterFn.functionName}`,
             removalPolicy: RemovalPolicy.DESTROY,
             retention: logs.RetentionDays.TWO_WEEKS,

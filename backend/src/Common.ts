@@ -10,57 +10,76 @@ import {
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { join } from "path";
+import { ConstantsType, ParamsType } from "../constants";
 
 export interface CommonStackProps extends StackProps {
-    appName: string;
-    powertoolsLayerArn: string;
+    constants: ConstantsType;
+    params: ParamsType;
 }
 
 export class CommonStack extends Stack {
-    public readonly TableName: string;
-    public readonly ProcessedQueueArn: string;
-    public readonly CommonLayerSsmParameterArn: string;
-
     constructor(scope: Construct, id: string, props: CommonStackProps) {
         super(scope, id, props);
 
+        ////////////////////////////////////////////////////////////
+        // DynamoDB table for holding News data
+        ////////////////////////////////////////////////////////////
         // Create a DynamoDB table for the API
-        const Table = new dynamodb.Table(this, `${props.appName}-Table`, {
+        const table = new dynamodb.Table(this, `${props.constants.APP_NAME}-Table`, {
+            tableName: `${props.constants.APP_NAME}-Table`,
             partitionKey: { name: "pk", type: dynamodb.AttributeType.STRING },
             sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
             timeToLiveAttribute: "ttl",
-            removalPolicy: RemovalPolicy.RETAIN,
+            removalPolicy: RemovalPolicy.DESTROY,
         });
 
-        Table.addLocalSecondaryIndex({
+        table.addLocalSecondaryIndex({
             indexName: "byUrlHash",
             sortKey: { name: "url_hash", type: dynamodb.AttributeType.STRING },
         });
 
-        this.TableName = Table.tableName;
+        ////////////////////////////////////////////////////////////
+        // Common Layer for lambda functions
+        ////////////////////////////////////////////////////////////
 
-        // Create a Common Layer
-        const CommonLayer: lambda.ILayerVersion = new lambda.LayerVersion(this, `${props.appName}-CommonLayer`, {
+        const commonLayer = new lambda.LayerVersion(this, `${props.constants.APP_NAME}-CommonLayer`, {
             compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
             code: lambda.Code.fromAsset(join(__dirname, "../../.layers/common")),
             removalPolicy: RemovalPolicy.RETAIN,
         });
 
-        const layerArnParameter = new ssm.StringParameter(this, `${props.appName}-CommonLayerArn`, {
-            parameterName: `/${props.appName}/layers/common-layer-arn`,
-            stringValue: CommonLayer.layerVersionArn,
-            tier: ssm.ParameterTier.STANDARD,
-            description: `The ARN of the Common Layer for ${props.appName}`,
-        });
+        ////////////////////////////////////////////////////////////
+        // Processed Queue for holding processed news
+        ////////////////////////////////////////////////////////////
 
-        this.CommonLayerSsmParameterArn = layerArnParameter.parameterArn;
-
-        // Create a Processed Queue
-        const ProcessedQueue = new sqs.Queue(this, `${props.appName}-ProcessedQueue`, {
+        const processedQueue = new sqs.Queue(this, `${props.constants.APP_NAME}-ProcessedQueue`, {
             visibilityTimeout: Duration.seconds(180),
         });
 
-        this.ProcessedQueueArn = ProcessedQueue.queueArn;
+        ////////////////////////////////////////////////////////////
+        // Create SSM parameters
+        ////////////////////////////////////////////////////////////
+
+        const tableNameParameter = new ssm.StringParameter(this, `${props.constants.APP_NAME}-TableName`, {
+            parameterName: props.params.TABLE_NAME,
+            stringValue: table.tableName,
+            tier: ssm.ParameterTier.STANDARD,
+            description: `The name of the DynamoDB table for ${props.constants.APP_NAME}`,
+        });
+
+        const commonLayerArnParameter = new ssm.StringParameter(this, `${props.constants.APP_NAME}-CommonLayerArn`, {
+            parameterName: props.params.COMMON_LAYER_ARN,
+            stringValue: commonLayer.layerVersionArn,
+            tier: ssm.ParameterTier.STANDARD,
+            description: `The ARN of the Common Layer for ${props.constants.APP_NAME}`,
+        });
+
+        const processedQueueArnParameter = new ssm.StringParameter(this, `${props.constants.APP_NAME}-ProcessedQueueArn`, {
+            parameterName: props.params.PROCESSED_QUEUE_ARN,
+            stringValue: processedQueue.queueArn,
+            tier: ssm.ParameterTier.STANDARD,
+            description: `The ARN of the Processed Queue for ${props.constants.APP_NAME}`,
+        });
     }
 }
