@@ -54,7 +54,7 @@ SUCCESS_STATUS_CODE = 200
 HEADERS = {"User-Agent": "SnapNewsReader/1.0"}  # It's good practice to identify your bot
 
 # Define expected XML content types
-XML_CONTENT_TYPES = ['application/xml', 'text/xml', 'application/rss+xml', 'application/atom+xml']
+XML_CONTENT_TYPES = ["application/xml", "text/xml", "application/rss+xml", "application/atom+xml"]
 
 
 def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
@@ -87,7 +87,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
         raise FeedFetchError(f"Network error fetching {feed_url}: {e}") from e
 
     # Check Content-Type
-    content_type = response.headers.get('Content-Type', '').split(';')[0].strip().lower()
+    content_type = response.headers.get("Content-Type", '').split(';')[0].strip().lower()
     if content_type not in XML_CONTENT_TYPES:
         logger.warning(f"Unexpected Content-Type '{content_type}' for feed {feed_url}. Attempting parse anyway.")
         # Optionally raise FeedParseError here if strict checking is desired:
@@ -101,7 +101,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
         # Use lxml to parse. It often handles encoding better.
         # Use recover=True to try and parse even slightly broken XML
         parser = ET.XMLParser(recover=True, strip_cdata=False, resolve_entities=False)
-        xml_root = ET.fromstring(response.content, parser=parser)
+        xml_root = ET.fromstring(response.content, parser=parser)  # noqa: S320
     except ET.XMLSyntaxError as e:
         logger.error(f"Failed to parse XML from {feed_url} using lxml", exc_info=e)
         # Log part of the content for debugging (carefully)
