@@ -13,24 +13,35 @@ import {
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { join } from "path";
+import { ConstantsType, ParamsType } from "../constants";
 
 export interface ProcessStackProps extends StackProps {
-    appName: string;
-    bucketName: string;
-    tableName: string;
-    layers: {
-        COMMON_SSM_PARAMETER_NAME: string;
-        POWERTOOLS_ARN: string;
-    };
-    processedQueueArn: string;
+    constants: ConstantsType;
+    params: ParamsType;
 }
 
 export class ProcessStack extends Stack {
     constructor(scope: Construct, id: string, props: ProcessStackProps) {
         super(scope, id, props);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Import SSM parameters
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        const processedQueueArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-ProcessedQueueArn`, {
+            parameterName: props.params.PROCESSED_QUEUE_ARN,
+        });
+
+        const tableName = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-TableName`, {
+            parameterName: props.params.TABLE_NAME,
+        });
+
+        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-CommonLayerArn`, {
+            parameterName: props.params.COMMON_LAYER_ARN,
+        });
+
         // Enable eventbridge notifications for the bucket
-        const bucket = s3.Bucket.fromBucketName(this, "NewsBucket", props.bucketName);
+        const bucket = s3.Bucket.fromBucketName(this, "NewsBucket", props.constants.NEWS_FEED_BUCKET);
         bucket.enableEventBridgeNotification();
 
         // Create S3 Event Notification
@@ -40,7 +51,7 @@ export class ProcessStack extends Stack {
                 detailType: ["Object Created"],
                 detail: {
                     bucket: {
-                        name: [props.bucketName],
+                        name: [props.constants.NEWS_FEED_BUCKET],
                     },
                 },
             },
@@ -48,27 +59,33 @@ export class ProcessStack extends Stack {
 
         // Get the dynamodb table
         const table = dynamodb.Table.fromTableAttributes(this, "NewsTable", {
-            tableName: props.tableName,
+            tableName: tableName.stringValue,
             localIndexes: ["byUrlHash"],
             grantIndexPermissions: true,
         });
 
         // Create a SQS queue to store individual rss items
-        const processedNewsQueue = sqs.Queue.fromQueueArn(this, `${props.appName}-ProcessedQueue`, props.processedQueueArn);
+        const processedNewsQueue = sqs.Queue.fromQueueArn(
+            this,
+            `${props.constants.APP_NAME}-ProcessedQueue`,
+            processedQueueArn.stringValue
+        );
 
         // Configure the Layer
-        const commonLayerArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.appName}-CommonLayerArn`, {
-            parameterName: props.layers.COMMON_SSM_PARAMETER_NAME,
-        });
-        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(this, `${props.appName}-CommonLayer`, commonLayerArn.stringValue);
+
+        const commonLayer = lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            `${props.constants.APP_NAME}-CommonLayer`,
+            commonLayerArn.stringValue
+        );
         const powertoolsLayer = lambda.LayerVersion.fromLayerVersionArn(
             this,
-            `${props.appName}-PowertoolsLayer`,
-            props.layers.POWERTOOLS_ARN
+            `${props.constants.APP_NAME}-PowertoolsLayer`,
+            props.constants.ARN_POWERTOOLS_LAYER
         );
         // Create a lambda function to process the rss items
         const processFn = new lambda.Function(this, "ProcessFn", {
-            functionName: `${props.appName}-Processor`,
+            functionName: `${props.constants.APP_NAME}-Processor`,
             runtime: lambda.Runtime.PYTHON_3_12,
             handler: "app.main",
             code: lambda.Code.fromAsset(join(__dirname, "fn/process")),
@@ -82,7 +99,7 @@ export class ProcessStack extends Stack {
 
         rule.addTarget(new targets.LambdaFunction(processFn));
 
-        new logs.LogGroup(this, "ProcessFnLogGroup", {
+        new logs.LogGroup(this, `${props.constants.APP_NAME}-ProcessFnLogGroup`, {
             logGroupName: `/aws/lambda/${processFn.functionName}`,
             removalPolicy: RemovalPolicy.DESTROY,
             retention: logs.RetentionDays.TWO_WEEKS,
