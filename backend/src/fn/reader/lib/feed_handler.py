@@ -6,9 +6,9 @@
 
 # ==================================================================================================
 # Python imports
-from lxml import etree as ET
 import requests
 import requests.exceptions
+from lxml import etree as ET  # noqa: N812
 
 # ==================================================================================================
 # Module imports
