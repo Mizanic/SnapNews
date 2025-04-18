@@ -10,6 +10,8 @@ MAIN_REQUIREMENTS_FILE=requirements.txt
 COMMON_REQUIREMENTS_FILE=backend/src/fn/requirements.txt
 COMMON_OUTPUT_DIR=${LAYERS_DIR}/common/python
 
+SHARED_LIB_CODE_DIR=backend/src/shared
+
 # Create the layers directory
 rm -rf ${LAYERS_DIR}
 mkdir -p ${LAYERS_DIR}
@@ -26,11 +28,11 @@ python -m pip install -r ${MAIN_REQUIREMENTS_FILE} --upgrade
 
 
 
-# ## Libs
-# SHARED_LIB_CODE_DIR=backend/src/shared
-# # SHARED_LIB_OUTPUT_DIR_NAME=shared
+## Libs
 
-# # mkdir -p ${COMMON_OUTPUT_DIR}/${SHARED_LIB_OUTPUT_DIR_NAME}
+# SHARED_LIB_OUTPUT_DIR_NAME=shared
 
-# # Copy the shared lib code
-# cp -r ${SHARED_LIB_CODE_DIR} ${COMMON_OUTPUT_DIR}/
+# mkdir -p ${COMMON_OUTPUT_DIR}/${SHARED_LIB_OUTPUT_DIR_NAME}
+
+# Copy the shared lib code
+cp -r ${SHARED_LIB_CODE_DIR} ${COMMON_OUTPUT_DIR}/
