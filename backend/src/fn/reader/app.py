@@ -14,7 +14,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
 # Module imports
-from lib.aws_utils import get_news_urls, upload_feed_to_s3
+from lib.aws_utils import get_source_metadata, upload_feed_to_s3
 from lib.feed_handler import get_feed_from_rss
 from shared.logger import logger
 
@@ -33,16 +33,16 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     logger.info(f"Context: {context}")
 
     news_source: str = event.get("NewsSource")
-    news_urls: str = get_news_urls(news_source)
+    source_metadata = get_source_metadata(news_source)
 
-    if not news_urls or not isinstance(news_urls, dict):
-        logger.error(f"Invalid news URLs structure received for {news_source}: {news_urls}")
-        return {"statusCode": 400, "body": "Invalid news URL data"}
+    if not source_metadata or not isinstance(source_metadata, dict):
+        logger.error(f"Invalid source metadata structure received for {news_source}: {source_metadata}")
+        return {"statusCode": 400, "body": "Invalid source metadata data"}
 
-    for category, feed_url in news_urls.items():
+    for category, feed_url in source_metadata.get("feeds").items():
         logger.info(f"Processing category: {category}, URL: {feed_url}")
         try:
-            feed = get_feed_from_rss(news_source, feed_url)
+            feed = get_feed_from_rss(news_source, feed_url, category, source_metadata.get("language"))
 
             if feed:  # Check if feed retrieval was successful
                 # Upload the json feed to S3

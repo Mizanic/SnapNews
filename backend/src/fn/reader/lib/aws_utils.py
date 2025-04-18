@@ -45,7 +45,7 @@ def upload_feed_to_s3(feed: list[dict], s3_key: str, bucket_name: str) -> None:
             temp_file_path.unlink()
 
 
-def get_news_urls(news_source: str) -> dict:
+def get_source_metadata(news_source: str) -> tuple[dict, str]:
     """
     This function gets the news url dictionary for the given news source
     """
@@ -58,8 +58,16 @@ def get_news_urls(news_source: str) -> dict:
     response = table.get_item(Key={"pk": f"SOURCE#{news_source}", "sk": f"SOURCE#{news_source}"})
     item = response.get("Item")
 
+    logger.info(f"Item: {item}")
+
     if item:
-        return item.get("Sources")[0]
+        source_metadata = {
+            "name_short": item.get("Name").get("Short"),
+            "name_long": item.get("Name").get("Long"),
+            "language": item.get("Language"),
+            "feeds": item.get("Feeds")[0],
+        }
+        return source_metadata
 
     msg = f"News source {news_source} not found"
     raise ValueError(msg)
