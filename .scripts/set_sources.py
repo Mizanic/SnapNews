@@ -12,13 +12,13 @@ NEWS_SOURCES_FILE = "./NewsSources.json"
 AWS_REGION = "us-east-1"
 
 
-def get_dynamodb_table_from_ssm(ssm_client):
+def get_dynamodb_table_from_ssm(ssm_client: boto3.client) -> str:
     response = ssm_client.get_parameter(Name=TABLE_NAME_SSM_PARAMETER)
     return response["Parameter"]["Value"]
 
 
 # --- Helper Function to Transform Source to DynamoDB Item ---
-def transform_source_to_dynamodb_item(source_data):
+def transform_source_to_dynamodb_item(source_data: dict) -> dict | None:
     """
     Transforms a standard Python dictionary (from JSON) into the DynamoDB item format.
 
@@ -61,12 +61,12 @@ def transform_source_to_dynamodb_item(source_data):
 
         return dynamodb_item
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Error transforming source data: {e}. Data: {source_data}")
         return None
 
 
-def main() -> None:
+def main() -> None:  # noqa: C901, PLR0912, PLR0915
     print("Starting news source loading process...")
 
     # --- Initialize Boto3 Clients ---
@@ -79,7 +79,7 @@ def main() -> None:
     except (NoCredentialsError, PartialCredentialsError) as e:
         print(f"AWS Credentials Error: {e}. Please configure your AWS credentials.")
         sys.exit(1)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Error initializing Boto3: {e}")
         sys.exit(1)
 
@@ -93,23 +93,23 @@ def main() -> None:
     except ClientError as e:
         print(f"AWS Error getting table name from SSM: {e}")
         sys.exit(1)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Error getting table name from SSM: {e}")
         sys.exit(1)
 
     # --- Read and Parse JSON File ---
-    if not os.path.exists(NEWS_SOURCES_FILE):
+    if not os.path.exists(NEWS_SOURCES_FILE):  # noqa: PTH110
         print(f"Error: News sources file not found at '{NEWS_SOURCES_FILE}'")
         sys.exit(1)
 
     print(f"Reading sources from: {NEWS_SOURCES_FILE}")
     try:
-        with open(NEWS_SOURCES_FILE, 'r') as f:
+        with open(NEWS_SOURCES_FILE) as f:  # noqa: PTH123
             data = json.load(f)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON from '{NEWS_SOURCES_FILE}': {e}")
         sys.exit(1)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Error reading file '{NEWS_SOURCES_FILE}': {e}")
         sys.exit(1)
 
@@ -145,7 +145,7 @@ def main() -> None:
         except ClientError as e:
             print(f"AWS Error putting item for '{short_name}': {e}")
             items_failed += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"An unexpected error occurred putting item for '{short_name}': {e}")
             items_failed += 1
 
