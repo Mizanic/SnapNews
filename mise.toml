@@ -4,4 +4,3 @@ python = "3.12"
 
 [env]
 _.file = ['.env.web.local', '.env.cdk.local']
-_.python.venv = { path = ".env", create = true } # create the venv if it doesn't exist

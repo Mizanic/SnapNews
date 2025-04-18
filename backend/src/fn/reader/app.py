@@ -9,7 +9,6 @@ import os
 
 # ==================================================================================================
 # AWS imports
-from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -17,11 +16,10 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 # Module imports
 from lib.aws_utils import get_news_urls, upload_feed_to_s3
 from lib.feed_handler import get_feed_from_rss
+from shared.logger import logger
 
 # ==================================================================================================
 # Global declarations
-tracer = Tracer()
-logger = Logger()
 
 BUCKET_NAME = os.environ["NEWS_FEED_BUCKET"]
 
