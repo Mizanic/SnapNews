@@ -35,8 +35,8 @@ export class CommonStack extends Stack {
         });
 
         table.addLocalSecondaryIndex({
-            indexName: "byUrlHash",
-            sortKey: { name: "url_hash", type: dynamodb.AttributeType.STRING },
+            indexName: "byItemHash",
+            sortKey: { name: "item_hash", type: dynamodb.AttributeType.STRING },
         });
 
         ////////////////////////////////////////////////////////////
