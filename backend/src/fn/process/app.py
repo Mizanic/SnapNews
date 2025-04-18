@@ -42,6 +42,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
 
     logger.info("Reading file from S3")
     feed = get_feed_from_s3(bucket_name, object_name)
+
     logger.info(feed)
 
     feed_with_metadata = inject_metadata(feed)
@@ -57,12 +58,12 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     # Send the message to SQS
     for item in validated_feed:
         logger.info(f"Processing item {item}")
-        # query dynamodb to see if the item exists by using "url_hash" as the sk in LSI named "byUrlHash"
+        # query dynamodb to see if the item exists by using "item_hash" as the sk in LSI named "byItemHash"
 
         if article_exists(item) is False:
-            logger.info(f"Item {item['url_hash']} does not exist in the database")
+            logger.info(f"Item {item['item_hash']} does not exist in the database")
             queue.send_message(MessageBody=json.dumps(item))
         else:
-            logger.info(f"Item {item['url_hash']} already exists in the database")
+            logger.info(f"Item {item['item_hash']} already exists in the database")
 
     return {"statusCode": 200, "body": "Success"}
