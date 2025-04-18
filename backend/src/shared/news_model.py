@@ -25,16 +25,18 @@ class NewsItemModel(BaseModel):
     # Computed metadata
     pk: str
     sk: str
-    url_hash: str
+    item_hash: str
     ttl: int
 
     # News content
-    source: str
+    source_id: str
+    source_name: str
+    language: str
     news_url: str
     headline: str
     published: int
     summary: str
-    # content: str #This will be added later. Not being used to save space in DynamoDB  # noqa: ERA001
+    # content: str #This will be added later. Not being used to save space in DynamoDB
     media: NewsMediaModel
 
 

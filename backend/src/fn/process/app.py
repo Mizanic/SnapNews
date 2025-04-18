@@ -11,7 +11,6 @@ import os
 # ==================================================================================================
 # AWS imports
 import boto3
-from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -19,22 +18,22 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 # Module imports
 from lib.aws_utils import article_exists, get_feed_from_s3
 from lib.preprocess import inject_metadata, validate_feed_items
+from shared.logger import logger
 
 # ==================================================================================================
 # Global declarations
-tracer = Tracer()
-logger = Logger(service="pre-processor")
 
 PROCESSED_NEWS_QUEUE_NAME = os.environ["PROCESSED_NEWS_QUEUE_NAME"]
 
 
 @event_source(data_class=EventBridgeEvent)
-def main(event: EventBridgeEvent, context: LambdaContext) -> dict:  # noqa: ARG001
+def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     """
     This function is used to read RSS feeds
     """
     logger.info("I'm a process being invoked by S3 Notification!")
-    logger.info(event)
+    logger.info(event.raw_event)
+    logger.info(context)
 
     bucket_name: str = event["detail"]["bucket"]["name"]
     object_name: str = event["detail"]["object"]["key"]
