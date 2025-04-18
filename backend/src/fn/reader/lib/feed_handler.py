@@ -77,7 +77,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str) -> list[dict]:
         raise FeedFetchError(f"Network error fetching {feed_url}: {e}") from e
 
     # Check Content-Type
-    content_type = response.headers.get("Content-Type", '').split(';')[0].strip().lower()
+    content_type = response.headers.get("Content-Type", "").split(";")[0].strip().lower()
     if content_type not in XML_CONTENT_TYPES:
         logger.warning(f"Unexpected Content-Type '{content_type}' for feed {feed_url}. Attempting parse anyway.")
         # Optionally raise FeedParseError here if strict checking is desired:

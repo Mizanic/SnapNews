@@ -32,7 +32,7 @@ class TOI:
                 data["headline"] = item.findtext("title")
                 data["published"] = time_to_unix(item.findtext("pubDate"))
                 data["summary"] = item.findtext("description")
-                # data["content"] = item.findtext("description")  # noqa: ERA001
+                # data["content"] = item.findtext("description")
                 media_content = item.find("enclosure")
                 if media_content is not None:
                     data["media"] = {

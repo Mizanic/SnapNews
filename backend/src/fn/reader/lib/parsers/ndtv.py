@@ -13,12 +13,11 @@ from .utils import time_to_unix
 
 # ==================================================================================================
 
+
 class NDTV:
     """
     This class is used to read RSS feeds from NDTV
     """
-
-    
 
     def parse_feed(self, xml_root: Element) -> list:
         """
