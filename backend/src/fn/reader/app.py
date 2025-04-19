@@ -33,7 +33,10 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     logger.info(f"Context: {context}")
 
     news_source: str = event.get("NewsSource")
-    source_metadata = get_source_metadata(news_source)
+    country: str = event.get("Country")
+    language: str = event.get("Language")
+
+    source_metadata = get_source_metadata(news_source, country, language)
 
     if not source_metadata or not isinstance(source_metadata, dict):
         logger.error(f"Invalid source metadata structure received for {news_source}: {source_metadata}")
@@ -42,7 +45,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     for category, feed_url in source_metadata.get("feeds").items():
         logger.info(f"Processing category: {category}, URL: {feed_url}")
         try:
-            feed = get_feed_from_rss(news_source, feed_url, category, source_metadata.get("language"))
+            feed = get_feed_from_rss(news_source, feed_url, category, language, country)
 
             if feed:  # Check if feed retrieval was successful
                 # Upload the json feed to S3

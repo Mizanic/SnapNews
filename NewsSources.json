@@ -1,7 +1,8 @@
 {
     "Sources": [
         {
-            "Language": "ENGLISH",
+            "Language": "ENG",
+            "Country": "IND",
             "Name": {
                 "Short": "NDTV",
                 "Long": "NDTV"
@@ -17,7 +18,8 @@
             ]
         },
         {
-            "Language": "ENGLISH",
+            "Language": "ENG",
+            "Country": "IND",
             "Name": {
                 "Short": "TOI",
                 "Long": "Times of India"

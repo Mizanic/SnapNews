@@ -47,7 +47,7 @@ HEADERS = {"User-Agent": "SnapNewsReader/1.0"}  # It's good practice to identify
 XML_CONTENT_TYPES = ["application/xml", "text/xml", "application/rss+xml", "application/atom+xml"]
 
 
-def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: str) -> list[dict]:
+def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: str, country: str) -> list[dict]:
     """
     Fetches and parses an RSS feed using lxml and custom parsers, raising specific exceptions on failure.
 
@@ -108,7 +108,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: 
     try:
         # Instantiate the parser and parse the feed
         feed_parser_instance = parser_class()
-        feed_items = feed_parser_instance.parse_feed(xml_root, category, language)
+        feed_items = feed_parser_instance.parse_feed(xml_root, category, language, country)
         return feed_items
     except Exception as e:
         # Catching general Exception from within a specific parser

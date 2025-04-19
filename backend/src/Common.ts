@@ -54,6 +54,7 @@ export class CommonStack extends Stack {
         ////////////////////////////////////////////////////////////
 
         const processedQueue = new sqs.Queue(this, `${props.constants.APP_NAME}-ProcessedQueue`, {
+            queueName: `${props.constants.APP_NAME}-ProcessedQueue`,
             visibilityTimeout: Duration.seconds(180),
         });
 

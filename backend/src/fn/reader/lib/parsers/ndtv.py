@@ -19,7 +19,7 @@ class NDTV:
     This class is used to read RSS feeds from NDTV
     """
 
-    def parse_feed(self, xml_root: Element, category: str, language: str) -> list:
+    def parse_feed(self, xml_root: Element, category: str, language: str, country: str) -> list:
         """
         This function parses the XML root and returns a JSON object
         """
@@ -31,6 +31,7 @@ class NDTV:
                 data["source_id"] = "NDTV"
                 data["category"] = category
                 data["language"] = language
+                data["country"] = country
                 data["news_url"] = item.findtext("link")
                 data["headline"] = item.findtext("title")
                 data["published"] = time_to_unix(item.findtext("pubDate"))

@@ -13,8 +13,28 @@ AWS_REGION = "us-east-1"
 
 
 def get_dynamodb_table_from_ssm(ssm_client: boto3.client) -> str:
-    response = ssm_client.get_parameter(Name=TABLE_NAME_SSM_PARAMETER)
-    return response["Parameter"]["Value"]
+    """
+    Retrieves the DynamoDB table name from AWS SSM Parameter Store.
+
+    Args:
+        ssm_client: The boto3 client for SSM.
+
+    """
+    try:
+        response = ssm_client.get_parameter(Name=TABLE_NAME_SSM_PARAMETER)
+        table_name = response["Parameter"]["Value"]
+        if not table_name:
+            print("Error: Could not retrieve table name from SSM.")
+            sys.exit(1)
+        print(f"Using table: {table_name}")
+    except ClientError as e:
+        print(f"AWS Error getting table name from SSM: {e}")
+        sys.exit(1)
+    except Exception as e:  # noqa: BLE001
+        print(f"Error getting table name from SSM: {e}")
+        sys.exit(1)
+
+    return table_name
 
 
 # --- Helper Function to Transform Source to DynamoDB Item ---
@@ -30,15 +50,19 @@ def transform_source_to_dynamodb_item(source_data: dict) -> dict | None:
     """
     try:
         short_name = source_data.get("Name", {}).get("Short")
-        if not short_name:
-            print(f"Warning: Skipping source due to missing or empty 'Name.Short'. Data: {source_data}")
+        country = source_data.get("Country", "")
+        language = source_data.get("Language", "")
+        if not short_name or not country or not language:
+            print(f"Warning: Skipping source due to missing or empty 'Name.Short', 'Country', or 'Language'. Data: {source_data}")
             return None
 
-        pk_value = f"SOURCE#{short_name}"
+        pk_value = f"SOURCE#{country}#{language}"
+        sk_value = f"NAME#{short_name}"
         dynamodb_item = {
             "pk": {"S": pk_value},
-            "sk": {"S": pk_value},
-            "Language": {"S": source_data.get("Language", "")},
+            "sk": {"S": sk_value},
+            "Language": {"S": language},
+            "Country": {"S": country},
             "Name": {"M": {"Long": {"S": source_data.get("Name", {}).get("Long", "")}, "Short": {"S": short_name}}},
         }
 
@@ -66,7 +90,7 @@ def transform_source_to_dynamodb_item(source_data: dict) -> dict | None:
         return None
 
 
-def main() -> None:  # noqa: C901, PLR0912, PLR0915
+def main() -> None:  # noqa: C901, PLR0915
     print("Starting news source loading process...")
 
     # --- Initialize Boto3 Clients ---
@@ -84,18 +108,7 @@ def main() -> None:  # noqa: C901, PLR0912, PLR0915
         sys.exit(1)
 
     # --- Get Table Name ---
-    try:
-        table_name = get_dynamodb_table_from_ssm(ssm_client)
-        if not table_name:
-            print("Error: Could not retrieve table name from SSM.")
-            sys.exit(1)
-        print(f"Using table: {table_name}")
-    except ClientError as e:
-        print(f"AWS Error getting table name from SSM: {e}")
-        sys.exit(1)
-    except Exception as e:  # noqa: BLE001
-        print(f"Error getting table name from SSM: {e}")
-        sys.exit(1)
+    table_name = get_dynamodb_table_from_ssm(ssm_client)
 
     # --- Read and Parse JSON File ---
     if not os.path.exists(NEWS_SOURCES_FILE):  # noqa: PTH110

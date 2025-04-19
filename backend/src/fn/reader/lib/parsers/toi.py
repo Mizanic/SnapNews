@@ -19,7 +19,7 @@ class TOI:
     This class is used to read RSS feeds from Times of India
     """
 
-    def parse_feed(self, xml_root: Element, category: str, language: str) -> list:
+    def parse_feed(self, xml_root: Element, category: str, language: str, country: str) -> list:
         """
         This method is used to read RSS feeds from Times of India
         """
@@ -31,6 +31,7 @@ class TOI:
                 data["source_id"] = "TOI"
                 data["category"] = category
                 data["language"] = language
+                data["country"] = country
                 data["news_url"] = item.findtext("link")
                 data["headline"] = item.findtext("title")
                 data["published"] = time_to_unix(item.findtext("pubDate"))

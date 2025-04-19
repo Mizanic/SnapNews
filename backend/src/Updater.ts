@@ -46,9 +46,9 @@ export class UpdaterStack extends Stack {
         const processedQueue = sqs.Queue.fromQueueArn(this, `${props.constants.APP_NAME}-ProcessedQueue`, processedQueueArn.stringValue);
 
         // Fetch dynamodb main table and local index
-        const NewsTable = dynamodb.Table.fromTableAttributes(this, "NewsTable", {
+        const newsTable = dynamodb.Table.fromTableAttributes(this, `${props.constants.APP_NAME}-NewsTable`, {
             tableName: tableName.stringValue,
-            localIndexes: ["byUrlHash"],
+            localIndexes: ["byItemHash"],
             grantIndexPermissions: true,
         });
 
@@ -72,7 +72,7 @@ export class UpdaterStack extends Stack {
             code: lambda.Code.fromAsset(join(__dirname, "fn/updater")),
             layers: [commonLayer, powertoolsLayer],
             environment: {
-                NEWS_TABLE_NAME: NewsTable.tableName,
+                NEWS_TABLE_NAME: newsTable.tableName,
                 PROCESSED_NEWS_QUEUE_NAME: processedQueue.queueName,
             },
         });
@@ -85,7 +85,7 @@ export class UpdaterStack extends Stack {
 
         // Grant the lambda function access to the queue and table
         processedQueue.grantConsumeMessages(updaterFn);
-        NewsTable.grantReadWriteData(updaterFn);
+        newsTable.grantReadWriteData(updaterFn);
 
         // Create a rule to trigger the lambda function
         updaterFn.addEventSource(new lambdaEventSources.SqsEventSource(processedQueue));

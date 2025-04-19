@@ -1,8 +1,12 @@
 [
     {
-        "NewsSource": "NDTV"
+        "NewsSource": "NDTV",
+        "Country": "IND",
+        "Language": "ENG"
     },
     {
-        "NewsSource": "TOI"
+        "NewsSource": "TOI",
+        "Country": "IND",
+        "Language": "ENG"
     }
 ]

@@ -45,7 +45,7 @@ def upload_feed_to_s3(feed: list[dict], s3_key: str, bucket_name: str) -> None:
             temp_file_path.unlink()
 
 
-def get_source_metadata(news_source: str) -> tuple[dict, str]:
+def get_source_metadata(news_source: str, country: str, language: str) -> tuple[dict, str]:
     """
     This function gets the news url dictionary for the given news source
     """
@@ -54,8 +54,9 @@ def get_source_metadata(news_source: str) -> tuple[dict, str]:
 
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["NEWS_TABLE_NAME"])
+    logger.info(f"Country: {country}, Language: {language}")
 
-    response = table.get_item(Key={"pk": f"SOURCE#{news_source}", "sk": f"SOURCE#{news_source}"})
+    response = table.get_item(Key={"pk": f"SOURCE#{country}#{language}", "sk": f"NAME#{news_source}"})
     item = response.get("Item")
 
     logger.info(f"Item: {item}")
@@ -65,6 +66,7 @@ def get_source_metadata(news_source: str) -> tuple[dict, str]:
             "name_short": item.get("Name").get("Short"),
             "name_long": item.get("Name").get("Long"),
             "language": item.get("Language"),
+            "country": item.get("Country"),
             "feeds": item.get("Feeds")[0],
         }
         return source_metadata

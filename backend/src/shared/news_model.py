@@ -32,6 +32,7 @@ class NewsItemModel(BaseModel):
     source_name: str
     source_id: str
     category: str
+    country: str
     language: str
     news_url: str
     headline: str

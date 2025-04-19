@@ -26,7 +26,7 @@ def inject_metadata(news_items: list[dict]) -> list[dict]:
     Inject metadata into news items
     """
     for item in news_items:
-        item["pk"] = f"NEWS#{item['language']}#{item['source_id']}"
+        item["pk"] = f"NEWS#{item['country']}#{item['language']}#{item['category']}"
         item["sk"] = f"{item['published']}"
         item["item_hash"] = hasher(f"{item['pk']}#{item['news_url']}")
         item["ttl"] = item["published"] + TTL_DAYS * 86400
