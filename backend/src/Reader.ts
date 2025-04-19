@@ -82,6 +82,8 @@ export class ReaderStack extends Stack {
                 new targets.LambdaFunction(readerFn, {
                     event: events.RuleTargetInput.fromObject({
                         NewsSource: source.Name.Short,
+                        Country: source.Country,
+                        Language: source.Language,
                     }),
                 })
             );

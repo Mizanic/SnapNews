@@ -4,7 +4,7 @@ import { AdminStack } from "./src/Admin";
 import { ReaderStack } from "./src/Reader";
 import { ProcessStack } from "./src/Process";
 import { UpdaterStack } from "./src/Updater";
-
+import { ApiStack } from "./src/Api";
 import { PARAMS, CONSTANTS } from "./constants";
 
 ////////////////////////////////////////////////////////////
@@ -40,10 +40,16 @@ const updater = new UpdaterStack(app, `${APP_NAME}-UpdateStack`, {
     params: PARAMS,
 });
 
+const api = new ApiStack(app, `${APP_NAME}-ApiStack`, {
+    constants: CONSTANTS,
+    params: PARAMS,
+});
+
 admin.addDependency(common);
 reader.addDependency(common);
 process.addDependency(common);
 updater.addDependency(common);
+api.addDependency(common);
 
 // Add tags to all resources
 

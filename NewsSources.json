@@ -1,7 +1,8 @@
 {
     "Sources": [
         {
-            "Language": "English",
+            "Language": "ENG",
+            "Country": "IND",
             "Name": {
                 "Short": "NDTV",
                 "Long": "NDTV"
@@ -11,13 +12,14 @@
                     "CRICKET": "https://feeds.feedburner.com/ndtvsports-cricket",
                     "INDIA": "https://feeds.feedburner.com/ndtvnews-india-news",
                     "LATEST": "https://feeds.feedburner.com/ndtvnews-latest",
-                    "TOP": "\"https://feeds.feedburner.com/ndtvnews-top-stories\"",
+                    "TOP": "https://feeds.feedburner.com/ndtvnews-top-stories",
                     "TRENDING": "https://feeds.feedburner.com/ndtvnews-trending-news"
                 }
             ]
         },
         {
-            "Language": "English",
+            "Language": "ENG",
+            "Country": "IND",
             "Name": {
                 "Short": "TOI",
                 "Long": "Times of India"
@@ -26,9 +28,7 @@
                 {
                     "CRICKET": "https://timesofindia.indiatimes.com/rssfeeds/54829575.cms",
                     "INDIA": "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
-                    "LATEST": "https://timesofindia.indiatimes.com/rssfeedmostrecent.cms",
-                    "TOP": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
-                    "TRENDING": "https://timesofindia.indiatimes.com/rssfeedmostread.cms"
+                    "TOP": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"
                 }
             ]
         }

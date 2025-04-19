@@ -19,7 +19,7 @@ class TOI:
     This class is used to read RSS feeds from Times of India
     """
 
-    def parse_feed(self, xml_root: Element) -> list:
+    def parse_feed(self, xml_root: Element, category: str, language: str, country: str) -> list:
         """
         This method is used to read RSS feeds from Times of India
         """
@@ -27,12 +27,16 @@ class TOI:
         for item in xml_root.findall("./channel/item"):
             data = {}
             try:
-                data["source"] = "TimesOfIndia"
+                data["source_name"] = "Times Of India"
+                data["source_id"] = "TOI"
+                data["category"] = category
+                data["language"] = language
+                data["country"] = country
                 data["news_url"] = item.findtext("link")
                 data["headline"] = item.findtext("title")
                 data["published"] = time_to_unix(item.findtext("pubDate"))
                 data["summary"] = item.findtext("description")
-                # data["content"] = item.findtext("description")  # noqa: ERA001
+                # data["content"] = item.findtext("description")
                 media_content = item.find("enclosure")
                 if media_content is not None:
                     data["media"] = {

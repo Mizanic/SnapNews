@@ -36,7 +36,7 @@ def get_feed_from_s3(bucket_name: str, s3_object_name: str) -> list[dict]:
     with Path(f"/tmp/{s3_object_name}").open("r", encoding="utf-8") as infile:  # noqa: S108
         feed = json.load(infile)
 
-    return feed  # noqa: RET504
+    return feed
 
 
 def article_exists(item: dict) -> bool:
@@ -45,9 +45,9 @@ def article_exists(item: dict) -> bool:
     """
     table = boto3.resource("dynamodb").Table(os.environ["NEWS_TABLE_NAME"])
     response = table.query(
-        IndexName="byUrlHash",
-        KeyConditionExpression="pk = :pk AND url_hash = :url_hash",
-        ExpressionAttributeValues={":pk": item["pk"], ":url_hash": item["url_hash"]},
+        IndexName="byItemHash",
+        KeyConditionExpression="pk = :pk AND item_hash = :item_hash",
+        ExpressionAttributeValues={":pk": item["pk"], ":item_hash": item["item_hash"]},
     )
 
     logger.debug(f"Query Response: {response}")

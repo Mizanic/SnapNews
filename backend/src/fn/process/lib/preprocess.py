@@ -7,21 +7,18 @@ Inserts metadata into news items
 # Python imports
 import os
 
-# ==================================================================================================
-# Powertools imports
-from aws_lambda_powertools import Logger
 from pydantic import ValidationError
 
 # ==================================================================================================
 # Module imports
+from shared.logger import logger
 from shared.news_model import NewsItemModel
 from shared.url_hasher import hasher
 
 # ==================================================================================================
 # Global declarations
-logger = Logger(service="pre-processor")
 
-TTL_DAYS = int(os.environ.get("NEWS_TTL_DAYS", "14"))
+TTL_DAYS = int(os.environ.get("NEWS_TTL_DAYS", "14"))  # TODO: To be changed to parameter in future
 
 
 def inject_metadata(news_items: list[dict]) -> list[dict]:
@@ -29,9 +26,9 @@ def inject_metadata(news_items: list[dict]) -> list[dict]:
     Inject metadata into news items
     """
     for item in news_items:
-        item["pk"] = "NEWS"
+        item["pk"] = f"NEWS#{item['country']}#{item['language']}#{item['category']}"
         item["sk"] = f"{item['published']}"
-        item["url_hash"] = hasher(item["news_url"])
+        item["item_hash"] = hasher(f"{item['pk']}#{item['news_url']}")
         item["ttl"] = item["published"] + TTL_DAYS * 86400
 
     return news_items

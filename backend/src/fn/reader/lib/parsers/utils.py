@@ -35,7 +35,7 @@ def santise_content(content: str) -> str:
     # Remove multiple spaces
     content = re.sub(" +", " ", content)
 
-    return content  # noqa: RET504
+    return content
 
 
 def time_to_unix(time_stamp: Union[str, None]) -> int:

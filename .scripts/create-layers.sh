@@ -5,10 +5,12 @@ alias echo="echo -e"
 # Layers directory
 LAYERS_DIR=.layers
 # Main requirements file
-MAIN_REQUIREMENTS_FILE=backend/requirements.txt
+MAIN_REQUIREMENTS_FILE=requirements.txt
 # Common requirements file
 COMMON_REQUIREMENTS_FILE=backend/src/fn/requirements.txt
 COMMON_OUTPUT_DIR=${LAYERS_DIR}/common/python
+
+SHARED_LIB_CODE_DIR=backend/src/shared
 
 # Create the layers directory
 rm -rf ${LAYERS_DIR}
@@ -18,15 +20,16 @@ mkdir -p ${LAYERS_DIR}
 mkdir -p ${COMMON_OUTPUT_DIR}
 
 # Download the dependencies for layers
-pip install -r ${COMMON_REQUIREMENTS_FILE} --target ${COMMON_OUTPUT_DIR} --upgrade
+python -m pip install -r ${COMMON_REQUIREMENTS_FILE} --target ${COMMON_OUTPUT_DIR} --upgrade
 
 # Install all the dependencies for offline development users
-pip install -r ${MAIN_REQUIREMENTS_FILE} --upgrade
+echo "Installing dependencies in virtual environment"
+python -m pip install -r ${MAIN_REQUIREMENTS_FILE} --upgrade
 
 
 
 ## Libs
-SHARED_LIB_CODE_DIR=backend/src/shared
+
 # SHARED_LIB_OUTPUT_DIR_NAME=shared
 
 # mkdir -p ${COMMON_OUTPUT_DIR}/${SHARED_LIB_OUTPUT_DIR_NAME}
