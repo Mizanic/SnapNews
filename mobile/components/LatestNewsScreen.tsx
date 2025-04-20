@@ -9,7 +9,7 @@ const LatestNewsScreen = () => {
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const bookmarks = useSelector((state)=>state.bookmarkState.bookmarks);
-    // console.log(bookmarks);
+  // console.log(bookmarks);
 
   const fetchNews = async () => {
     setLoading(true);

@@ -12,8 +12,8 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AppHeader from "@/components/screens/AppHeader";
 import { Provider } from "react-redux";
-import store from "../dux/store";
-import NewsCard from "@/components/screens/NewsCard";
+import store, { persistor } from "../dux/store";
+import { PersistGate } from 'redux-persist/integration/react';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,8 +36,10 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <AppHeader />
-      <Navigation />
+      <PersistGate loading={null} persistor={persistor}>
+        <AppHeader />
+        <Navigation />
+      </PersistGate>
     </Provider>
   );
 }
