@@ -5,6 +5,7 @@
 
 # ==================================================================================================
 # Python imports
+import json
 
 # ==================================================================================================
 # AWS imports
@@ -13,7 +14,8 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
 # Module imports
-from lib.feed_handler import get_feed
+from lib.feed_handler import get_feed, like_news_item
+from shared.lambda_response import RESPONSE
 from shared.logger import logger
 
 # ==================================================================================================
@@ -36,7 +38,7 @@ def feed() -> dict:
     logger.info(response)
     logger.info(f"Count: {len(response)}")
 
-    return response
+    return RESPONSE(response)
 
 
 @app.get("/feed")
@@ -53,7 +55,7 @@ def feed_paginated() -> dict:
     if not all([country, language, category]):
         logger.error("Missing required parameters: country, language, or category")
         # Return an appropriate error response
-        return {"news": [], "page_key": None, "error": "Missing required parameters"}
+        return RESPONSE(status_code=400, body={"news": [], "page_key": None, "error": "Missing required parameters"})
 
     # Check if any Query String Parameters are passed
     page_key = app.current_event["queryStringParameters"].get("page_key") if app.current_event["queryStringParameters"] else None
@@ -80,7 +82,7 @@ def feed_paginated() -> dict:
 
     logger.info(response)
 
-    return response
+    return RESPONSE(response)
 
 
 @app.post("/like")
@@ -89,9 +91,18 @@ def like() -> dict:
     Like a news item
     """
 
-    item_hash = app.current_event["body"]["item_hash"]
+    item_hash = json.loads(app.current_event["body"])["item_hash"]
+    item_pk = json.loads(app.current_event["body"])["item_pk"]
+    logger.info(f"item_hash: {item_hash}")
+    logger.info(f"item_pk: {item_pk}")
 
-    return {"message": "Liked"}
+    try:
+        like_news_item(item_hash=item_hash, item_pk=item_pk)
+    except Exception as e:
+        logger.error(f"Error liking news item: {e}")
+        raise e
+
+    return RESPONSE({"message": "Liked"})
 
 
 def main(event: dict, context: LambdaContext):  # noqa: ANN201
