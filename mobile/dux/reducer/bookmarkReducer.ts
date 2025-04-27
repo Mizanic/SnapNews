@@ -2,13 +2,16 @@
 import { ADD_BOOKMARK, REMOVE_BOOKMARK } from "../actionTypes";
 import { NewsItem } from "../../model/newsItem";
 import { initialState } from "../initialState";
+import { AnyAction } from "redux";
 
-interface BookmarkState {
+export interface BookmarkState {
   bookmarks: { [key: string]: NewsItem };
 }
 
-
-const bookmarkReducer = (state = initialState, action: any): BookmarkState => {
+const bookmarkReducer = (
+  state = initialState,
+  action: AnyAction
+): BookmarkState => {
   switch (action.type) {
     case ADD_BOOKMARK:
       return {
@@ -16,7 +19,7 @@ const bookmarkReducer = (state = initialState, action: any): BookmarkState => {
         bookmarks: {
           ...action.payload,
           ...state.bookmarks,
-        }        
+        },
       };
     case REMOVE_BOOKMARK:
       const newBookmarks = { ...state.bookmarks };
