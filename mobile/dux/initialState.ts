@@ -1,5 +1,5 @@
-import { BookmarkState } from "./reducer/bookmarkReducer";
+import { BookmarkState } from "@/model/bookmarkState";
+import { LikeState } from "@/model/likeState";
 
-export const initialState: BookmarkState = {
-  bookmarks: {},
-};
+export const bookmarkInitialState: BookmarkState = {};
+export const likeInitialState: LikeState = {};

@@ -2,21 +2,23 @@ import { createStore, combineReducers } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bookmarkReducer from "./reducer/bookmarkReducer";
+import LikeReducer from "./reducer/like/likeReducer";
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["bookmarkState"], // only bookmarkState will be persisted
+  whitelist: ["bookmarks", "likes"],
 };
 
+
 const rootReducer = combineReducers({
-  bookmarkState: bookmarkReducer,
+  bookmarks: bookmarkReducer,
+  likes: LikeReducer,
 });
 
-const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = createStore(persistedReducer);
 export const persistor = persistStore(store);
 
 export default store;
-export type RootState = ReturnType<typeof rootReducer>;
