@@ -96,7 +96,7 @@ def get_feed(
     return response
 
 
-def like_news_item(item_pk: str, item_hash: str) -> dict:
+def like_news_item(item_pk: str, item_hash: str, item_sk: str) -> dict:
     """
     Likes a news item
     """
