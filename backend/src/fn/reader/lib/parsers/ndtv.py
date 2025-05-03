@@ -9,7 +9,7 @@ from xml.etree.ElementTree import Element
 
 # ==================================================================================================
 # Module imports
-from .utils import time_to_unix
+from .utils import time_to_iso
 
 # ==================================================================================================
 
@@ -34,7 +34,7 @@ class NDTV:
                 data["country"] = country
                 data["news_url"] = item.findtext("link")
                 data["headline"] = item.findtext("title")
-                data["published"] = time_to_unix(item.findtext("pubDate"))
+                data["published"] = time_to_iso(item.findtext("pubDate"))
                 data["summary"] = item.findtext("description")
                 # content_text = item.findtext(
                 #     "content:encoded", namespaces={"content": "http://purl.org/rss/1.0/modules/content/"}
