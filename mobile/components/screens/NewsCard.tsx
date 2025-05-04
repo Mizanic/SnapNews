@@ -13,17 +13,43 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
+  // Format the published date for better display - handles both ISO string and Unix timestamp
+  const formatDate = (dateValue) => {
+    // Check if the date is a Unix timestamp (number as string)
+    const date = !isNaN(dateValue) && dateValue.length === 10
+      ? new Date(parseInt(dateValue) * 1000) // Convert Unix timestamp to milliseconds
+      : new Date(dateValue);
+      
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
     <View style={styles.card}>
       <View style={styles.imageWrapper}>
         <ImageSection image={news.media.image_url} label={news.source} />
+        
+        <View style={styles.topOverlay}>
+          
+          <View style={styles.sourceNameWrapper}>
+            <Text style={styles.sourceNameText}>
+              {news.source_name}
+            </Text>
+          </View>
+          <View style={styles.dateWrapper}>
+            <Text style={styles.dateText}>
+              {formatDate(news.published)}
+            </Text>
+          </View>
+        </View>
+        
         <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.85)"]}
           style={styles.overlay}
         >
-          <View style={styles.sourceWrapper}>
-            <Text style={styles.sourceText}>{news.source}</Text>
-          </View>
           <Header title={news.headline} />
         </LinearGradient>
       </View>
@@ -58,6 +84,38 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 16 / 9, // Maintain visual consistency across devices
     overflow: "hidden",
+  },
+  topOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 12,
+    zIndex: 10,
+  },
+  dateWrapper: {
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  dateText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  sourceNameWrapper: {
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  sourceNameText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
   },
   overlay: {
     position: "absolute",
