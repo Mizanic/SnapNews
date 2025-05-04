@@ -4,18 +4,18 @@ import { addLike, removeLike } from "@/dux/action/like/likeActions";
 import { useDispatch } from "react-redux";
 
 interface LikeButtonProps {
-    url_hash : string;
+    item_hash : string;
     isLiked : boolean,
 }
 
-const LikeButton = ({url_hash,isLiked} : LikeButtonProps) => {
+const LikeButton = ({item_hash,isLiked} : LikeButtonProps) => {
     const dispatch = useDispatch();
   
   const toggleLike = () => {
         if (!isLiked) {
-          dispatch(addLike(url_hash));
+          dispatch(addLike(item_hash));
         } else {
-          dispatch(removeLike(url_hash));
+          dispatch(removeLike(item_hash));
         }
       };
 

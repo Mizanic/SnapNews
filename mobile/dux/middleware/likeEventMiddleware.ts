@@ -15,7 +15,7 @@ export const likeEventMiddleware: Middleware = store => next => async action => 
     const url = action.type === LIKE ? LIKE_API_URL : UNLIKE_API_URL;
 
     try {
-      await retryAsync(() => fakeApiCall(url, { url_hash: action.payload }), MAX_RETRY_ATTEMPTS, BASE_RETRY_DELAY_MS);
+      await retryAsync(() => fakeApiCall(url, { item_hash: action.payload }), MAX_RETRY_ATTEMPTS, BASE_RETRY_DELAY_MS);
       console.log(`${action.type} synced to server`);
     } catch (error) {
       console.error(`Failed to sync ${action.type} after ${MAX_RETRY_ATTEMPTS} attempts:`, error);

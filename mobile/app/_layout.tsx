@@ -1,8 +1,3 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -15,7 +10,7 @@ import { Provider } from "react-redux";
 import store, { persistor } from "../dux/store";
 import { PersistGate } from 'redux-persist/integration/react';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -37,7 +32,7 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        {/* <AppHeader /> */}
+        <AppHeader />
         <Navigation />
       </PersistGate>
     </Provider>

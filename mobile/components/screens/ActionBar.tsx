@@ -14,7 +14,7 @@ const ActionBar = ({news,isBookmarked,isLiked}:ActionBarProps) => {
 
   return (
     <View style={styles.actionBar}>
-      <LikeButton url_hash={news.url_hash} isLiked={isLiked}/>
+      <LikeButton item_hash={news.item_hash} isLiked={isLiked}/>
       <BookmarkButton news={news} isBookmarked={isBookmarked}/>
       <ShareButton newsSourceUrl={news.news_url}/>
     </View>

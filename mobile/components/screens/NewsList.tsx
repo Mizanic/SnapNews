@@ -10,12 +10,12 @@ const NewsList = ({ data, loading ,bookmarks, likes}: any) =>{
       renderItem={({ item }) => (
         <NewsCard
           news={item}
-          isBookmarked={bookmarks.has(item.url_hash)?true:false}
-          isLiked={likes.has(item.url_hash)?true:false}
+          isBookmarked={bookmarks.has(item.item_hash)?true:false}
+          isLiked={likes.has(item.item_hash)?true:false}
         />
       )}
       style={{ padding: 16, gap: 10 }}
-      keyExtractor={(item) => item.url_hash}
+      keyExtractor={(item) => item.item_hash}
     />
   );
 }

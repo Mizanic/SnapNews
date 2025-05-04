@@ -1,58 +1,75 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, Platform } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Header = () => {
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  const toggleMenu = () => setMenuVisible(!menuVisible);
-
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: 10,
-        backgroundColor: "#000",
-      }}
+    <LinearGradient
+      colors={["#3a7bd5", "#3a6073"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.headerContainer}
     >
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <MaterialIcons name="cruelty-free" size={24} color="#ff007f" />
-        <Text style={{ color: "#fff", marginLeft: 8, fontSize: 18 }}>
-          BlinkFeed
+      <View style={styles.logoContainer}>
+        <Text style={styles.logoText}>
+          <Text style={styles.logoBold}>Snap</Text>
+          <Text style={styles.logoLight}>News</Text>
         </Text>
       </View>
-
-      <TouchableOpacity onPress={toggleMenu}>
-        <MaterialIcons name="menu" size={28} color="#fff" />
-      </TouchableOpacity>
-
-      {menuVisible && (
-        <Modal transparent={true} animationType="fade" visible={menuVisible}>
-          <View
-            style={{
-              position: "absolute",
-              top: 50,
-              right: 0,
-              backgroundColor: "#000",
-              padding: 20,
-              elevation: 5,
-              width: "50%",
-              height: "auto",
-            }}
-          >
-            <TouchableOpacity
-              onPress={toggleMenu}
-              style={{ alignSelf: "flex-end" }}
-            >
-              <MaterialIcons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      )}
-    </View>
+      
+      <View style={styles.taglineContainer}>
+        <Text style={styles.taglineText}>Stay Informed. Stay Ahead.</Text>
+      </View>
+    </LinearGradient>
   );
 };
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logoText: {
+    fontSize: 22,
+    letterSpacing: 0.5,
+  },
+  logoBold: {
+    fontWeight: "800",
+    color: "#fff",
+  },
+  logoLight: {
+    fontWeight: "300",
+    color: "#fff",
+  },
+  taglineContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  taglineText: {
+    color: "rgba(255, 255, 255, 0.9)",
+    fontSize: 12,
+    fontWeight: "500",
+    letterSpacing: 0.5,
+  },
+});
 
 export default Header;

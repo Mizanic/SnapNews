@@ -1,6 +1,5 @@
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
 import { addBookmark, removeBookmark } from "../../dux/action/bookmark/bookmarkActions";
 import { NewsItem } from "../../model/newsItem";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +17,7 @@ const BookmarkButton = ({ news, isBookmarked }: BookmarkButtonProps) => {
       if (!isBookmarked) {
         dispatch(addBookmark(news));
       } else {
-        dispatch(removeBookmark(news.url_hash));
+        dispatch(removeBookmark(news.item_hash));
       }
     };
   

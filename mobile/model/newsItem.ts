@@ -1,7 +1,7 @@
 export interface NewsItem {
     summary: string;
     published: string;
-    url_hash: string;
+    item_hash: string;
     media: {
       image_url: string;
       video_url: string | null;

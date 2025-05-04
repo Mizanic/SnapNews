@@ -13,23 +13,19 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
-  // Format the published date as a relative time (e.g., "2 hours ago")
   const formatRelativeTime = (dateValue) => {
-    // Get the published date - handle both Unix timestamp and ISO string
     const publishedDate = !isNaN(dateValue) && dateValue.length === 10
-      ? new Date(parseInt(dateValue) * 1000) // Convert Unix timestamp to milliseconds
+      ? new Date(parseInt(dateValue) * 1000) 
       : new Date(dateValue);
       
     const now = new Date();
     const diffInSeconds = Math.floor((now - publishedDate) / 1000);
     
-    // Calculate different time units
     const minute = 60;
     const hour = minute * 60;
     const day = hour * 24;
     const week = day * 7;
     
-    // Return appropriate relative time string
     if (diffInSeconds < minute) {
       return "just now";
     } else if (diffInSeconds < hour) {
@@ -51,8 +47,7 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
     <View style={styles.card}>
       <View style={styles.imageWrapper}>
         <ImageSection image={news.media.image_url} label={news.source} />
-        
-        {/* Top overlay with published date and source */}
+
         <View style={styles.topOverlay}>
           <View style={styles.dateWrapper}>
             <Text style={styles.dateText}>
@@ -70,9 +65,6 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
           colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.85)"]}
           style={styles.overlay}
         >
-          <View style={styles.sourceWrapper}>
-            <Text style={styles.sourceText}>{news.source}</Text>
-          </View>
           <Header title={news.headline} />
         </LinearGradient>
       </View>
@@ -100,12 +92,12 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     alignSelf: "center",
     width: "100%",
-    maxWidth: 600, // Keeps the card centered and responsive on large screens
+    maxWidth: 600, 
   },
   imageWrapper: {
     position: "relative",
     width: "100%",
-    aspectRatio: 16 / 9, // Maintain visual consistency across devices
+    aspectRatio: 16 / 9,
     overflow: "hidden",
   },
   topOverlay: {

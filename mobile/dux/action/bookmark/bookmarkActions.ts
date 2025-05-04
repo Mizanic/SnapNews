@@ -6,14 +6,14 @@ export const addBookmark = (newsItem: NewsItem) => {
   return {
     type: ADD_BOOKMARK,
     payload: {
-      [newsItem.url_hash]: { ...newsItem },
+      [newsItem.item_hash]: { ...newsItem },
     },
   };
 };
 
-export const removeBookmark = (url_hash: string) => {
+export const removeBookmark = (item_hash: string) => {
   return {
     type: REMOVE_BOOKMARK,
-    payload : url_hash,
+    payload : item_hash,
   };
 };
