@@ -4,7 +4,7 @@ import Header from "./Header";
 import Summary from "./Summary";
 import ActionBar from "./ActionBar";
 import { NewsItem } from "@/model/newsItem";
-import { LinearGradient } from "expo-linear-gradient"; // Add this to your dependencies
+import { LinearGradient } from "expo-linear-gradient";
 
 interface NewsCardProps {
   news: NewsItem;
@@ -12,11 +12,7 @@ interface NewsCardProps {
   isLiked: boolean;
 }
 
-const { width } = Dimensions.get("window");
-
 const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
-
-
   return (
     <View style={styles.card}>
       <View style={styles.imageWrapper}>
@@ -25,13 +21,17 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
           colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.85)"]}
           style={styles.overlay}
         >
+          <View style={styles.sourceWrapper}>
+            <Text style={styles.sourceText}>{news.source}</Text>
+          </View>
           <Header title={news.headline} />
         </LinearGradient>
       </View>
-      
+
       <View style={styles.content}>
         <Summary description={news.summary} />
       </View>
+
       <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} />
     </View>
   );
@@ -40,47 +40,48 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: "hidden",
-    marginBottom: 16,
+    marginBottom: 20,
     marginHorizontal: 12,
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 600, // Keeps the card centered and responsive on large screens
   },
   imageWrapper: {
     position: "relative",
-    height: width * 0.5,
+    width: "100%",
+    aspectRatio: 16 / 9, // Maintain visual consistency across devices
+    overflow: "hidden",
   },
   overlay: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
     paddingTop: 50,
+    justifyContent: "flex-end",
   },
-  sourceContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  sourceWrapper: {
     marginBottom: 6,
   },
   sourceText: {
-    color: "#ffffff",
+    color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
     textTransform: "uppercase",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    paddingHorizontal: 8,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  dateText: {
-    color: "#f0f0f0",
-    fontSize: 12,
+    borderRadius: 8,
+    alignSelf: "flex-start",
   },
   content: {
     padding: 16,
