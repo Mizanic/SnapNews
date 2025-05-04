@@ -15,15 +15,7 @@ interface NewsCardProps {
 const { width } = Dimensions.get("window");
 
 const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
-  // Format the date to be more readable
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+
 
   return (
     <View style={styles.card}>
@@ -33,26 +25,13 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
           colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.85)"]}
           style={styles.overlay}
         >
-          <View style={styles.sourceContainer}>
-            <Text style={styles.sourceText}>{news.source}</Text>
-            <Text style={styles.dateText}>{formatDate(news.published_date)}</Text>
-          </View>
           <Header title={news.headline} />
         </LinearGradient>
       </View>
       
       <View style={styles.content}>
         <Summary description={news.summary} />
-        
-        <View style={styles.tagsContainer}>
-          {news.categories && news.categories.slice(0, 3).map((category, index) => (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.tagText}>{category}</Text>
-            </View>
-          ))}
-        </View>
       </View>
-      
       <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} />
     </View>
   );
@@ -73,7 +52,7 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     position: "relative",
-    height: width * 0.5, // Dynamic height based on screen width
+    height: width * 0.5,
   },
   overlay: {
     position: "absolute",
@@ -81,7 +60,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    paddingTop: 50, // Extra space for gradient to look natural
+    paddingTop: 50,
   },
   sourceContainer: {
     flexDirection: "row",
