@@ -13,18 +13,38 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
-  // Format the published date for better display - handles both ISO string and Unix timestamp
-  const formatDate = (dateValue) => {
-    // Check if the date is a Unix timestamp (number as string)
-    const date = !isNaN(dateValue) && dateValue.length === 10
+  // Format the published date as a relative time (e.g., "2 hours ago")
+  const formatRelativeTime = (dateValue) => {
+    // Get the published date - handle both Unix timestamp and ISO string
+    const publishedDate = !isNaN(dateValue) && dateValue.length === 10
       ? new Date(parseInt(dateValue) * 1000) // Convert Unix timestamp to milliseconds
       : new Date(dateValue);
       
-    return date.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - publishedDate) / 1000);
+    
+    // Calculate different time units
+    const minute = 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const week = day * 7;
+    
+    // Return appropriate relative time string
+    if (diffInSeconds < minute) {
+      return "just now";
+    } else if (diffInSeconds < hour) {
+      const minutes = Math.floor(diffInSeconds / minute);
+      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+    } else if (diffInSeconds < day) {
+      const hours = Math.floor(diffInSeconds / hour);
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    } else if (diffInSeconds < week) {
+      const days = Math.floor(diffInSeconds / day);
+      return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    } else {
+      const weeks = Math.floor(diffInSeconds / week);
+      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    }
   };
 
   return (
@@ -32,16 +52,16 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
       <View style={styles.imageWrapper}>
         <ImageSection image={news.media.image_url} label={news.source} />
         
+        {/* Top overlay with published date and source */}
         <View style={styles.topOverlay}>
-          
+          <View style={styles.dateWrapper}>
+            <Text style={styles.dateText}>
+              {formatRelativeTime(news.published)}
+            </Text>
+          </View>
           <View style={styles.sourceNameWrapper}>
             <Text style={styles.sourceNameText}>
               {news.source_name}
-            </Text>
-          </View>
-          <View style={styles.dateWrapper}>
-            <Text style={styles.dateText}>
-              {formatDate(news.published)}
             </Text>
           </View>
         </View>
@@ -50,6 +70,9 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
           colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.85)"]}
           style={styles.overlay}
         >
+          <View style={styles.sourceWrapper}>
+            <Text style={styles.sourceText}>{news.source}</Text>
+          </View>
           <Header title={news.headline} />
         </LinearGradient>
       </View>
