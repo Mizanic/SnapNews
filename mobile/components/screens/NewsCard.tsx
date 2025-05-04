@@ -8,9 +8,10 @@ import { NewsItem } from "@/model/newsItem";
 interface NewsCardProps {
   news: NewsItem;
   isBookmarked : boolean;
+  isLiked: boolean;
 }
 
-const NewsCard = ({ news ,isBookmarked}: NewsCardProps) => (
+const NewsCard = ({ news ,isBookmarked, isLiked}: NewsCardProps) => (
   <View style={styles.card}>
     <View style={styles.imageWrapper}>
       <ImageSection image={news.media.image_url} label={news.source} />
@@ -21,7 +22,7 @@ const NewsCard = ({ news ,isBookmarked}: NewsCardProps) => (
     <View style={styles.content}>
       <Summary description={news.summary} />
     </View>
-    <ActionBar news={news} isBookmarked={isBookmarked}/>
+    <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked}/>
   </View>
 );
 

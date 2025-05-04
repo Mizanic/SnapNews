@@ -1,16 +1,16 @@
 import { LIKE, UNLIKE } from "@/dux/actionTypes";
 import { LikeUnlikeActionType } from "@/model/likeUnlikeActionType";
 
-export const addLike = (news_hash:string) : LikeUnlikeActionType => {
+export const addLike = (url_hash:string) => {
   return {
     type: LIKE,
-    payload: news_hash,
+    payload: url_hash,
   };
 };
 
-export const removeLike = (news_hash:string) : LikeUnlikeActionType => {
+export const removeLike = (url_hash:string) => {
     return {
         type: UNLIKE,
-        payload: news_hash,
+        payload: url_hash,
     };
 };

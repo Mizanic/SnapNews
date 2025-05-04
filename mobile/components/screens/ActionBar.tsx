@@ -1,33 +1,20 @@
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import { View, StyleSheet } from "react-native";
 import ShareButton from "./ShareButton";
 import BookmarkButton from "./BookmarkButton";
 import { NewsItem } from "../../model/newsItem";
+import LikeButton from "./LikeButton";
 
 interface ActionBarProps {
   news: NewsItem;
   isBookmarked : boolean;
+  isLiked : boolean;
 }
 
-const ActionBar = ({news,isBookmarked}:ActionBarProps) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isDisliked, setIsDisliked] = useState(false);
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    if (isDisliked) setIsDisliked(false);
-  };
+const ActionBar = ({news,isBookmarked,isLiked}:ActionBarProps) => {
 
   return (
     <View style={styles.actionBar}>
-      <TouchableOpacity onPress={() => handleLike()}>
-        <MaterialIcons
-          name={isLiked ? "thumb-up-alt" : "thumb-up-off-alt"}
-          size={24}
-          color="#555"
-        />
-      </TouchableOpacity>
+      <LikeButton url_hash={news.url_hash} isLiked={isLiked}/>
       <BookmarkButton news={news} isBookmarked={isBookmarked}/>
       <ShareButton newsSourceUrl={news.news_url}/>
     </View>
