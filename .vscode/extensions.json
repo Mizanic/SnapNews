@@ -1,15 +1,22 @@
 {
     "recommendations": [
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "christian-kohler.npm-intellisense",
-        "astro-build.astro-vscode",
-        "Boto3typed.boto3-ide",
+        // Global extensions
         "formulahendry.auto-rename-tag",
-        "ms-python.python",
+        // Local extensions
+        "astro-build.astro-vscode",
         "njpwerner.autodocstring",
+        "Boto3typed.boto3-ide",
         "ms-python.black-formatter",
+        "dbaeumer.vscode-eslint",
+        "github.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        "christian-kohler.npm-intellisense",
+        "esbenp.prettier-vscode",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy",
         "charliermarsh.ruff",
+        "bradlc.vscode-tailwindcss",
         "redhat.vscode-yaml"
     ],
     "unwantedRecommendations": []
