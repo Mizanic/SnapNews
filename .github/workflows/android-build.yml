@@ -2,9 +2,9 @@ name: Build React Native Android App
 
 on:
     push:
-        branches: ["main"]
+        branches: ["dev-mobile"]
     pull_request:
-        branches: ["main"]
+        branches: ["dev-mobile"]
 
 jobs:
     build:
