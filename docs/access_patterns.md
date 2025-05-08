@@ -1,10 +1,10 @@
 # NEWS
 
-| Access Pattern                       | Table/GSI/LSI          | Key Conditions                                            | Example |
-| ------------------------------------ | ---------------------- | --------------------------------------------------------- | ------- |
-| Get news by category sorted by time  | Table                  | pk=NEWS#{country}#{language}#{category}, sk=gte(time)     | TBD     |
-| Get news by category sorted by likes | LSI (sk=likes)         | pk=NEWS#{country}#{language}#{category}, sk=gt(0)         | TBD     |
-| Get news by news_url_hash            | LSI (sk=news_url_hash) | pk=NEWS#{country}#{language}#{category}, sk=news_url_hash | TBD     |
+| Access Pattern                       | Table/GSI/LSI      | Key Conditions                                        | Example |
+| ------------------------------------ | ------------------ | ----------------------------------------------------- | ------- |
+| Get news by category sorted by time  | Table              | pk=NEWS#{country}#{language}#{category}, sk=gte(time) | TBD     |
+| Get news by category sorted by likes | LSI (sk=likes)     | pk=NEWS#{country}#{language}#{category}, sk=gt(0)     | TBD     |
+| Get news by item_hash                | LSI (sk=item_hash) | pk=NEWS#{country}#{language}#{category}, sk=item_hash | TBD     |
 
 Table Schema:
 
@@ -17,7 +17,7 @@ attributes:
     - news_url
     - summary
     - media
-    - news_url_hash
+    - item_hash
     - likes
     - time
 ```

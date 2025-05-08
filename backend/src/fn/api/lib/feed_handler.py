@@ -79,8 +79,7 @@ def get_feed(
         logger.info(f"DynamoDB query result count: {result.get('Count', 0)}")
     except Exception as e:
         logger.error(f"DynamoDB query failed: {e}")
-        # Handle error appropriately, maybe raise or return an error structure
-        return {"news": [], "page_key": None, "error": str(e)}
+        raise e
 
     # Extract items and the next page key (SK of the last evaluated item)
     items = result.get("Items", [])
@@ -95,3 +94,21 @@ def get_feed(
         "page_key": next_page_key,
     }
     return response
+
+
+def like_news_item(item_pk: str, item_hash: str, item_sk: str) -> dict:
+    """
+    Likes a news item
+    """
+    logger.info(f"Liking news item with hash: {item_hash}")
+    try:
+        table.update_item(
+            IndexName="byItemHash",
+            Key={"pk": item_pk, "sk": item_hash},
+            UpdateExpression="SET likes = likes + :inc",
+            ExpressionAttributeValues={":inc": 1},
+        )
+    except Exception as e:
+        logger.error(f"Error liking news item: {e}")
+        raise e
+    return {"message": "Liked"}

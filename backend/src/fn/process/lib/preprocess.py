@@ -6,7 +6,9 @@ Inserts metadata into news items
 # ==================================================================================================
 # Python imports
 import os
+from datetime import datetime, timedelta, timezone
 
+from dateutil import parser
 from pydantic import ValidationError
 
 # ==================================================================================================
@@ -23,13 +25,29 @@ TTL_DAYS = int(os.environ.get("NEWS_TTL_DAYS", "14"))  # TODO: To be changed to 
 
 def inject_metadata(news_items: list[dict]) -> list[dict]:
     """
-    Inject metadata into news items
+    Inject metadata into news items.
+    Assumes 'published' is an ISO 8601 string. Calculates 'ttl' as a Unix timestamp.
     """
     for item in news_items:
         item["pk"] = f"NEWS#{item['country']}#{item['language']}#{item['category']}"
         item["sk"] = f"{item['published']}"
         item["item_hash"] = hasher(f"{item['pk']}#{item['news_url']}")
-        item["ttl"] = item["published"] + TTL_DAYS * 86400
+
+        # Calculate TTL based on the ISO published string
+        try:
+            published_dt = parser.parse(item["published"])
+            # Ensure timezone awareness - if naive, assume UTC as per time_to_iso fallback
+            if published_dt.tzinfo is None:
+                published_dt = published_dt.replace(tzinfo=timezone.utc)
+
+            ttl_dt = published_dt + timedelta(days=TTL_DAYS)
+            item["ttl"] = int(ttl_dt.timestamp())
+        except (ValueError, parser.ParserError, TypeError) as e:
+            logger.error(f"Error processing published date '{item.get('published', 'N/A')}' for TTL calculation: {e}")
+            # Fallback: Set TTL based on current time, or handle error appropriately
+            now_dt = datetime.now(timezone.utc)
+            ttl_dt = now_dt + timedelta(days=TTL_DAYS)
+            item["ttl"] = int(ttl_dt.timestamp())
 
     return news_items
 

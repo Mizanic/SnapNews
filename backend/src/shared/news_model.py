@@ -36,7 +36,7 @@ class NewsItemModel(BaseModel):
     language: str
     news_url: str
     headline: str
-    published: int
+    published: str
     summary: str
 
     # content: str #This will be added later. Not being used to save space in DynamoDB
