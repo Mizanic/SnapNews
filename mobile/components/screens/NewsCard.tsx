@@ -1,4 +1,12 @@
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import React, { useState, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+} from "react-native";
 import ImageSection from "./ImageSection";
 import Header from "./Header";
 import Summary from "./Summary";
@@ -13,19 +21,23 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
+  const [isActionBarVisible, setIsActionBarVisible] = useState(false);
+  const animatedValue = useRef(new Animated.Value(0)).current;
+  const scaleValue = useRef(new Animated.Value(1)).current;
+
   const formatRelativeTime = (dateValue) => {
     const publishedDate = !isNaN(dateValue) && dateValue.length === 10
-      ? new Date(parseInt(dateValue) * 1000) 
+      ? new Date(parseInt(dateValue) * 1000)
       : new Date(dateValue);
-      
+
     const now = new Date();
     const diffInSeconds = Math.floor((now - publishedDate) / 1000);
-    
+
     const minute = 60;
     const hour = minute * 60;
     const day = hour * 24;
     const week = day * 7;
-    
+
     if (diffInSeconds < minute) {
       return "just now";
     } else if (diffInSeconds < hour) {
@@ -43,56 +55,109 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
     }
   };
 
+  const toggleActionBar = () => {
+    if (isActionBarVisible) {
+      // Hide ActionBar
+      Animated.parallel([
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: false,
+        }),
+        Animated.spring(scaleValue, {
+          toValue: 1,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setIsActionBarVisible(false));
+    } else {
+      // Show ActionBar
+      setIsActionBarVisible(true);
+      Animated.parallel([
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.spring(scaleValue, {
+          toValue: 1.02,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  const heightInterpolation = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 60],
+  });
+
+  const opacityInterpolation = animatedValue;
+
+  const animatedStyle = {
+    transform: [{ scale: scaleValue }],
+    backgroundColor: scaleValue.interpolate({
+      inputRange: [1, 1.02],
+      outputRange: ["#ffffff", "#f9f9f9"],
+    }),
+  };
+
   return (
-    <View style={styles.card}>
+    <Animated.View style={[styles.card, animatedStyle]}>
       <View style={styles.imageWrapper}>
         <ImageSection image={news.media.image_url} label={news.source} />
 
         <View style={styles.topOverlay}>
           <View style={styles.dateWrapper}>
-            <Text style={styles.dateText}>
-              {formatRelativeTime(news.published)}
-            </Text>
+            <Text style={styles.dateText}>{formatRelativeTime(news.published)}</Text>
           </View>
           <View style={styles.sourceNameWrapper}>
-            <Text style={styles.sourceNameText}>
-              {news.source_name}
-            </Text>
+            <Text style={styles.sourceNameText}>{news.source_name}</Text>
           </View>
         </View>
-        
+
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.85)"]}
+          colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.85)"]}
           style={styles.overlay}
         >
           <Header title={news.headline} />
         </LinearGradient>
       </View>
 
-      <View style={styles.content}>
-        <Summary description={news.summary} />
-      </View>
+      <TouchableOpacity onPress={toggleActionBar} activeOpacity={1}>
+        <View style={styles.content}>
+          <Summary description={news.summary} />
+        </View>
 
-      <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} />
-    </View>
+        <Animated.View
+          style={[
+            styles.actionBarWrapper,
+            {
+              height: heightInterpolation,
+              opacity: opacityInterpolation,
+            },
+          ]}
+        >
+          <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} />
+        </Animated.View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: "hidden",
-    marginBottom: 20,
-    marginHorizontal: 12,
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    marginBottom: 24,
+    marginHorizontal: 16,
     alignSelf: "center",
     width: "100%",
-    maxWidth: 600, 
+    maxWidth: 600,
   },
   imageWrapper: {
     position: "relative",
@@ -107,11 +172,11 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 12,
+    padding: 16,
     zIndex: 10,
   },
   dateWrapper: {
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
@@ -122,7 +187,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   sourceNameWrapper: {
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
@@ -142,44 +207,14 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     justifyContent: "flex-end",
   },
-  sourceWrapper: {
-    marginBottom: 6,
-  },
-  sourceText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    alignSelf: "flex-start",
-  },
   content: {
-    padding: 16,
+    padding: 20,
     paddingTop: 12,
-    backgroundColor: "#fafafa",
+    backgroundColor: "#ffffff",
   },
-  tagsContainer: {
-    flexDirection: "row",
-    marginTop: 12,
-    flexWrap: "wrap",
-  },
-  tag: {
-    backgroundColor: "#f0f4f8",
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 8,
-    marginBottom: 4,
-    borderWidth: 1,
-    borderColor: "#e0e6ed",
-  },
-  tagText: {
-    color: "#506580",
-    fontSize: 12,
-    fontWeight: "500",
+  actionBarWrapper: {
+    overflow: "hidden",
+    backgroundColor: "#fff",
   },
 });
 
