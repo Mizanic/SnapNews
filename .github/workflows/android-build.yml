@@ -1,4 +1,4 @@
-name: Build React Native Android App
+name: Build Android App
 
 on:
     push:
