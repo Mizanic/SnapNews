@@ -1,14 +1,21 @@
 import React from "react";
-import { FlatList, ActivityIndicator, View, StyleSheet } from "react-native";
+import { FlatList, ActivityIndicator, View, StyleSheet, Text } from "react-native";
 import NewsCard from "./NewsCard";
+import { Colors, Spacing } from "@/constants/Theme";
+import { Typography } from "@/constants/Fonts";
 
 // TODO: Add types
 const NewsList = ({ data, loading, bookmarks, likes }: any) => {
-    return loading ? (
-        <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#ff007f" />
-        </View>
-    ) : (
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={Colors.primary[600]} />
+                <Text style={styles.loadingText}>Loading latest news...</Text>
+            </View>
+        );
+    }
+
+    return (
         <FlatList
             data={data}
             renderItem={({ item }) => (
@@ -21,6 +28,7 @@ const NewsList = ({ data, loading, bookmarks, likes }: any) => {
             contentContainerStyle={styles.listContainer}
             keyExtractor={(item) => item.item_hash}
             showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
     );
 };
@@ -30,11 +38,22 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 20,
+        backgroundColor: Colors.background.secondary,
+        paddingHorizontal: Spacing.lg,
+    },
+    loadingText: {
+        ...Typography.bodyText.medium,
+        color: Colors.text.secondary,
+        marginTop: Spacing.md,
+        textAlign: "center",
     },
     listContainer: {
-        paddingHorizontal: 16,
-        paddingBottom: 20,
+        paddingTop: Spacing.md,
+        paddingBottom: Spacing.xl,
+        backgroundColor: Colors.background.secondary,
+    },
+    separator: {
+        height: Spacing.xs,
     },
 });
 

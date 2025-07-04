@@ -7,6 +7,7 @@ import ActionBar from "./ActionBar";
 import { NewsItem } from "@/model/newsItem";
 import { LinearGradient } from "expo-linear-gradient";
 import { Typography } from "@/constants/Fonts";
+import { Colors, Spacing, Shadows, BorderRadius } from "@/constants/Theme";
 
 interface NewsCardProps {
     news: NewsItem;
@@ -37,16 +38,16 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             return "just now";
         } else if (diffInSeconds < hour) {
             const minutes = Math.floor(diffInSeconds / minute);
-            return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+            return `${minutes}m ago`;
         } else if (diffInSeconds < day) {
             const hours = Math.floor(diffInSeconds / hour);
-            return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+            return `${hours}h ago`;
         } else if (diffInSeconds < week) {
             const days = Math.floor(diffInSeconds / day);
-            return `${days} ${days === 1 ? "day" : "days"} ago`;
+            return `${days}d ago`;
         } else {
             const weeks = Math.floor(diffInSeconds / week);
-            return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
+            return `${weeks}w ago`;
         }
     };
 
@@ -87,17 +88,13 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
 
     const heightInterpolation = animatedValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, 60],
+        outputRange: [0, 64],
     });
 
     const opacityInterpolation = animatedValue;
 
     const animatedStyle = {
         transform: [{ scale: scaleValue }],
-        backgroundColor: scaleValue.interpolate({
-            inputRange: [1, 1.02],
-            outputRange: ["#ffffff", "#f9f9f9"],
-        }),
     };
 
     return (
@@ -105,23 +102,37 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             <View style={styles.imageWrapper}>
                 <ImageSection image={news.media.image_url} label={news.source} />
 
+                {/* Top overlay with metadata */}
                 <View style={styles.topOverlay}>
-                    <View style={styles.dateWrapper}>
-                        <Text style={styles.dateText}>{formatRelativeTime(news.published)}</Text>
-                    </View>
-                    <View style={styles.sourceNameWrapper}>
-                        <Text style={styles.sourceNameText}>{news.source}</Text>
+                    <View style={styles.metadataContainer}>
+                        <View style={styles.timeChip}>
+                            <Text style={styles.timeText}>{formatRelativeTime(news.published)}</Text>
+                        </View>
+                        <View style={styles.sourceChip}>
+                            <Text style={styles.sourceText}>{news.source}</Text>
+                        </View>
                     </View>
                 </View>
 
-                <LinearGradient colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.9)"]} style={styles.overlay}>
-                    <Header title={news.headline} />
+                {/* Bottom gradient overlay with title */}
+                <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.headlineText} numberOfLines={3}>
+                            {news.headline}
+                        </Text>
+                    </View>
                 </LinearGradient>
             </View>
 
-            <TouchableOpacity onPress={toggleActionBar} activeOpacity={1}>
-                <View style={styles.content}>
-                    <Summary description={news.summary} />
+            <TouchableOpacity onPress={toggleActionBar} activeOpacity={0.9}>
+                <View style={styles.contentContainer}>
+                    <Text style={styles.summaryText} numberOfLines={3}>
+                        {news.summary}
+                    </Text>
+
+                    <View style={styles.readMoreContainer}>
+                        <Text style={styles.readMoreText}>{isActionBarVisible ? "Tap to hide actions" : "Tap to show actions"}</Text>
+                    </View>
                 </View>
 
                 <Animated.View
@@ -142,25 +153,14 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#fff",
-        borderRadius: 8,
+        backgroundColor: Colors.background.primary,
+        borderRadius: BorderRadius.xl,
         overflow: "hidden",
-        marginBottom: 24,
-        alignSelf: "center",
-        width: "100%",
+        marginBottom: Spacing.lg,
+        marginHorizontal: Spacing.md,
+        ...Shadows.lg,
         borderWidth: 1,
-        borderColor: "#e0e0e0",
-        ...Platform.select({
-            ios: {
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-            },
-            android: {
-                elevation: 6,
-            },
-        }),
+        borderColor: Colors.border.light,
     },
     imageWrapper: {
         position: "relative",
@@ -173,52 +173,83 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 16,
+        padding: Spacing.md,
         zIndex: 10,
     },
-    dateWrapper: {
-        backgroundColor: "rgba(0,0,0,0.6)",
-        paddingHorizontal: 12,
+    metadataContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+    },
+    timeChip: {
+        backgroundColor: Colors.secondary[800],
+        paddingHorizontal: Spacing.sm,
         paddingVertical: 6,
-        borderRadius: 6,
+        borderRadius: BorderRadius.md,
+        ...Shadows.sm,
     },
-    dateText: {
-        color: "#fff",
-        ...Typography.caption,
+    timeText: {
+        ...Typography.captionText.medium,
+        color: Colors.white,
+        fontWeight: "600",
     },
-    sourceNameWrapper: {
-        backgroundColor: "rgba(0,0,0,0.6)",
-        paddingHorizontal: 12,
+    sourceChip: {
+        backgroundColor: Colors.primary[600],
+        paddingHorizontal: Spacing.sm,
         paddingVertical: 6,
-        borderRadius: 6,
+        borderRadius: BorderRadius.md,
+        ...Shadows.sm,
     },
-    sourceNameText: {
-        color: "#fff",
-        ...Typography.caption,
-        fontWeight: "bold",
+    sourceText: {
+        ...Typography.captionText.medium,
+        color: Colors.white,
+        fontWeight: "600",
     },
-    overlay: {
+    gradientOverlay: {
         position: "absolute",
         bottom: 0,
         left: 0,
         right: 0,
-        paddingHorizontal: 20,
-        paddingBottom: 24,
-        paddingTop: 80,
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.lg,
+        paddingTop: Spacing.xxxl,
         justifyContent: "flex-end",
     },
-    content: {
-        padding: 20,
-        paddingTop: 16,
-        backgroundColor: "#ffffff",
+    titleContainer: {
+        marginBottom: Spacing.sm,
+    },
+    headlineText: {
+        ...Typography.heading.h3,
+        color: Colors.white,
+        fontWeight: "700",
+        textShadowColor: Colors.shadow.dark,
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
+    },
+    contentContainer: {
+        padding: Spacing.md,
+        backgroundColor: Colors.background.primary,
+    },
+    summaryText: {
+        ...Typography.bodyText.medium,
+        color: Colors.text.secondary,
+        lineHeight: 22,
+        marginBottom: Spacing.sm,
+    },
+    readMoreContainer: {
+        alignItems: "center",
+        paddingTop: Spacing.xs,
+    },
+    readMoreText: {
+        ...Typography.captionText.large,
+        color: Colors.primary[600],
+        fontWeight: "600",
     },
     actionBarWrapper: {
         overflow: "hidden",
-        backgroundColor: "#fff",
+        backgroundColor: Colors.background.secondary,
         borderTopWidth: 1,
-        borderTopColor: "#f0f0f0",
+        borderTopColor: Colors.border.light,
     },
 });
 

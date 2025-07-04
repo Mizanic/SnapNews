@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import NewsList from "./screens/NewsList";
 import { useSelector } from "react-redux";
+import { Colors, Spacing } from "@/constants/Theme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LatestNewsScreen: React.FC = () => {
     const [activeTab, setActiveTab] = useState("latest");
@@ -9,6 +11,7 @@ const LatestNewsScreen: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
+    const insets = useSafeAreaInsets();
 
     const fetchNews = async () => {
         setLoading(true);
@@ -36,7 +39,7 @@ const LatestNewsScreen: React.FC = () => {
     }, [activeTab]);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingBottom: 60 + insets.bottom }]}>
             <NewsList data={newsData} loading={loading} bookmarks={new Set(Object.keys(bookmarks))} likes={new Set(Object.keys(likes))} />
         </View>
     );
@@ -45,8 +48,7 @@ const LatestNewsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f5f5f5",
-        paddingBottom: 70,
+        backgroundColor: Colors.background.secondary,
     },
     text: {
         fontSize: 18,
