@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import React from "react";
 import { useSelector } from "react-redux";
 import NewsList from "./screens/NewsList";
 
-const BookmarkScreen = () => {
+const BookmarkScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
     return (

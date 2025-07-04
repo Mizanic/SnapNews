@@ -1,9 +1,9 @@
-import { View, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import NewsList from "./screens/NewsList";
 import { useSelector } from "react-redux";
 
-const LatestNewsScreen = () => {
+const LatestNewsScreen: React.FC = () => {
     const [activeTab, setActiveTab] = useState("latest");
     const [newsData, setNewsData] = useState([]);
     const [loading, setLoading] = useState(true);

@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
 import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
-const TopNewsScreen = () => {
+const TopNewsScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.text}>This is Top News Screen</Text>

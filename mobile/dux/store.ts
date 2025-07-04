@@ -5,24 +5,20 @@ import bookmarkReducer from "./reducer/bookmarkReducer";
 import LikeReducer from "./reducer/like/likeReducer";
 import { likeEventMiddleware } from "./middleware/likeEventMiddleware";
 
-
 const persistConfig = {
-  key: "root",
-  storage: AsyncStorage,
-  whitelist: ["bookmarks", "likes"],
+    key: "root",
+    storage: AsyncStorage,
+    whitelist: ["bookmarks", "likes"],
 };
 
 const rootReducer = combineReducers({
-  bookmarks: bookmarkReducer,
-  likes: LikeReducer,
+    bookmarks: bookmarkReducer,
+    likes: LikeReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(
-  persistedReducer,
-  applyMiddleware(likeEventMiddleware)
-);
+const store = createStore(persistedReducer, applyMiddleware(likeEventMiddleware));
 
 export const persistor = persistStore(store);
 
