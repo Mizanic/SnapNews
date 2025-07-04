@@ -1,7 +1,15 @@
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
+import { Typography } from "../../constants/Fonts";
 
 const Summary = ({ description }: any) => (
-  <Text className="text-sm text-gray-600">{description}</Text>
+  <Text style={styles.summary}>{description}</Text>
 );
+
+const styles = StyleSheet.create({
+  summary: {
+    ...Typography.body,
+    color: "#333",
+  },
+});
 
 export default Summary;

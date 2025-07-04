@@ -1,11 +1,15 @@
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
+import { Typography } from "../../constants/Fonts";
 
 const Header = ({ title }: any) => (
-  <Text
-    className="text-xl font-semibold"
-    style={{ color: "#fff", fontWeight: "bold" }}
-  >
-    {title}
-  </Text>
+  <Text style={styles.title}>{title}</Text>
 );
+
+const styles = StyleSheet.create({
+  title: {
+    ...Typography.h2,
+    color: "#fff",
+  },
+});
+
 export default Header;

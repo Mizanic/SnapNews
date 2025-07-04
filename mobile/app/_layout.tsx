@@ -19,6 +19,10 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    "Lora-Regular": require("../assets/fonts/Lora/static/Lora-Regular.ttf"),
+    "Lora-Bold": require("../assets/fonts/Lora/static/Lora-Bold.ttf"),
+    "Inter-Regular": require("../assets/fonts/Inter/static/Inter_18pt-Regular.ttf"),
+    "Inter-Bold": require("../assets/fonts/Inter/static/Inter_18pt-Bold.ttf"),
   });
 
   useEffect(() => {
