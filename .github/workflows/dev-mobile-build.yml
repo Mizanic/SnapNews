@@ -35,9 +35,6 @@ jobs:
               with:
                   cmdline-tools-version: 13114758
 
-            - name: Accept Android Licenses
-              run: yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || true # Fallback for older SDKs
-
             - name: Install dependencies
               run: |
                   cd mobile
