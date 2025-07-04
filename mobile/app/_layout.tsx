@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/useColorScheme.web";
+import useColorScheme from "@/hooks/useColorScheme.web";
 import AppHeader from "@/components/screens/AppHeader";
 import { Provider } from "react-redux";
 import store, { persistor } from "@/dux/store";
