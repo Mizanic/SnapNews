@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { addLike, removeLike } from "@/dux/action/like/likeActions";
 import { useDispatch } from "react-redux";
 import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/Theme";
@@ -25,13 +25,13 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
     return (
         <TouchableOpacity onPress={toggleLike} style={[styles.button, isLiked && styles.buttonActive]} activeOpacity={0.7}>
             <View style={styles.buttonContent}>
-                <MaterialIcons
-                    name={isLiked ? "thumb-up" : "thumb-up-off-alt"}
-                    size={20}
+                <Ionicons
+                    name={isLiked ? "heart" : "heart-outline"}
+                    size={18}
                     color={isLiked ? Colors.white : Colors.gray[600]}
                     style={{ marginRight: Spacing.xs }}
                 />
-                <Text style={[styles.buttonText, isLiked && styles.buttonTextActive]}>Like</Text>
+                <Text style={[styles.buttonText, isLiked && styles.buttonTextActive]}>{isLiked ? "Liked" : "Like"}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -40,7 +40,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.background.primary,
-        borderRadius: BorderRadius.md,
+        borderRadius: BorderRadius.lg,
         paddingVertical: Spacing.sm,
         paddingHorizontal: Spacing.md,
         borderWidth: 1,
@@ -49,8 +49,9 @@ const styles = StyleSheet.create({
         ...Shadows.sm,
     },
     buttonActive: {
-        backgroundColor: Colors.primary[600],
-        borderColor: Colors.primary[600],
+        backgroundColor: Colors.accent.red,
+        borderColor: Colors.accent.red,
+        ...Shadows.md,
     },
     buttonContent: {
         flexDirection: "row",
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     buttonText: {
         ...Typography.button.small,
         color: Colors.text.secondary,
+        fontWeight: "600",
     },
     buttonTextActive: {
         color: Colors.white,

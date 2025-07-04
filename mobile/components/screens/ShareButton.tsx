@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View, Share, Alert } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 
@@ -33,7 +33,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
     return (
         <TouchableOpacity onPress={handleShare} style={styles.button} activeOpacity={0.7}>
             <View style={styles.buttonContent}>
-                <MaterialIcons name="share" size={20} color={Colors.gray[600]} style={{ marginRight: Spacing.xs }} />
+                <Ionicons name="share-social-outline" size={18} color={Colors.gray[600]} style={{ marginRight: Spacing.xs }} />
                 <Text style={styles.buttonText}>Share</Text>
             </View>
         </TouchableOpacity>
@@ -43,7 +43,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.background.primary,
-        borderRadius: BorderRadius.md,
+        borderRadius: BorderRadius.lg,
         paddingVertical: Spacing.sm,
         paddingHorizontal: Spacing.md,
         borderWidth: 1,
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     buttonText: {
         ...Typography.button.small,
         color: Colors.text.secondary,
+        fontWeight: "600",
     },
 });
 
