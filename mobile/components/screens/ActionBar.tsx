@@ -10,7 +10,7 @@ interface ActionBarProps {
     isLiked: boolean;
 }
 
-const ActionBar = ({ news, isBookmarked, isLiked }: ActionBarProps) => {
+const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked }) => {
     return (
         <View style={styles.actionBar}>
             <LikeButton item_hash={news.item_hash} isLiked={isLiked} />

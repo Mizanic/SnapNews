@@ -1,3 +1,4 @@
+import React from "react";
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { addLike, removeLike } from "@/dux/action/like/likeActions";
@@ -8,7 +9,7 @@ interface LikeButtonProps {
     isLiked: boolean;
 }
 
-const LikeButton = ({ item_hash, isLiked }: LikeButtonProps) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
     const dispatch = useDispatch();
 
     const toggleLike = () => {

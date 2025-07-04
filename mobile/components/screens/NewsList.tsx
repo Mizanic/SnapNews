@@ -1,6 +1,8 @@
+import React from "react";
 import { FlatList, ActivityIndicator, View, StyleSheet } from "react-native";
 import NewsCard from "./NewsCard";
 
+// TODO: Add types
 const NewsList = ({ data, loading, bookmarks, likes }: any) => {
     return loading ? (
         <View style={styles.loadingContainer}>
