@@ -73,7 +73,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             </View>
 
             <View style={styles.contentContainer}>
-                <Text style={styles.summaryText} numberOfLines={3}>
+                <Text style={styles.summaryText} numberOfLines={11}>
                     {news.summary}
                 </Text>
             </View>
