@@ -1,13 +1,13 @@
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import Navigation from "components/Navigation";
+import Navigation from "@/components/Navigation";
 import "react-native-reanimated";
 
-import { useColorScheme } from "hooks/useColorScheme.web";
-import AppHeader from "components/screens/AppHeader";
+import { useColorScheme } from "@/hooks/useColorScheme.web";
+import AppHeader from "@/components/screens/AppHeader";
 import { Provider } from "react-redux";
-import store, { persistor } from "../dux/store";
+import store, { persistor } from "@/dux/store";
 import { PersistGate } from "redux-persist/integration/react";
 
 SplashScreen.preventAutoHideAsync();
