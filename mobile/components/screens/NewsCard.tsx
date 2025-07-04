@@ -162,7 +162,7 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
-    borderRadius: 16,
+    borderRadius: 8,
     overflow: "hidden",
     marginBottom: 24,
     alignSelf: "center",
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 6,
   },
   dateText: {
     color: "#fff",
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 6,
   },
   sourceNameText: {
     color: "#fff",
