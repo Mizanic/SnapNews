@@ -1,10 +1,11 @@
 import { View, Text, StyleSheet, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Typography } from "../../constants/Fonts";
 
 const Header = () => {
   return (
     <LinearGradient
-      colors={["#3a7bd5", "#3a6073"]}
+      colors={["#2c3e50", "#34495e"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.headerContainer}
@@ -15,7 +16,7 @@ const Header = () => {
           <Text style={styles.logoLight}>News</Text>
         </Text>
       </View>
-      
+
       <View style={styles.taglineContainer}>
         <Text style={styles.taglineText}>Stay Informed. Stay Ahead.</Text>
       </View>
@@ -30,17 +31,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOpacity: 0.15,
+        shadowRadius: 5,
       },
       android: {
-        elevation: 4,
+        elevation: 5,
       },
     }),
   },
@@ -49,26 +50,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoText: {
-    fontSize: 22,
-    letterSpacing: 0.5,
+    ...Typography.h2,
+    color: "#fff",
   },
   logoBold: {
-    fontWeight: "800",
-    color: "#fff",
+    fontFamily: "Lora-Bold",
   },
   logoLight: {
-    fontWeight: "300",
-    color: "#fff",
+    fontFamily: "Lora-Regular",
   },
   taglineContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   taglineText: {
+    ...Typography.caption,
     color: "rgba(255, 255, 255, 0.9)",
-    fontSize: 12,
-    fontWeight: "500",
-    letterSpacing: 0.5,
   },
 });
 

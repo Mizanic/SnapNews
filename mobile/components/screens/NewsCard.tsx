@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Platform,
 } from "react-native";
 import ImageSection from "./ImageSection";
 import Header from "./Header";
@@ -126,7 +127,7 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
         </View>
 
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.85)"]}
+          colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.9)"]}
           style={styles.overlay}
         >
           <Header title={news.headline} />
@@ -161,11 +162,24 @@ const NewsCard = ({ news, isBookmarked, isLiked }: NewsCardProps) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: "hidden",
     marginBottom: 24,
     alignSelf: "center",
     width: "100%",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   imageWrapper: {
     position: "relative",
@@ -184,43 +198,46 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   dateWrapper: {
-    backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
   },
   dateText: {
     color: "#fff",
     ...Typography.caption,
   },
   sourceNameWrapper: {
-    backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
   },
   sourceNameText: {
     color: "#fff",
     ...Typography.caption,
+    fontWeight: "bold",
   },
   overlay: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+    paddingTop: 80,
     justifyContent: "flex-end",
   },
   content: {
     padding: 20,
-    paddingTop: 12,
+    paddingTop: 16,
     backgroundColor: "#ffffff",
   },
   actionBarWrapper: {
     overflow: "hidden",
     backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderTopColor: "#f0f0f0",
   },
 });
 
