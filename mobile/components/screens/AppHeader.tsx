@@ -1,123 +1,121 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, StatusBar } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text, StyleSheet, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Typography } from "@/constants/Fonts";
 import { Spacing, Shadows } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import useColorScheme from "@/hooks/useColorScheme.web";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
+    const colorScheme = useColorScheme();
+
+    const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
+    const statusBarBg = colors.backgroundColors.primary;
+
+    // Reddit red color
+    const redditRed = "#FF4500";
+
+    const handleMenuPress = () => {
+        // TODO: Implement menu functionality
+        console.log("Menu pressed");
+    };
+
+    const handleSettingsPress = () => {
+        // TODO: Implement settings functionality
+        console.log("Settings pressed");
+    };
 
     return (
         <>
-            <StatusBar barStyle="light-content" backgroundColor={colors.primary[600]} />
-            <LinearGradient
-                colors={[colors.primary[500], colors.primary[600], colors.primary[700]]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={[styles.headerContainer, { paddingTop: insets.top }]}
+            <StatusBar barStyle={statusBarStyle} backgroundColor={statusBarBg} />
+            <View
+                style={[
+                    styles.headerContainer,
+                    {
+                        paddingTop: insets.top,
+                        backgroundColor: colors.backgroundColors.primary,
+                        borderBottomColor: colors.borderColors.light,
+                        shadowColor: colors.black,
+                    },
+                ]}
             >
                 <View style={styles.headerContent}>
+                    {/* Left side - Hamburger Menu */}
+                    <TouchableOpacity style={styles.iconButton} onPress={handleMenuPress} activeOpacity={0.7}>
+                        <Ionicons name="menu" size={24} color={colors.textColors.primary} />
+                    </TouchableOpacity>
+
+                    {/* Center - Logo */}
                     <View style={styles.logoContainer}>
-                        <View style={[styles.logoIconContainer, { backgroundColor: colors.white }]}>
-                            <Text style={styles.logoIcon}>📰</Text>
-                        </View>
-                        <View style={styles.logoTextContainer}>
-                            <Text style={[styles.logoText, { color: colors.white }]}>
-                                <Text style={[styles.logoBold, { color: colors.white }]}>Snap</Text>
-                                <Text style={[styles.logoLight, { color: colors.white }]}>News</Text>
-                            </Text>
-                            <Text style={[styles.taglineText, { color: colors.white }]}>Stay Informed, Stay Ahead</Text>
-                        </View>
+                        <Text style={styles.logoIcon}>📰</Text>
+                        <Text style={[styles.logoText, { color: redditRed }]}>
+                            <Text style={[styles.logoBold, { color: redditRed }]}>Snap</Text>
+                            <Text style={[styles.logoLight, { color: redditRed }]}>News</Text>
+                        </Text>
                     </View>
 
-                    <View style={styles.headerActions}>
-                        <View style={[styles.statusIndicator, { backgroundColor: colors.accent.red }]}>
-                            <View style={[styles.liveIndicator, { backgroundColor: colors.white }]} />
-                            <Text style={[styles.liveText, { color: colors.white }]}>LIVE</Text>
-                        </View>
-                    </View>
+                    {/* Right side - Settings */}
+                    <TouchableOpacity style={styles.iconButton} onPress={handleSettingsPress} activeOpacity={0.7}>
+                        <Ionicons name="settings-outline" size={24} color={colors.textColors.primary} />
+                    </TouchableOpacity>
                 </View>
 
-                {/* Subtle bottom border */}
-                <View style={[styles.bottomBorder, { backgroundColor: colors.white }]} />
-            </LinearGradient>
+                {/* Bottom border for separation */}
+                <View style={[styles.bottomBorder, { backgroundColor: colors.borderColors.light }]} />
+            </View>
         </>
     );
 };
 
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingBottom: Spacing.md,
+        paddingBottom: Spacing.lg,
         ...Shadows.md,
+        elevation: 4,
+        borderBottomWidth: 1,
     },
     headerContent: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingHorizontal: Spacing.md,
-        paddingTop: Spacing.sm,
+        paddingHorizontal: Spacing.lg,
+        paddingTop: Spacing.md,
+    },
+    iconButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        alignItems: "center",
+        justifyContent: "center",
     },
     logoContainer: {
         flexDirection: "row",
         alignItems: "center",
         flex: 1,
-    },
-    logoIconContainer: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        alignItems: "center",
         justifyContent: "center",
-        marginRight: Spacing.md,
-        ...Shadows.sm,
     },
     logoIcon: {
-        fontSize: 24,
-    },
-    logoTextContainer: {
-        flex: 1,
+        fontSize: 28,
+        marginRight: Spacing.sm,
     },
     logoText: {
         ...Typography.heading.h2,
-        marginBottom: 2,
+        letterSpacing: -0.5,
     },
     logoBold: {
         ...Typography.heading.h2,
         fontFamily: Typography.heading.h1.fontFamily,
+        fontWeight: "800",
+        letterSpacing: -0.5,
     },
     logoLight: {
         ...Typography.heading.h2,
         fontFamily: Typography.bodyText.medium.fontFamily,
+        fontWeight: "300",
         opacity: 0.95,
-    },
-    taglineText: {
-        ...Typography.captionText.large,
-        opacity: 0.85,
-        fontStyle: "italic",
-    },
-    headerActions: {
-        alignItems: "flex-end",
-    },
-    statusIndicator: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: 4,
-        borderRadius: 12,
-        ...Shadows.sm,
-    },
-    liveIndicator: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        marginRight: 6,
-    },
-    liveText: {
-        ...Typography.label.small,
-        fontWeight: "bold",
         letterSpacing: 0.5,
     },
     bottomBorder: {
@@ -126,7 +124,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 1,
-        opacity: 0.1,
+        opacity: 0.5,
     },
 });
 
