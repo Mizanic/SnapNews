@@ -3,8 +3,9 @@ import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { addLike, removeLike } from "@/dux/action/like/likeActions";
 import { useDispatch } from "react-redux";
-import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/Theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
+import { useThemeColors } from "@/hooks/useThemeColor";
 
 interface LikeButtonProps {
     item_hash: string;
@@ -13,6 +14,7 @@ interface LikeButtonProps {
 
 const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
     const dispatch = useDispatch();
+    const colors = useThemeColors();
 
     const toggleLike = () => {
         if (!isLiked) {
@@ -23,15 +25,33 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
     };
 
     return (
-        <TouchableOpacity onPress={toggleLike} style={[styles.button, isLiked && styles.buttonActive]} activeOpacity={0.7}>
+        <TouchableOpacity
+            onPress={toggleLike}
+            style={[
+                styles.button,
+                {
+                    backgroundColor: colors.backgroundColors.primary,
+                    borderColor: colors.borderColors.medium,
+                    shadowColor: colors.black,
+                },
+                isLiked && {
+                    backgroundColor: colors.accent.red,
+                    borderColor: colors.accent.red,
+                    ...Shadows.md,
+                },
+            ]}
+            activeOpacity={0.7}
+        >
             <View style={styles.buttonContent}>
                 <Ionicons
                     name={isLiked ? "heart" : "heart-outline"}
                     size={18}
-                    color={isLiked ? Colors.white : Colors.gray[600]}
+                    color={isLiked ? colors.white : colors.gray[600]}
                     style={{ marginRight: Spacing.xs }}
                 />
-                <Text style={[styles.buttonText, isLiked && styles.buttonTextActive]}>{isLiked ? "Liked" : "Like"}</Text>
+                <Text style={[styles.buttonText, { color: colors.textColors.secondary }, isLiked && { color: colors.white }]}>
+                    {isLiked ? "Liked" : "Like"}
+                </Text>
             </View>
         </TouchableOpacity>
     );
@@ -39,19 +59,12 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: Colors.background.primary,
         borderRadius: BorderRadius.lg,
         paddingVertical: Spacing.sm,
         paddingHorizontal: Spacing.md,
         borderWidth: 1,
-        borderColor: Colors.border.medium,
         minWidth: 80,
         ...Shadows.sm,
-    },
-    buttonActive: {
-        backgroundColor: Colors.accent.red,
-        borderColor: Colors.accent.red,
-        ...Shadows.md,
     },
     buttonContent: {
         flexDirection: "row",
@@ -60,11 +73,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         ...Typography.button.small,
-        color: Colors.text.secondary,
         fontWeight: "600",
-    },
-    buttonTextActive: {
-        color: Colors.white,
     },
 });
 

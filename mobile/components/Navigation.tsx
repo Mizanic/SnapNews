@@ -7,7 +7,9 @@ import { BlurView } from "expo-blur";
 import TopNewsScreen from "./TopNewsScreen";
 import LatestNewsScreen from "./LatestNewsScreen";
 import BookmarkScreen from "./BookmarkScreen";
-import { Colors, Spacing, Shadows, BorderRadius } from "@/constants/Theme";
+import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
+import { useThemeColors } from "@/hooks/useThemeColor";
+import useColorScheme from "@/hooks/useColorScheme.web";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabParamList = {
@@ -20,6 +22,8 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 const MainTabs: React.FC = () => {
     const insets = useSafeAreaInsets();
+    const colors = useThemeColors();
+    const colorScheme = useColorScheme();
 
     return (
         <Tab.Navigator
@@ -34,28 +38,37 @@ const MainTabs: React.FC = () => {
 
                 return {
                     tabBarIcon: ({ focused, size }) => (
-                        <View style={[styles.iconWrapper, focused && styles.iconWrapperFocused]}>
-                            <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
+                        <View style={[styles.iconWrapper, focused && { backgroundColor: colors.primary[50] }]}>
+                            <View style={[styles.iconContainer, focused && { backgroundColor: colors.white, ...Shadows.sm }]}>
                                 <IconComponent
                                     name={name}
                                     size={focused ? size : size - 2}
-                                    color={focused ? Colors.primary[600] : Colors.gray[500]}
+                                    color={focused ? colors.primary[600] : colors.gray[500]}
                                 />
                             </View>
-                            {focused && <View style={styles.focusedIndicator} />}
+                            {focused && <View style={[styles.focusedIndicator, { backgroundColor: colors.primary[600] }]} />}
                         </View>
                     ),
                     tabBarShowLabel: false,
                     tabBarBackground: () =>
                         Platform.OS === "ios" ? (
-                            <BlurView intensity={95} tint="light" style={StyleSheet.absoluteFill} />
+                            <BlurView intensity={95} tint={colorScheme === "dark" ? "dark" : "light"} style={StyleSheet.absoluteFill} />
                         ) : (
-                            <View style={[StyleSheet.absoluteFill, styles.androidTabBackground]} />
+                            <View
+                                style={[
+                                    StyleSheet.absoluteFill,
+                                    {
+                                        backgroundColor: colors.backgroundColors.primary,
+                                        borderTopLeftRadius: BorderRadius.xl,
+                                        borderTopRightRadius: BorderRadius.xl,
+                                    },
+                                ]}
+                            />
                         ),
                     tabBarStyle: {
                         height: 60 + insets.bottom,
                         paddingBottom: insets.bottom,
-                        backgroundColor: Platform.OS === "ios" ? "transparent" : Colors.background.primary,
+                        backgroundColor: Platform.OS === "ios" ? "transparent" : colors.backgroundColors.primary,
                         borderTopWidth: 0,
                         borderTopLeftRadius: BorderRadius.xl,
                         borderTopRightRadius: BorderRadius.xl,
@@ -63,7 +76,7 @@ const MainTabs: React.FC = () => {
                         ...Shadows.lg,
                         ...Platform.select({
                             ios: {
-                                shadowColor: Colors.black,
+                                shadowColor: colors.black,
                                 shadowOffset: { width: 0, height: -8 },
                                 shadowOpacity: 0.1,
                                 shadowRadius: 16,
@@ -94,9 +107,6 @@ const styles = StyleSheet.create({
         minWidth: 60,
         minHeight: 44,
     },
-    iconWrapperFocused: {
-        backgroundColor: Colors.primary[50],
-    },
     iconContainer: {
         alignItems: "center",
         justifyContent: "center",
@@ -105,21 +115,11 @@ const styles = StyleSheet.create({
         borderRadius: BorderRadius.md,
         marginBottom: 2,
     },
-    iconContainerFocused: {
-        backgroundColor: Colors.white,
-        ...Shadows.sm,
-    },
     focusedIndicator: {
         width: 24,
         height: 3,
-        backgroundColor: Colors.primary[600],
         borderRadius: BorderRadius.sm,
         marginTop: 2,
-    },
-    androidTabBackground: {
-        backgroundColor: Colors.background.primary,
-        borderTopLeftRadius: BorderRadius.xl,
-        borderTopRightRadius: BorderRadius.xl,
     },
 });
 

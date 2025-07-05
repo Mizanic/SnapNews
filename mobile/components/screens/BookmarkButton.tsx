@@ -4,8 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { addBookmark, removeBookmark } from "@/dux/action/bookmark/bookmarkActions";
 import { useDispatch } from "react-redux";
 import { NewsItem } from "@/model/newsItem";
-import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/Theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
+import { useThemeColors } from "@/hooks/useThemeColor";
 
 interface BookmarkButtonProps {
     news: NewsItem;
@@ -14,6 +15,7 @@ interface BookmarkButtonProps {
 
 const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) => {
     const dispatch = useDispatch();
+    const colors = useThemeColors();
 
     const toggleBookmark = () => {
         if (!isBookmarked) {
@@ -24,15 +26,33 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
     };
 
     return (
-        <TouchableOpacity onPress={toggleBookmark} style={[styles.button, isBookmarked && styles.buttonActive]} activeOpacity={0.7}>
+        <TouchableOpacity
+            onPress={toggleBookmark}
+            style={[
+                styles.button,
+                {
+                    backgroundColor: colors.backgroundColors.primary,
+                    borderColor: colors.borderColors.medium,
+                    shadowColor: colors.black,
+                },
+                isBookmarked && {
+                    backgroundColor: colors.accent.orange,
+                    borderColor: colors.accent.orange,
+                    ...Shadows.md,
+                },
+            ]}
+            activeOpacity={0.7}
+        >
             <View style={styles.buttonContent}>
                 <Ionicons
                     name={isBookmarked ? "bookmark" : "bookmark-outline"}
                     size={18}
-                    color={isBookmarked ? Colors.white : Colors.gray[600]}
+                    color={isBookmarked ? colors.white : colors.gray[600]}
                     style={{ marginRight: Spacing.xs }}
                 />
-                <Text style={[styles.buttonText, isBookmarked && styles.buttonTextActive]}>{isBookmarked ? "Saved" : "Save"}</Text>
+                <Text style={[styles.buttonText, { color: colors.textColors.secondary }, isBookmarked && { color: colors.white }]}>
+                    {isBookmarked ? "Saved" : "Save"}
+                </Text>
             </View>
         </TouchableOpacity>
     );
@@ -40,19 +60,12 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: Colors.background.primary,
         borderRadius: BorderRadius.lg,
         paddingVertical: Spacing.sm,
         paddingHorizontal: Spacing.md,
         borderWidth: 1,
-        borderColor: Colors.border.medium,
         minWidth: 80,
         ...Shadows.sm,
-    },
-    buttonActive: {
-        backgroundColor: Colors.accent.orange,
-        borderColor: Colors.accent.orange,
-        ...Shadows.md,
     },
     buttonContent: {
         flexDirection: "row",
@@ -61,11 +74,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         ...Typography.button.small,
-        color: Colors.text.secondary,
         fontWeight: "600",
-    },
-    buttonTextActive: {
-        color: Colors.white,
     },
 });
 

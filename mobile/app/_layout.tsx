@@ -11,12 +11,13 @@ import AppHeader from "@/components/screens/AppHeader";
 import { Provider } from "react-redux";
 import store, { persistor } from "@/dux/store";
 import { PersistGate } from "redux-persist/integration/react";
-import { Colors } from "@/constants/Theme";
+import { useThemeColors } from "@/hooks/useThemeColor";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
+    const colors = useThemeColors();
     const [loaded] = useFonts({
         SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     });
@@ -35,7 +36,7 @@ export default function RootLayout() {
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
                 <SafeAreaProvider>
-                    <StatusBar style="light" backgroundColor={Colors.primary[600]} />
+                    <StatusBar style={colorScheme === "dark" ? "light" : "dark"} backgroundColor={colors.primary[600]} />
                     <AppHeader />
                     <Navigation />
                 </SafeAreaProvider>

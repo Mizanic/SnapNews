@@ -1,14 +1,17 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View, Share, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Spacing, BorderRadius, Shadows } from "@/constants/Theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
+import { useThemeColors } from "@/hooks/useThemeColor";
 
 interface ShareButtonProps {
     newsSourceUrl: string;
 }
 
 const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
+    const colors = useThemeColors();
+
     const handleShare = async () => {
         try {
             const result = await Share.share({
@@ -31,10 +34,21 @@ const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
     };
 
     return (
-        <TouchableOpacity onPress={handleShare} style={styles.button} activeOpacity={0.7}>
+        <TouchableOpacity
+            onPress={handleShare}
+            style={[
+                styles.button,
+                {
+                    backgroundColor: colors.backgroundColors.primary,
+                    borderColor: colors.borderColors.medium,
+                    shadowColor: colors.black,
+                },
+            ]}
+            activeOpacity={0.7}
+        >
             <View style={styles.buttonContent}>
-                <Ionicons name="share-social-outline" size={18} color={Colors.gray[600]} style={{ marginRight: Spacing.xs }} />
-                <Text style={styles.buttonText}>Share</Text>
+                <Ionicons name="share-social-outline" size={18} color={colors.gray[600]} style={{ marginRight: Spacing.xs }} />
+                <Text style={[styles.buttonText, { color: colors.textColors.secondary }]}>Share</Text>
             </View>
         </TouchableOpacity>
     );
@@ -42,12 +56,10 @@ const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: Colors.background.primary,
         borderRadius: BorderRadius.lg,
         paddingVertical: Spacing.sm,
         paddingHorizontal: Spacing.md,
         borderWidth: 1,
-        borderColor: Colors.border.medium,
         minWidth: 80,
         ...Shadows.sm,
     },
@@ -58,7 +70,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         ...Typography.button.small,
-        color: Colors.text.secondary,
         fontWeight: "600",
     },
 });

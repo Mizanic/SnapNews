@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import NewsList from "./screens/NewsList";
 import { useSelector } from "react-redux";
-import { Colors, Spacing } from "@/constants/Theme";
+import { Spacing } from "@/constants/Theme";
+import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LatestNewsScreen: React.FC = () => {
@@ -12,6 +13,7 @@ const LatestNewsScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
     const insets = useSafeAreaInsets();
+    const colors = useThemeColors();
 
     const fetchNews = async () => {
         setLoading(true);
@@ -39,7 +41,7 @@ const LatestNewsScreen: React.FC = () => {
     }, [activeTab]);
 
     return (
-        <View style={[styles.container, { paddingBottom: 60 + insets.bottom }]}>
+        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
             <NewsList data={newsData} loading={loading} bookmarks={new Set(Object.keys(bookmarks))} likes={new Set(Object.keys(likes))} />
         </View>
     );
@@ -48,7 +50,6 @@ const LatestNewsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background.secondary,
     },
     text: {
         fontSize: 18,

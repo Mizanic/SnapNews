@@ -2,45 +2,47 @@ import React from "react";
 import { View, Text, StyleSheet, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Typography } from "@/constants/Fonts";
-import { Colors, Spacing, Shadows } from "@/constants/Theme";
+import { Spacing, Shadows } from "@/constants/Theme";
+import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
+    const colors = useThemeColors();
 
     return (
         <>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
+            <StatusBar barStyle="light-content" backgroundColor={colors.primary[600]} />
             <LinearGradient
-                colors={[Colors.primary[500], Colors.primary[600], Colors.primary[700]]}
+                colors={[colors.primary[500], colors.primary[600], colors.primary[700]]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={[styles.headerContainer, { paddingTop: insets.top }]}
             >
                 <View style={styles.headerContent}>
                     <View style={styles.logoContainer}>
-                        <View style={styles.logoIconContainer}>
+                        <View style={[styles.logoIconContainer, { backgroundColor: colors.white }]}>
                             <Text style={styles.logoIcon}>📰</Text>
                         </View>
                         <View style={styles.logoTextContainer}>
-                            <Text style={styles.logoText}>
-                                <Text style={styles.logoBold}>Snap</Text>
-                                <Text style={styles.logoLight}>News</Text>
+                            <Text style={[styles.logoText, { color: colors.white }]}>
+                                <Text style={[styles.logoBold, { color: colors.white }]}>Snap</Text>
+                                <Text style={[styles.logoLight, { color: colors.white }]}>News</Text>
                             </Text>
-                            <Text style={styles.taglineText}>Stay Informed, Stay Ahead</Text>
+                            <Text style={[styles.taglineText, { color: colors.white }]}>Stay Informed, Stay Ahead</Text>
                         </View>
                     </View>
 
                     <View style={styles.headerActions}>
-                        <View style={styles.statusIndicator}>
-                            <View style={styles.liveIndicator} />
-                            <Text style={styles.liveText}>LIVE</Text>
+                        <View style={[styles.statusIndicator, { backgroundColor: colors.accent.red }]}>
+                            <View style={[styles.liveIndicator, { backgroundColor: colors.white }]} />
+                            <Text style={[styles.liveText, { color: colors.white }]}>LIVE</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Subtle bottom border */}
-                <View style={styles.bottomBorder} />
+                <View style={[styles.bottomBorder, { backgroundColor: colors.white }]} />
             </LinearGradient>
         </>
     );
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         borderRadius: 12,
-        backgroundColor: Colors.white,
         alignItems: "center",
         justifyContent: "center",
         marginRight: Spacing.md,
@@ -81,23 +82,19 @@ const styles = StyleSheet.create({
     },
     logoText: {
         ...Typography.heading.h2,
-        color: Colors.white,
         marginBottom: 2,
     },
     logoBold: {
         ...Typography.heading.h2,
         fontFamily: Typography.heading.h1.fontFamily,
-        color: Colors.white,
     },
     logoLight: {
         ...Typography.heading.h2,
         fontFamily: Typography.bodyText.medium.fontFamily,
-        color: Colors.white,
         opacity: 0.95,
     },
     taglineText: {
         ...Typography.captionText.large,
-        color: Colors.white,
         opacity: 0.85,
         fontStyle: "italic",
     },
@@ -107,7 +104,6 @@ const styles = StyleSheet.create({
     statusIndicator: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: Colors.accent.red,
         paddingHorizontal: Spacing.sm,
         paddingVertical: 4,
         borderRadius: 12,
@@ -117,12 +113,10 @@ const styles = StyleSheet.create({
         width: 6,
         height: 6,
         borderRadius: 3,
-        backgroundColor: Colors.white,
         marginRight: 6,
     },
     liveText: {
         ...Typography.label.small,
-        color: Colors.white,
         fontWeight: "bold",
         letterSpacing: 0.5,
     },
@@ -132,7 +126,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 1,
-        backgroundColor: Colors.white,
         opacity: 0.1,
     },
 });
