@@ -90,6 +90,11 @@ export class ApiStack extends Stack {
             deployOptions: {
                 stageName: "v1",
             },
+            defaultCorsPreflightOptions: {
+                allowOrigins: ["*"],
+                allowMethods: apigw.Cors.ALL_METHODS,
+                allowHeaders: ["*"],
+            },
             endpointTypes: [apigw.EndpointType.REGIONAL],
             minCompressionSize: Size.bytes(0),
         });

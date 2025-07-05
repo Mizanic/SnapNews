@@ -3,8 +3,8 @@ export interface NewsItem {
     published: string;
     item_hash: string;
     media: {
-      image_url: string;
-      video_url: string | null;
+        image_url: string;
+        video_url: string | null;
     };
     headline: string;
     news_url: string;
@@ -12,5 +12,4 @@ export interface NewsItem {
     sk: string;
     source: string;
     pk: string;
-  }
-  
+}

@@ -9,7 +9,7 @@ import json
 
 # ==================================================================================================
 # AWS imports
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
@@ -23,7 +23,12 @@ from shared.logger import logger
 DURATION_HOURS = 14 * 24
 PAGE_SIZE = 50
 
-app = APIGatewayRestResolver(enable_validation=True)
+cors_config = CORSConfig(
+    allow_origin="*",
+    allow_headers=["*"],
+)
+
+app = APIGatewayRestResolver(enable_validation=True, cors=cors_config)
 
 app.enable_swagger(path="/docs", title="News Feed API", version="1.0.0", description="API for the News Feed")
 
