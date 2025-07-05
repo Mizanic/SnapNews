@@ -64,6 +64,7 @@ export const Colors = {
         secondary: "#f8fafc",
         tertiary: "#f1f5f9",
         dark: "#0f172a",
+        opaque: "rgba(0, 0, 0, 0.5)",
     },
 
     // Text Colors

@@ -48,19 +48,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     return (
         <View style={styles.card}>
             <View style={styles.imageWrapper}>
-                <ImageSection image={news.media.image_url} label={news.source} />
-
-                {/* Top overlay with metadata */}
-                <View style={styles.topOverlay}>
-                    <View style={styles.metadataContainer}>
-                        <View style={styles.timeChip}>
-                            <Text style={styles.timeText}>{formatRelativeTime(news.published)}</Text>
-                        </View>
-                        <View style={styles.sourceChip}>
-                            <Text style={styles.sourceText}>{news.source}</Text>
-                        </View>
-                    </View>
-                </View>
+                <ImageSection image={news.media.image_url} sourceName={news.source_name} timeLabel={formatRelativeTime(news.published)} />
 
                 {/* Bottom gradient overlay with title */}
                 <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
@@ -103,43 +91,7 @@ const styles = StyleSheet.create({
         aspectRatio: 16 / 9,
         overflow: "hidden",
     },
-    topOverlay: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        padding: Spacing.md,
-        zIndex: 10,
-    },
-    metadataContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-    },
-    timeChip: {
-        backgroundColor: Colors.secondary[800],
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: 6,
-        borderRadius: BorderRadius.md,
-        ...Shadows.sm,
-    },
-    timeText: {
-        ...Typography.captionText.medium,
-        color: Colors.white,
-        fontWeight: "600",
-    },
-    sourceChip: {
-        backgroundColor: Colors.primary[600],
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: 6,
-        borderRadius: BorderRadius.md,
-        ...Shadows.sm,
-    },
-    sourceText: {
-        ...Typography.captionText.medium,
-        color: Colors.white,
-        fontWeight: "600",
-    },
+
     gradientOverlay: {
         position: "absolute",
         bottom: 0,
