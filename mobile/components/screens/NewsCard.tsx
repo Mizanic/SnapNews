@@ -125,12 +125,12 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         paddingHorizontal: Spacing.md,
-        paddingBottom: Spacing.lg,
+        paddingBottom: Spacing.sm,
         paddingTop: Spacing.xxxl,
         justifyContent: "flex-end",
     },
     titleContainer: {
-        marginBottom: Spacing.sm,
+        marginBottom: Spacing.xs,
     },
     headlineText: {
         ...Typography.heading.h3,

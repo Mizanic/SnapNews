@@ -55,19 +55,19 @@ export const Typography = {
             letterSpacing: -0.25,
         },
         h2: {
-            fontFamily: Fonts.Primary.semiBold,
+            fontFamily: Fonts.Accent.semiBold,
             fontSize: 20,
             lineHeight: 28,
             letterSpacing: 0,
         },
         h3: {
-            fontFamily: Fonts.Primary.semiBold,
+            fontFamily: Fonts.Accent.semiBold,
             fontSize: 18,
             lineHeight: 26,
             letterSpacing: 0,
         },
         h4: {
-            fontFamily: Fonts.Primary.semiBold,
+            fontFamily: Fonts.Accent.semiBold,
             fontSize: 16,
             lineHeight: 24,
             letterSpacing: 0,

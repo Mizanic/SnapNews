@@ -50,7 +50,6 @@ const AppHeader: React.FC = () => {
 
                     {/* Center - Logo */}
                     <View style={styles.logoContainer}>
-                        <Text style={styles.logoIcon}>📰</Text>
                         <Text style={[styles.logoText, { color: redditRed }]}>
                             <Text style={[styles.logoBold, { color: redditRed }]}>Snap</Text>
                             <Text style={[styles.logoLight, { color: redditRed }]}>News</Text>
@@ -72,7 +71,7 @@ const AppHeader: React.FC = () => {
 
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingBottom: Spacing.lg,
+        paddingBottom: Spacing.sm,
         ...Shadows.md,
         elevation: 4,
         borderBottomWidth: 1,
@@ -81,8 +80,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingHorizontal: Spacing.lg,
-        paddingTop: Spacing.md,
+        paddingHorizontal: Spacing.xs,
+        paddingTop: Spacing.sm,
     },
     iconButton: {
         width: 44,
@@ -95,11 +94,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         flex: 1,
-        justifyContent: "center",
-    },
-    logoIcon: {
-        fontSize: 28,
-        marginRight: Spacing.sm,
+        justifyContent: "flex-start",
     },
     logoText: {
         ...Typography.heading.h2,
