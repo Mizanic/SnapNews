@@ -96,10 +96,14 @@ mobile-build:
 	@echo ">>> Building mobile app..."
 	./.scripts/mobile-build.sh
 
+mobile-web:
+	@echo ">>> Building mobile web app..."
+	cd mobile && npx expo start --web
 
 # --- Phony Targets ---
 # Ensures these targets run even if a file with the same name exists
 
 .PHONY: help deploy hotswap destroy \
 		deploy-all layers config-env \
-		test-reader create-user set-sources dev
+		test-reader create-user set-sources dev \
+		mobile-dev mobile-build mobile-web
