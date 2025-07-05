@@ -86,6 +86,17 @@ dev:
 	npm run --prefix ./admin/ dev
 
 
+# --- Mobile Frontend ---
+
+mobile-dev:
+	@echo ">>> Starting mobile dev server..."
+	./.scripts/mobile-dev.sh
+
+mobile-build:
+	@echo ">>> Building mobile app..."
+	./.scripts/mobile-build.sh
+
+
 # --- Phony Targets ---
 # Ensures these targets run even if a file with the same name exists
 
