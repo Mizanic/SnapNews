@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { addBookmark, removeBookmark } from "@/dux/action/bookmark/bookmarkActions";
+import { addBookmark, removeBookmark } from "@/store/action/bookmark/bookmarkActions";
 import { useDispatch } from "react-redux";
 import { NewsItem } from "@/model/newsItem";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";

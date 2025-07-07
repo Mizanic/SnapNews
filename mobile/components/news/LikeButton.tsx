@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { addLike, removeLike } from "@/dux/action/like/likeActions";
+import { addLike, removeLike } from "@/store/action/like/likeActions";
 import { useDispatch } from "react-redux";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";

@@ -1,15 +1,15 @@
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import Navigation from "@/components/Navigation";
+import MainTabs from "@/app/(tabs)/_layout";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
 import useColorScheme from "@/hooks/useColorScheme.web";
-import AppHeader from "@/components/screens/AppHeader";
+
 import { Provider } from "react-redux";
-import store, { persistor } from "@/dux/store";
+import store, { persistor } from "@/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { useThemeColors } from "@/hooks/useThemeColor";
 
@@ -37,8 +37,7 @@ export default function RootLayout() {
             <PersistGate loading={null} persistor={persistor}>
                 <SafeAreaProvider>
                     <StatusBar style={colorScheme === "dark" ? "light" : "dark"} backgroundColor={colors.primary[600]} />
-                    <AppHeader />
-                    <Navigation />
+                    <MainTabs />
                 </SafeAreaProvider>
             </PersistGate>
         </Provider>

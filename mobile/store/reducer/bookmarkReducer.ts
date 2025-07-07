@@ -1,5 +1,5 @@
 import { ADD_BOOKMARK, REMOVE_BOOKMARK } from "../actionTypes";
-import { NewsItem } from "../../model/newsItem";
+import { NewsItem } from "@/model/newsItem";
 import { bookmarkInitialState } from "../initialState";
 import { AnyAction } from "redux";
 

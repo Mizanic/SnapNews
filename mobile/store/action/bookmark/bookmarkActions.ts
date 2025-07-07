@@ -1,5 +1,5 @@
 import { NewsItem } from "@/model/newsItem";
-import { ADD_BOOKMARK, REMOVE_BOOKMARK } from "@/dux/actionTypes";
+import { ADD_BOOKMARK, REMOVE_BOOKMARK } from "@/store/actionTypes";
 
 export const addBookmark = (newsItem: NewsItem) => {
     return {

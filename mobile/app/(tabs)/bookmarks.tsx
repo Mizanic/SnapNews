@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Text, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import NewsCard from "./screens/NewsCard";
+import NewsCard from "@/components/news/NewsCard";
 import { Spacing } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Typography } from "@/constants/Fonts";

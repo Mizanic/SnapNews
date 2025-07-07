@@ -4,11 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   LIKE,
   UNLIKE,
-} from '@/dux/actionTypes';
+} from '@/store/actionTypes';
 import { BASE_RETRY_DELAY_MS, FAILED_LIKE_EVENTS_KEY, LIKE_API_URL, MAX_RETRY_ATTEMPTS, UNLIKE_API_URL } from '@/globalConfig';
 
 
-export const likeEventMiddleware: Middleware = store => next => async action => {
+export const likeEventMiddleware: Middleware = store => next => async (action: any) => {
   next(action);
 
   if (action.type === LIKE || action.type === UNLIKE) {

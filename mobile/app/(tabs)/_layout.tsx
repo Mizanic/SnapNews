@@ -4,12 +4,13 @@ import { View, StyleSheet, Platform } from "react-native";
 import { MaterialCommunityIcons, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
-import TopNewsScreen from "./TopNewsScreen";
-import LatestNewsScreen from "./LatestNewsScreen";
-import BookmarkScreen from "./BookmarkScreen";
+import TopNewsScreen from "./top";
+import LatestNewsScreen from "./index";
+import BookmarkScreen from "./bookmarks";
 import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import useColorScheme from "@/hooks/useColorScheme.web";
+import AppHeader from "@/components/news/AppHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabParamList = {
@@ -86,7 +87,8 @@ const MainTabs: React.FC = () => {
                             },
                         }),
                     },
-                    headerShown: false,
+                    headerShown: true,
+                    header: () => <AppHeader />,
                 };
             }}
         >

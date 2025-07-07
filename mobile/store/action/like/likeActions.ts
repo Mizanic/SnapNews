@@ -1,4 +1,4 @@
-import { LIKE, UNLIKE } from "@/dux/actionTypes";
+import { LIKE, UNLIKE } from "@/store/actionTypes";
 
 export const addLike = (item_hash: string) => {
     return {

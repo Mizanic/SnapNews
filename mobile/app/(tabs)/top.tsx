@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import NewsList from "./screens/NewsList";
+import NewsList from "@/components/news/NewsList";
 import { useSelector } from "react-redux";
 import { Spacing } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const LatestNewsScreen: React.FC = () => {
-    const [activeTab, setActiveTab] = useState("latest");
+const TopNewsScreen: React.FC = () => {
+    const [activeTab, setActiveTab] = useState("top");
     const [newsData, setNewsData] = useState([]);
     const [loading, setLoading] = useState(true);
     const bookmarks = useSelector((state: any) => state.bookmarks);
@@ -19,7 +19,7 @@ const LatestNewsScreen: React.FC = () => {
         setLoading(true);
         try {
             const response = await fetch(
-                "https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed?country=IND&language=ENG&category=LATEST",
+                "https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed?country=IND&language=ENG&category=TOP",
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LatestNewsScreen;
+export default TopNewsScreen;
