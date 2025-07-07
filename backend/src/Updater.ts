@@ -48,7 +48,7 @@ export class UpdaterStack extends Stack {
         // Fetch dynamodb main table and local index
         const newsTable = dynamodb.Table.fromTableAttributes(this, `${props.constants.APP_NAME}-NewsTable`, {
             tableName: tableName.stringValue,
-            localIndexes: ["byItemHash"],
+            localIndexes: ["byItemHash", "byPopScore"],
             grantIndexPermissions: true,
         });
 
