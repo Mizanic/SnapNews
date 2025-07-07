@@ -38,7 +38,7 @@ class NewsItemModel(BaseModel):
     headline: str
     published: str
     summary: str
-
+    tags: Optional[list[str]]
     # content: str #This will be added later. Not being used to save space in DynamoDB
     media: NewsMediaModel
 

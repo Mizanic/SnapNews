@@ -17,4 +17,10 @@ const useThemeColor = (props: { light?: string; dark?: string }, colorName: keyo
     }
 };
 
+// Hook to get theme-aware colors
+export const useThemeColors = () => {
+    const theme = useColorScheme() ?? "light";
+    return Colors[theme];
+};
+
 export default useThemeColor;

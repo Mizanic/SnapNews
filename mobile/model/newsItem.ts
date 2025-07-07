@@ -1,15 +1,20 @@
 export interface NewsItem {
-    summary: string;
-    published: string;
+    pk: string;
+    sk: string;
     item_hash: string;
+    ttl: string;
+    source_name: string;
+    source_id: string;
+    category: string;
+    country: string;
+    language: string;
+    news_url: string;
+    headline: string;
+    published: string;
+    summary: string;
     media: {
         image_url: string;
         video_url: string | null;
     };
-    headline: string;
-    news_url: string;
-    ttl: string;
-    sk: string;
-    source: string;
-    pk: string;
+    tags: string[];
 }
