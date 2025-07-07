@@ -56,7 +56,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: 
         feed_url: The URL of the RSS feed.
 
     Returns:
-        A list of dictionaries representing the feed items.
+        A list of SourceNewsModel objects representing the feed items.
 
     Raises:
         FeedFetchError: If the feed cannot be fetched (network, timeout, bad status).
@@ -91,7 +91,7 @@ def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: 
         # Use lxml to parse. It often handles encoding better.
         # Use recover=True to try and parse even slightly broken XML
         parser = ET.XMLParser(recover=True, strip_cdata=False, resolve_entities=False)
-        xml_root = ET.fromstring(response.content, parser=parser)  # noqa: S320
+        xml_root = ET.fromstring(response.content, parser=parser)
     except ET.XMLSyntaxError as e:
         logger.error(f"Failed to parse XML from {feed_url} using lxml", exc_info=e)
         # Log part of the content for debugging (carefully)
