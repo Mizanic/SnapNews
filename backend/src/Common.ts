@@ -39,6 +39,11 @@ export class CommonStack extends Stack {
             sortKey: { name: "item_hash", type: dynamodb.AttributeType.STRING },
         });
 
+        table.addLocalSecondaryIndex({
+            indexName: "byTop",
+            sortKey: { name: "sk_top", type: dynamodb.AttributeType.STRING },
+        });
+
         ////////////////////////////////////////////////////////////
         // Common Layer for lambda functions
         ////////////////////////////////////////////////////////////
