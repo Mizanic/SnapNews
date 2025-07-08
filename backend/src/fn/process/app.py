@@ -5,8 +5,10 @@
 
 # ==================================================================================================
 # Python imports
-import json
+import json  # noqa: I001
 import os
+
+from pydantic import ValidationError
 
 # ==================================================================================================
 # AWS imports
@@ -19,6 +21,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from lib.aws_utils import get_feed_from_s3
 from lib.preprocess import inject_metadata, validate_feed_items
 from shared.logger import logger
+from shared.news_model import ProcessedNewsItemModel
 
 # ==================================================================================================
 # Global declarations
@@ -32,7 +35,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     """
     This function is used to read RSS feeds
     """
-    logger.info("I'm a process being invoked by S3 Notification!")
+    logger.info("Processing feed!")
     logger.info(event.raw_event)
     logger.info(context)
 
@@ -42,13 +45,16 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     # Read the file from S3
 
     logger.info("Reading file from S3")
-    feed = get_feed_from_s3(bucket_name, object_name)
 
-    logger.info(feed)
+    try:
+        feed = get_feed_from_s3(bucket_name, object_name)
+    except ValidationError as e:
+        logger.error(f"Validation error for feed {object_name}", exc_info=e)
+        raise e
 
     feed_with_metadata = inject_metadata(feed)
 
-    validated_feed, defective_feed = validate_feed_items(feed_with_metadata)
+    validated_feed, defective_feed = validate_feed_items(feed_with_metadata.model_dump()["feed"])
 
     logger.info(f"Validated feed: {validated_feed}")
     logger.info(f"Defective feed: {defective_feed}")
@@ -56,6 +62,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     # Send the message to SQS
     for item in validated_feed:
         logger.info(f"Processing item {item}")
+        ProcessedNewsItemModel.model_validate(item)
         # query dynamodb to see if the item exists by using "item_hash" as the sk in LSI named "byItemHash"
         try:
             queue.send_message(MessageBody=json.dumps(item))

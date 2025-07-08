@@ -18,11 +18,22 @@ class NewsMediaModel(BaseModel):
     This class defines the data model for the media object in the news feed
     """
 
-    image_url: Optional[str] = None
+    image_url: str
     video_url: Optional[str] = Field(default=None)
 
 
-class SourceNewsModel(BaseModel):
+class MetricsModel(BaseModel):
+    """
+    This class defines the data model for the metrics object in the news feed
+    """
+
+    views: int
+    likes: int
+    bookmarks: int
+    shares: int
+
+
+class SourceNewsItemModel(BaseModel):
     """
     This class defines the data model for the default object in the news feed
     """
@@ -40,18 +51,15 @@ class SourceNewsModel(BaseModel):
     media: NewsMediaModel
 
 
-class MetricsModel(BaseModel):
+class SourceNewsFeedModel(BaseModel):
     """
-    This class defines the data model for the metrics object in the news feed
+    This class defines the data model for the news feed
     """
 
-    views: int
-    likes: int
-    bookmarks: int
-    shares: int
+    feed: list[SourceNewsItemModel]
 
 
-class NewsItemModel(BaseModel):
+class ProcessedNewsItemModel(SourceNewsItemModel):
     """
     This class defines the data model for the news feed
     """
@@ -60,9 +68,7 @@ class NewsItemModel(BaseModel):
     pk: str
     sk: str
     ttl: int
-
-    # News default
-    news: SourceNewsModel
+    item_hash: str
 
     # News metrics
     metrics: MetricsModel
@@ -71,9 +77,9 @@ class NewsItemModel(BaseModel):
     sk_top: str
 
 
-class NewsFeedModel(BaseModel):
+class ProcessedNewsFeedModel(BaseModel):
     """
     This class defines the data model for the news feed
     """
 
-    feed: list[NewsItemModel]
+    feed: list[ProcessedNewsItemModel]

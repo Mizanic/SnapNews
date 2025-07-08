@@ -93,6 +93,7 @@ export class ProcessStack extends Stack {
             environment: {
                 PROCESSED_NEWS_QUEUE_NAME: processedNewsQueue.queueName,
                 NEWS_TABLE_NAME: table.tableName,
+                LOG_LEVEL: props.constants.LOG_LEVEL,
             },
             layers: [commonLayer, powertoolsLayer],
         });
