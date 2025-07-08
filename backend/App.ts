@@ -45,11 +45,11 @@ const api = new ApiStack(app, `${APP_NAME}-ApiStack`, {
     params: PARAMS,
 });
 
-// admin.addDependency(common);
-// reader.addDependency(common);
-// process.addDependency(common);
-// updater.addDependency(common);
-// api.addDependency(common);
+admin.addDependency(common);
+reader.addDependency(common);
+process.addDependency(common);
+updater.addDependency(common);
+api.addDependency(common);
 
 // Add tags to all resources
 
