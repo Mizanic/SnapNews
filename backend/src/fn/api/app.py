@@ -14,13 +14,12 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
 # Module imports
-from lib.feed_handler import get_feed, like_news_item
+from lib.feed_handler import get_feed
 from shared.lambda_response import RESPONSE
 from shared.logger import logger
 
 # ==================================================================================================
 # Global declarations
-DURATION_HOURS = 14 * 24
 PAGE_SIZE = 50
 
 cors_config = CORSConfig(
@@ -48,26 +47,24 @@ def feed() -> dict:
     return RESPONSE(response)
 
 
-@app.get("/feed")
-def feed_paginated() -> dict:
+@app.get("/feed/latest")
+def feed_latest() -> dict:
     """
-    Get the paginated feed
+    Get the latest feed sorted by time
     """
 
     # Get the country and language from query string
     country = app.current_event["queryStringParameters"].get("country") if app.current_event["queryStringParameters"] else None
     language = app.current_event["queryStringParameters"].get("language") if app.current_event["queryStringParameters"] else None
-    category = app.current_event["queryStringParameters"].get("category") if app.current_event["queryStringParameters"] else None
 
-    if not all([country, language, category]):
-        logger.error("Missing required parameters: country, language, or category")
+    if not all([country, language]):
+        logger.error("Missing required parameters: country, language")
         # Return an appropriate error response
         return RESPONSE(status_code=400, body={"news": [], "page_key": None, "error": "Missing required parameters"})
 
     # Check if any Query String Parameters are passed
     page_key = app.current_event["queryStringParameters"].get("page_key") if app.current_event["queryStringParameters"] else None
 
-    logger.info(f"category: {category}")
     logger.info(f"start_key: {page_key}")
     logger.info(f"country: {country}")
     logger.info(f"language: {language}")
@@ -75,14 +72,13 @@ def feed_paginated() -> dict:
     # Fetch the feed from the database
 
     response_params = {
-        "category": category,
+        "view": "LATEST",
         "page_key": page_key,
         "country": country,
         "language": language,
     }
 
     response = get_feed(
-        duration_hours=DURATION_HOURS,
         item_limit=PAGE_SIZE,
         params=response_params,
     )
@@ -92,25 +88,60 @@ def feed_paginated() -> dict:
     return RESPONSE(response)
 
 
-@app.post("/like")
-def like() -> dict:
+@app.get("/feed/top")
+def feed_top() -> dict:
     """
-    Like a news item
+    Get the top feed sorted by popularity
     """
 
-    # Get the item_pk and item_hash from the body. item_hash is used as the sort key
-    item_pk = json.loads(app.current_event["body"])["item_pk"]
-    item_hash = json.loads(app.current_event["body"])["item_hash"]
-    logger.info(f"item_pk: {item_pk}")
-    logger.info(f"item_hash: {item_hash}")
+    # Get the country and language from query string
+    country = app.current_event["queryStringParameters"].get("country") if app.current_event["queryStringParameters"] else None
+    language = app.current_event["queryStringParameters"].get("language") if app.current_event["queryStringParameters"] else None
 
-    try:
-        like_news_item(item_hash=item_hash, item_pk=item_pk)
-    except Exception as e:
-        logger.error(f"Error liking news item: {e}")
-        raise e
+    if not all([country, language]):
+        logger.error("Missing required parameters: country, language")
+        # Return an appropriate error response
+        return RESPONSE(status_code=400, body={"news": [], "page_key": None, "error": "Missing required parameters"})
 
-    return RESPONSE({"message": "Liked"})
+    # Check if any Query String Parameters are passed
+    page_key_param = app.current_event["queryStringParameters"].get("page_key") if app.current_event["queryStringParameters"] else None
+
+    # For top view, page_key might be a JSON string containing sk and sk_top
+    page_key = None
+    if page_key_param:
+        try:
+
+            # Try to parse as JSON for complex pagination key
+            page_key = json.loads(page_key_param)
+        except (json.JSONDecodeError, TypeError):
+            # If it's not JSON, treat as simple string (backward compatibility)
+            page_key = page_key_param
+
+    logger.info(f"page_key: {page_key}")
+    logger.info(f"country: {country}")
+    logger.info(f"language: {language}")
+
+    # Fetch the feed from the database
+
+    response_params = {
+        "view": "TOP",
+        "page_key": page_key,
+        "country": country,
+        "language": language,
+    }
+
+    response = get_feed(
+        item_limit=PAGE_SIZE,
+        params=response_params,
+    )
+
+    # Convert page_key back to JSON string if it's a dict for the client
+    if response.get("page_key") and isinstance(response["page_key"], dict):
+        response["page_key"] = json.dumps(response["page_key"])
+
+    logger.info(response)
+
+    return RESPONSE(response)
 
 
 def main(event: dict, context: LambdaContext):  # noqa: ANN201

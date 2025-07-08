@@ -40,7 +40,7 @@ export class ApiStack extends Stack {
 
         const newsTable = dynamodb.Table.fromTableAttributes(this, "NewsTable", {
             tableName: tableName.stringValue,
-            localIndexes: ["byItemHash", "byPopScore"],
+            localIndexes: ["byItemHash", "byTop"],
             grantIndexPermissions: true,
         });
 
