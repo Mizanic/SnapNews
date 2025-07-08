@@ -5,10 +5,11 @@ import { useSelector } from "react-redux";
 import { Spacing } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NewsItem } from "@/model/newsItem";
 
 const LatestNewsScreen: React.FC = () => {
     const [activeTab, setActiveTab] = useState("latest");
-    const [newsData, setNewsData] = useState([]);
+    const [newsData, setNewsData] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
@@ -18,17 +19,14 @@ const LatestNewsScreen: React.FC = () => {
     const fetchNews = async () => {
         setLoading(true);
         try {
-            const response = await fetch(
-                "https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed?country=IND&language=ENG&category=LATEST",
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                }
-            );
+            const response = await fetch("https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed/latest?country=IND&language=ENG", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            });
             const data = await response.json();
-            setNewsData(data?.body?.news);
+            setNewsData(data?.body?.news as NewsItem[]);
         } catch (error) {
             console.error("Error fetching news:", error);
         } finally {

@@ -18,15 +18,12 @@ const TopNewsScreen: React.FC = () => {
     const fetchNews = async () => {
         setLoading(true);
         try {
-            const response = await fetch(
-                "https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed?country=IND&language=ENG&category=TOP",
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                }
-            );
+            const response = await fetch("https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed/top?country=IND&language=ENG", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            });
             const data = await response.json();
             setNewsData(data?.body?.news);
         } catch (error) {
