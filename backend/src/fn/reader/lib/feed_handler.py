@@ -9,10 +9,12 @@
 import requests
 import requests.exceptions
 from lxml import etree as ET  # noqa: N812
+from pydantic import ValidationError
 
 # ==================================================================================================
 # Module imports
 from shared.logger import logger  # Import the Powertools logger
+from shared.news_model import SourceNewsFeedModel
 
 from . import parsers
 
@@ -47,7 +49,7 @@ HEADERS = {"User-Agent": "SnapNewsReader/1.0"}  # It's good practice to identify
 XML_CONTENT_TYPES = ["application/xml", "text/xml", "application/rss+xml", "application/atom+xml"]
 
 
-def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: str, country: str) -> list[dict]:
+def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: str, country: str) -> SourceNewsFeedModel:
     """
     Fetches and parses an RSS feed using lxml and custom parsers, raising specific exceptions on failure.
 
@@ -108,9 +110,14 @@ def get_feed_from_rss(feed_source: str, feed_url: str, category: str, language: 
     try:
         # Instantiate the parser and parse the feed
         feed_parser_instance = parser_class()
-        feed_items = feed_parser_instance.parse_feed(xml_root, category, language, country)
-        return feed_items
+        feed = feed_parser_instance.parse_feed(xml_root, category, language, country)
+        SourceNewsFeedModel.model_validate(feed)
+    except ValidationError as e:
+        logger.error(f"Validation error for feed {feed_url}", exc_info=e)
+        raise FeedParseError(f"Validation error for feed {feed_url}: {e}") from e
     except Exception as e:
         # Catching general Exception from within a specific parser
         logger.error(f"Error during execution of parser '{feed_source}' for {feed_url}", exc_info=True)
         raise ParserExecutionError(f"Parser '{feed_source}' failed for {feed_url}: {e}") from e
+
+    return feed
