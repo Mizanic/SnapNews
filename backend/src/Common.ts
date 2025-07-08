@@ -39,6 +39,11 @@ export class CommonStack extends Stack {
             sortKey: { name: "item_hash", type: dynamodb.AttributeType.STRING },
         });
 
+        table.addLocalSecondaryIndex({
+            indexName: "byTop",
+            sortKey: { name: "sk_top", type: dynamodb.AttributeType.STRING },
+        });
+
         ////////////////////////////////////////////////////////////
         // Common Layer for lambda functions
         ////////////////////////////////////////////////////////////
@@ -55,6 +60,7 @@ export class CommonStack extends Stack {
 
         const processedQueue = new sqs.Queue(this, `${props.constants.APP_NAME}-ProcessedQueue`, {
             queueName: `${props.constants.APP_NAME}-ProcessedQueue`,
+            removalPolicy: RemovalPolicy.DESTROY,
             visibilityTimeout: Duration.seconds(180),
         });
 

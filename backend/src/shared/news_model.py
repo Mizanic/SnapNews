@@ -3,9 +3,14 @@
 # THis module defines the datamodels for the news feed
 """
 
+# ==================================================================================================
+# Python imports
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+# ==================================================================================================
+# Data models
 
 
 class NewsMediaModel(BaseModel):
@@ -14,10 +19,47 @@ class NewsMediaModel(BaseModel):
     """
 
     image_url: str
-    video_url: Optional[str]
+    video_url: Optional[str] = Field(default=None)
 
 
-class NewsItemModel(BaseModel):
+class MetricsModel(BaseModel):
+    """
+    This class defines the data model for the metrics object in the news feed
+    """
+
+    views: int
+    likes: int
+    bookmarks: int
+    shares: int
+
+
+class SourceNewsItemModel(BaseModel):
+    """
+    This class defines the data model for the default object in the news feed
+    """
+
+    source_name: str
+    source_id: str
+    country: str
+    language: str
+    news_url: str
+    headline: str
+    published: str
+    summary: str
+    # content: str # This will be added later. Not being used to save space in DynamoDB
+    categories: list[str]
+    media: NewsMediaModel
+
+
+class SourceNewsFeedModel(BaseModel):
+    """
+    This class defines the data model for the news feed
+    """
+
+    feed: list[SourceNewsItemModel]
+
+
+class ProcessedNewsItemModel(SourceNewsItemModel):
     """
     This class defines the data model for the news feed
     """
@@ -25,27 +67,19 @@ class NewsItemModel(BaseModel):
     # Computed metadata
     pk: str
     sk: str
-    item_hash: str
     ttl: int
+    item_hash: str
 
-    # News content
-    source_name: str
-    source_id: str
-    category: str
-    country: str
-    language: str
-    news_url: str
-    headline: str
-    published: str
-    summary: str
-    tags: Optional[list[str]]
-    # content: str #This will be added later. Not being used to save space in DynamoDB
-    media: NewsMediaModel
+    # News metrics
+    metrics: MetricsModel
+
+    # Computed keys
+    sk_top: str
 
 
-class NewsFeedModel(BaseModel):
+class ProcessedNewsFeedModel(BaseModel):
     """
     This class defines the data model for the news feed
     """
 
-    feed: list[NewsItemModel]
+    feed: list[ProcessedNewsItemModel]

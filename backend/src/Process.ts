@@ -60,7 +60,7 @@ export class ProcessStack extends Stack {
         // Get the dynamodb table
         const table = dynamodb.Table.fromTableAttributes(this, "NewsTable", {
             tableName: tableName.stringValue,
-            localIndexes: ["byUrlHash"],
+            localIndexes: ["byItemHash"],
             grantIndexPermissions: true,
         });
 
@@ -93,6 +93,7 @@ export class ProcessStack extends Stack {
             environment: {
                 PROCESSED_NEWS_QUEUE_NAME: processedNewsQueue.queueName,
                 NEWS_TABLE_NAME: table.tableName,
+                POWERTOOLS_LOG_LEVEL: props.constants.LOG_LEVEL,
             },
             layers: [commonLayer, powertoolsLayer],
         });

@@ -1,7 +1,8 @@
 import { Text, StyleSheet } from "react-native";
 import { Typography } from "@/constants/Fonts";
+import { NewsItem } from "@/model/newsItem";
 
-const Summary: React.FC<{ description: string }> = ({ description }) => <Text style={styles.summary}>{description}</Text>;
+const Summary: React.FC<{ newsItem: NewsItem }> = ({ newsItem }) => <Text style={styles.summary}>{newsItem.summary}</Text>;
 
 const styles = StyleSheet.create({
     summary: {

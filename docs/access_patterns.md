@@ -1,22 +1,21 @@
 # NEWS
 
-| Access Pattern                       | Table/GSI/LSI      | Key Conditions                                        | Example |
-| ------------------------------------ | ------------------ | ----------------------------------------------------- | ------- |
-| Get news by category sorted by time  | Table              | pk=NEWS#{country}#{language}#{category}, sk=gte(time) | TBD     |
-| Get news by category sorted by likes | LSI (sk=likes)     | pk=NEWS#{country}#{language}#{category}, sk=gt(0)     | TBD     | xxx - sk not unique |
-| Get news by item_hash                | LSI (sk=item_hash) | pk=NEWS#{country}#{language}#{category}, sk=item_hash | TBD     |
+| Access Pattern                            | Table/GSI/LSI          | Key Conditions                             | Example |
+| ----------------------------------------- | ---------------------- | ------------------------------------------ | ------- |
+| Get news by category sorted by time       | Table                  | pk=NEWS#{country}#{language}, sk=gte(time) | TBD     |
+| Get news by category sorted by popularity | LSI (sk=sk_popularity) | pk=NEWS#{country}#{language}, sk=gt(0)     | TBD     | xxx - sk not unique |
+| Update news by pk, sk                     | Table                  | pk=pk, sk=sk                               | TBD     |
 
 Table Schema:
 
 ```
-pk: NEWS#{country}#{language}#{category}
-sk: time
-attributes:
-    - item_hash
+pk: NEWS#{country}#{language}
+sk: UUIDv7
+default_attributes:
     - ttl
+attributes:
     - source_name
     - source_id
-    - category
     - country
     - language
     - news_url
@@ -29,6 +28,8 @@ attributes:
     - bookmarks
     - shares
     - views
+computed_keys:
+    - sk_top: TOP#[f(views, likes, shares, bookmarks)]#uuidv7
 ```
 
 # SOURCE

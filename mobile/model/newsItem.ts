@@ -1,20 +1,32 @@
-export interface NewsItem {
-    pk: string;
-    sk: string;
-    item_hash: string;
-    ttl: string;
-    source_name: string;
-    source_id: string;
-    category: string;
-    country: string;
-    language: string;
-    news_url: string;
-    headline: string;
-    published: string;
-    summary: string;
-    media: {
-        image_url: string;
-        video_url: string | null;
-    };
-    tags: string[];
-}
+import { z } from "zod";
+
+export const MetricsSchema = z.object({
+    views: z.number(),
+    likes: z.number(),
+    shares: z.number(),
+    bookmarks: z.number(),
+});
+
+export const NewsItemSchema = z.object({
+    pk: z.string(),
+    sk: z.string(),
+    item_hash: z.string(),
+    ttl: z.string(),
+    source_name: z.string(),
+    source_id: z.string(),
+    category: z.string(),
+    country: z.string(),
+    language: z.string(),
+    news_url: z.string(),
+    headline: z.string(),
+    published: z.string(),
+    summary: z.string(),
+    media: z.object({
+        image_url: z.string(),
+        video_url: z.string().optional(),
+    }),
+    categories: z.array(z.string()),
+    metrics: MetricsSchema,
+});
+
+export type NewsItem = z.infer<typeof NewsItemSchema>;

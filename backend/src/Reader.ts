@@ -64,6 +64,7 @@ export class ReaderStack extends Stack {
             environment: {
                 NEWS_FEED_BUCKET: props.constants.NEWS_FEED_BUCKET,
                 NEWS_TABLE_NAME: tableName.stringValue,
+                POWERTOOLS_LOG_LEVEL: props.constants.LOG_LEVEL,
             },
         });
 

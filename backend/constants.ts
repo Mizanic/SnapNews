@@ -10,12 +10,15 @@ const NEWS_TTL_DAYS = defaults.NEWS_TTL_DAYS;
 const NEWS_FEED_BUCKET = defaults.NEWS_FEED_BUCKET;
 const ARN_POWERTOOLS_LAYER = "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:11";
 
+const LOG_LEVEL = "DEBUG";
+
 export const CONSTANTS = {
     APP_NAME,
     READ_SCHEDULE_HOURS,
     NEWS_TTL_DAYS,
     NEWS_FEED_BUCKET,
     ARN_POWERTOOLS_LAYER,
+    LOG_LEVEL,
 };
 
 export type ConstantsType = typeof CONSTANTS;

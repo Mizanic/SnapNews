@@ -4,9 +4,20 @@ import NewsCard from "./NewsCard";
 import { Spacing } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import { NewsItem } from "@/model/newsItem";
 
 // TODO: Add types
-const NewsList = ({ data, loading, bookmarks, likes }: any) => {
+const NewsList = ({
+    data,
+    loading,
+    bookmarks,
+    likes,
+}: {
+    data: NewsItem[];
+    loading: boolean;
+    bookmarks: Set<string>;
+    likes: Set<string>;
+}) => {
     const colors = useThemeColors();
 
     if (loading) {

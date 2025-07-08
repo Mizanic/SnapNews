@@ -40,7 +40,7 @@ export class ApiStack extends Stack {
 
         const newsTable = dynamodb.Table.fromTableAttributes(this, "NewsTable", {
             tableName: tableName.stringValue,
-            localIndexes: ["byItemHash"],
+            localIndexes: ["byItemHash", "byTop"],
             grantIndexPermissions: true,
         });
 
@@ -91,7 +91,7 @@ export class ApiStack extends Stack {
                 stageName: "v1",
             },
             defaultCorsPreflightOptions: {
-                allowOrigins: ["*"],
+                allowOrigins: ["*"], // TODO: Change to the mobile app URL
                 allowMethods: apigw.Cors.ALL_METHODS,
                 allowHeaders: ["*"],
             },

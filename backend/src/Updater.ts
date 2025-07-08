@@ -48,7 +48,7 @@ export class UpdaterStack extends Stack {
         // Fetch dynamodb main table and local index
         const newsTable = dynamodb.Table.fromTableAttributes(this, `${props.constants.APP_NAME}-NewsTable`, {
             tableName: tableName.stringValue,
-            localIndexes: ["byItemHash"],
+            localIndexes: ["byItemHash", "byTop"],
             grantIndexPermissions: true,
         });
 
@@ -74,6 +74,7 @@ export class UpdaterStack extends Stack {
             environment: {
                 NEWS_TABLE_NAME: newsTable.tableName,
                 PROCESSED_NEWS_QUEUE_NAME: processedQueue.queueName,
+                POWERTOOLS_LOG_LEVEL: props.constants.LOG_LEVEL,
             },
         });
 
@@ -88,6 +89,10 @@ export class UpdaterStack extends Stack {
         newsTable.grantReadWriteData(updaterFn);
 
         // Create a rule to trigger the lambda function
-        updaterFn.addEventSource(new lambdaEventSources.SqsEventSource(processedQueue));
+        updaterFn.addEventSource(
+            new lambdaEventSources.SqsEventSource(processedQueue, {
+                enabled: true,
+            })
+        );
     }
 }

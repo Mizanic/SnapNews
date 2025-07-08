@@ -22,6 +22,10 @@ from shared.logger import logger
 # Global declarations
 
 BUCKET_NAME = os.environ["NEWS_FEED_BUCKET"]
+LOG_LEVEL = os.environ["POWERTOOLS_LOG_LEVEL"]
+
+logger.service = "Reader"
+logger.setLevel(LOG_LEVEL)
 
 
 @event_source(data_class=EventBridgeEvent)
@@ -51,7 +55,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
                 # Upload the json feed to S3
                 s3_key = f"{news_source}-{category}.json"  # Define S3 key using source and category
                 logger.info(f"Uploading feed to S3 with key: {s3_key}")
-                upload_feed_to_s3(feed, s3_key, BUCKET_NAME)
+                upload_feed_to_s3(feed.model_dump()["feed"], s3_key, BUCKET_NAME)
                 logger.info(f"Uploaded feed for {category} to S3 successfully")
             else:
                 logger.warning(f"No feed data received for category: {category}, URL: {feed_url}")
