@@ -14,7 +14,7 @@ from pydantic import ValidationError
 from shared.logger import logger
 from shared.news_model import NewsMediaModel, SourceNewsFeedModel, SourceNewsItemModel
 
-from .utils import time_to_iso
+from .utils import time_to_iso, santise_content
 
 # ==================================================================================================
 
@@ -61,6 +61,10 @@ class NDTV:
 
         media = NewsMediaModel(image_url=image_url, video_url=None)
 
+        # Clean the summary content to remove HTML tags
+        raw_summary = item.findtext("description")
+        clean_summary = santise_content(raw_summary) if raw_summary else None
+
         data = SourceNewsItemModel(
             source_name="NDTV",
             source_id="NDTV",
@@ -69,7 +73,7 @@ class NDTV:
             news_url=item.findtext("link"),
             headline=item.findtext("title"),
             published=time_to_iso(item.findtext("pubDate")),
-            summary=item.findtext("description"),
+            summary=clean_summary,
             categories=[category],
             media=media,
         )

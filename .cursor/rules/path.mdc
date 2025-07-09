@@ -1,6 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: true
----
-1. Always use Absolute paths when running a command

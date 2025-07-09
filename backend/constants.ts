@@ -8,7 +8,7 @@ const APP_NAME = config.PROJECT_NAME.trim().replace(/ /g, "");
 const READ_SCHEDULE_HOURS = defaults.READ_SCHEDULE_HOURS;
 const NEWS_TTL_DAYS = defaults.NEWS_TTL_DAYS;
 const NEWS_FEED_BUCKET = defaults.NEWS_FEED_BUCKET;
-const ARN_POWERTOOLS_LAYER = "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:11";
+const ARN_POWERTOOLS_LAYER = "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:18";
 
 const LOG_LEVEL = "DEBUG";
 

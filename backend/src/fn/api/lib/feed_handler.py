@@ -8,25 +8,27 @@ This module implements two main query paths for the SnapNews API:
    - pk: NEWS#{country}#{language}
    - sk: UUIDv7 (naturally time-ordered)
    - Returns news sorted by publication time (newest first)
-   - Pagination: Uses simple sk value as page_key
+   - Pagination: Uses simple sk value as page_key (string)
 
 2. TOP PATH (/feed/top):
    - Queries the "byTop" Local Secondary Index (LSI)
    - pk: NEWS#{country}#{language} (same as main table)
    - sk_top: TOP#{popularity_score}#{uuidv7}
    - Returns news sorted by popularity score (highest first)
-   - Pagination: Uses complex page_key containing both sk and sk_top
+   - Pagination: Uses encoded page_key (string) containing pk, sk, and sk_top
 
 Access Patterns:
 - Latest: pk=NEWS#{country}#{language}, sk=UUIDv7 (time-ordered)
 - Top: pk=NEWS#{country}#{language}, sk_top=TOP#{score}#{uuidv7} (popularity-ordered)
 
-The like_news_item function updates both the likes count and recalculates the sk_top
-for proper popularity ranking in the TOP view.
+Both endpoints expose a consistent API with simple string page_key parameters,
+with the complexity of DynamoDB's LSI pagination requirements handled internally.
 """
 
 # ==================================================================================================
 # Python imports
+import base64
+import json
 import os
 from typing import Optional
 
@@ -46,18 +48,32 @@ TABLE_NAME = os.environ["NEWS_TABLE_NAME"]
 table = boto3.resource("dynamodb").Table(TABLE_NAME)
 
 
+def _encode_page_key(key_dict: dict) -> str:
+    """Encode a DynamoDB key as a base64 string for clean API interface."""
+    json_str = json.dumps(key_dict, sort_keys=True)
+    return base64.b64encode(json_str.encode()).decode()
+
+
+def _decode_page_key(page_key: str) -> dict:
+    """Decode a base64 page key back to DynamoDB key format."""
+    try:
+        json_str = base64.b64decode(page_key.encode()).decode()
+        return json.loads(json_str)
+    except (ValueError, json.JSONDecodeError):
+        raise ValueError(f"Invalid page_key format: {page_key}") from None
+
+
 def _build_latest_query_args(pk_value: str, item_limit: int, page_key: Optional[str]) -> dict:
     """Build query arguments for LATEST view (main table)."""
-    expression = Key("pk").eq(pk_value)
-
     query_args = {
-        "KeyConditionExpression": expression,
+        "KeyConditionExpression": Key("pk").eq(pk_value),
         "Limit": item_limit,
         "ScanIndexForward": False,  # Newest first (UUIDv7 is time-ordered)
     }
 
     if page_key:
         try:
+            # For main table, page_key is just the sk value
             query_args["ExclusiveStartKey"] = {"pk": pk_value, "sk": page_key}
             logger.info(f"Using ExclusiveStartKey with sk: {page_key}")
         except (ValueError, TypeError):
@@ -66,42 +82,43 @@ def _build_latest_query_args(pk_value: str, item_limit: int, page_key: Optional[
     return query_args
 
 
-def _build_top_query_args(pk_value: str, item_limit: int, page_key: Optional[dict]) -> dict:
+def _build_top_query_args(pk_value: str, item_limit: int, page_key: Optional[str]) -> dict:
     """Build query arguments for TOP view (LSI)."""
-    expression = Key("pk").eq(pk_value) & Key("sk_top").gte("TOP#")
-
     query_args = {
         "IndexName": "byTop",
-        "KeyConditionExpression": expression,
+        "KeyConditionExpression": Key("pk").eq(pk_value) & Key("sk_top").gte("TOP#"),
         "Limit": item_limit,
         "ScanIndexForward": False,  # Highest popularity first
     }
 
     if page_key:
         try:
-            # For LSI, we need pk, sk, and sk_top in ExclusiveStartKey
-            if isinstance(page_key, dict) and "sk" in page_key and "sk_top" in page_key:
-                query_args["ExclusiveStartKey"] = {"pk": pk_value, "sk": page_key["sk"], "sk_top": page_key["sk_top"]}
-                logger.info(f"Using ExclusiveStartKey for LSI: {query_args['ExclusiveStartKey']}")
+            # Decode the base64 page_key to get the complete DynamoDB key structure
+            decoded_key = _decode_page_key(page_key)
+            # For LSI, we need pk, sk, and sk_top for proper DynamoDB pagination
+            if "pk" in decoded_key and "sk" in decoded_key and "sk_top" in decoded_key:
+                query_args["ExclusiveStartKey"] = decoded_key
+                logger.info(f"Using complete ExclusiveStartKey for LSI: {decoded_key}")
             else:
-                logger.error(f"Invalid page_key format for LSI query: {page_key}. Ignoring pagination key.")
+                logger.error("Incomplete key structure in page_key. Ignoring pagination key.")
         except (ValueError, TypeError):
             logger.error(f"Invalid page_key format received: {page_key}. Ignoring pagination key.")
 
     return query_args
 
 
-def _prepare_next_page_key(view: str, last_key: Optional[dict]) -> Optional[str | dict]:
+def _prepare_next_page_key(view: str, last_key: Optional[dict]) -> Optional[str]:
     """Prepare next page key based on view type and last evaluated key."""
     if not last_key:
         return None
 
     if view == "LATEST":
-        # For main table, just return the sk
+        # For main table, return just the sk value (simple string)
         return str(last_key["sk"]) if "sk" in last_key else None
-    if view == "TOP" and "sk" in last_key and "sk_top" in last_key:
-        # For LSI, return both sk and sk_top for proper pagination
-        return {"sk": str(last_key["sk"]), "sk_top": str(last_key["sk_top"])}
+    if view == "TOP" and "pk" in last_key and "sk" in last_key and "sk_top" in last_key:
+        # For LSI, encode the complete key structure as base64 string for clean API
+        complete_key = {"pk": str(last_key["pk"]), "sk": str(last_key["sk"]), "sk_top": str(last_key["sk_top"])}
+        return _encode_page_key(complete_key)
 
     return None
 
