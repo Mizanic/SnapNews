@@ -1,0 +1,12 @@
+---
+alwaysApply: false
+---
+
+### Task: Troubleshoot
+
+1. **Workflow**:
+* Reflect on 5-7 different possible sources of the problem, 
+* distill them down to 1-2 most likely sources. 
+* And then add logs to validate your assumptions 
+* Once you have validated the assumptions, move on to fixing the problem.
+

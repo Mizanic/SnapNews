@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, ActivityIndicator, View, StyleSheet, Text } from "react-native";
+import { FlatList, ActivityIndicator, View, StyleSheet, Text, RefreshControl } from "react-native";
 import NewsCard from "./NewsCard";
 import { Spacing } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
@@ -12,15 +12,19 @@ const NewsList = ({
     loading,
     bookmarks,
     likes,
+    onRefresh,
+    refreshing = false,
 }: {
     data: NewsItem[];
     loading: boolean;
     bookmarks: Set<string>;
     likes: Set<string>;
+    onRefresh?: () => void;
+    refreshing?: boolean;
 }) => {
     const colors = useThemeColors();
 
-    if (loading) {
+    if (loading && !refreshing) {
         return (
             <View style={[styles.loadingContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
                 <ActivityIndicator size="large" color={colors.primary[600]} />
@@ -43,6 +47,17 @@ const NewsList = ({
             keyExtractor={(item) => item.item_hash}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
+            refreshControl={
+                onRefresh ? (
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={[colors.primary[600]]}
+                        tintColor={colors.primary[600]}
+                        progressBackgroundColor={colors.backgroundColors.primary}
+                    />
+                ) : undefined
+            }
         />
     );
 };
