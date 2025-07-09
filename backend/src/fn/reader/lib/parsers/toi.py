@@ -60,7 +60,27 @@ class TOI:
 
         # Clean the summary content to remove HTML tags
         raw_summary = item.findtext("description")
+        logger.info(f"Raw summary: {raw_summary}")
         clean_summary = santise_content(raw_summary) if raw_summary else None
+        if clean_summary == "":
+            clean_summary = None
+
+        logger.info(f"Clean summary: {clean_summary}")
+
+        params = {
+            "source_name": "Times Of India",
+            "source_id": "TOI",
+            "country": country,
+            "language": language,
+            "news_url": item.findtext("link"),
+            "headline": item.findtext("title"),
+            "published": time_to_iso(item.findtext("pubDate")),
+            "summary": clean_summary,
+            "categories": [category],
+            "media": media,
+        }
+
+        logger.info(f"Params: {params}")
 
         data = SourceNewsItemModel(
             source_name="Times Of India",

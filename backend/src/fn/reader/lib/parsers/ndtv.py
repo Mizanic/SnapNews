@@ -14,7 +14,7 @@ from pydantic import ValidationError
 from shared.logger import logger
 from shared.news_model import NewsMediaModel, SourceNewsFeedModel, SourceNewsItemModel
 
-from .utils import time_to_iso, santise_content
+from .utils import santise_content, time_to_iso
 
 # ==================================================================================================
 
@@ -64,6 +64,23 @@ class NDTV:
         # Clean the summary content to remove HTML tags
         raw_summary = item.findtext("description")
         clean_summary = santise_content(raw_summary) if raw_summary else None
+        if clean_summary == "":
+            clean_summary = None
+
+        params = {
+            "source_name": "NDTV",
+            "source_id": "NDTV",
+            "country": country,
+            "language": language,
+            "news_url": item.findtext("link"),
+            "headline": item.findtext("title"),
+            "published": time_to_iso(item.findtext("pubDate")),
+            "summary": clean_summary,
+            "categories": [category],
+            "media": media,
+        }
+
+        logger.info(f"Params: {params}")
 
         data = SourceNewsItemModel(
             source_name="NDTV",
