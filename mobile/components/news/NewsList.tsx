@@ -1,10 +1,10 @@
 import React from "react";
-import { FlatList, ActivityIndicator, View, StyleSheet, Text, RefreshControl } from "react-native";
+import { FlatList, View, StyleSheet, RefreshControl } from "react-native";
 import NewsCard from "./NewsCard";
 import { Spacing } from "@/constants/Theme";
-import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { NewsItem } from "@/model/newsItem";
+import NewsCardSkeleton from "./NewsCardSkeleton";
 
 // TODO: Add types
 const NewsList = ({
@@ -26,10 +26,13 @@ const NewsList = ({
 
     if (loading && !refreshing) {
         return (
-            <View style={[styles.loadingContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
-                <ActivityIndicator size="large" color={colors.primary[600]} />
-                <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>Loading latest news...</Text>
-            </View>
+            <FlatList
+                data={Array.from({ length: 5 })}
+                renderItem={() => <NewsCardSkeleton />}
+                keyExtractor={(_, index) => index.toString()}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
+            />
         );
     }
 
@@ -63,17 +66,6 @@ const NewsList = ({
 };
 
 const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: Spacing.lg,
-    },
-    loadingText: {
-        ...Typography.bodyText.medium,
-        marginTop: Spacing.md,
-        textAlign: "center",
-    },
     listContainer: {
         paddingTop: Spacing.md,
         paddingBottom: Spacing.xl,
