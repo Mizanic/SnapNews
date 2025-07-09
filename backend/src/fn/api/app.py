@@ -5,11 +5,12 @@
 
 # ==================================================================================================
 # Python imports
-import json
+from typing import Annotated, Optional
 
 # ==================================================================================================
 # AWS imports
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
+from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
@@ -29,13 +30,21 @@ cors_config = CORSConfig(
 
 app = APIGatewayRestResolver(enable_validation=True, cors=cors_config)
 
-app.enable_swagger(path="/docs", title="News Feed API", version="1.0.0", description="API for the News Feed")
+app.enable_swagger(
+    path="/docs",
+    title="News Feed API",
+    version="1.0.0",
+    description="API for fetching news feeds for SnapNews",
+)
 
 
 @app.get("/")
 def feed() -> dict:
     """
     Get the latest feed
+
+    Returns:
+        dict: Welcome message response
     """
 
     # Fetch all news items that are published in last 24 hours
@@ -48,22 +57,27 @@ def feed() -> dict:
 
 
 @app.get("/feed/latest")
-def feed_latest() -> dict:
+def feed_latest(
+    country: Annotated[str, Query(description="Country code ('IND')")],
+    language: Annotated[str, Query(description="Language code ('ENG')")],
+    page_key: Annotated[Optional[str], Query(description="Pagination key for next page")] = None,
+) -> dict:
     """
     Get the latest feed sorted by time
-    """
 
-    # Get the country and language from query string
-    country = app.current_event["queryStringParameters"].get("country") if app.current_event["queryStringParameters"] else None
-    language = app.current_event["queryStringParameters"].get("language") if app.current_event["queryStringParameters"] else None
+    Args:
+        country: Country code (required)
+        language: Language code (required)
+        page_key: Pagination key for next page (optional)
+
+    Returns:
+        dict: Feed response with news items and pagination info
+    """
 
     if not all([country, language]):
         logger.error("Missing required parameters: country, language")
         # Return an appropriate error response
         return RESPONSE(status_code=400, body={"news": [], "page_key": None, "error": "Missing required parameters"})
-
-    # Check if any Query String Parameters are passed
-    page_key = app.current_event["queryStringParameters"].get("page_key") if app.current_event["queryStringParameters"] else None
 
     logger.info(f"start_key: {page_key}")
     logger.info(f"country: {country}")
@@ -89,33 +103,27 @@ def feed_latest() -> dict:
 
 
 @app.get("/feed/top")
-def feed_top() -> dict:
+def feed_top(
+    country: Annotated[str, Query(description="Country code ('IND')")],
+    language: Annotated[str, Query(description="Language code ('ENG')")],
+    page_key: Annotated[Optional[str], Query(description="Pagination key for next page")] = None,
+) -> dict:
     """
     Get the top feed sorted by popularity
-    """
 
-    # Get the country and language from query string
-    country = app.current_event["queryStringParameters"].get("country") if app.current_event["queryStringParameters"] else None
-    language = app.current_event["queryStringParameters"].get("language") if app.current_event["queryStringParameters"] else None
+    Args:
+        country: Country code (required)
+        language: Language code (required)
+        page_key: Pagination key for next page (optional)
+
+    Returns:
+        dict: Feed response with news items and pagination info
+    """
 
     if not all([country, language]):
         logger.error("Missing required parameters: country, language")
         # Return an appropriate error response
         return RESPONSE(status_code=400, body={"news": [], "page_key": None, "error": "Missing required parameters"})
-
-    # Check if any Query String Parameters are passed
-    page_key_param = app.current_event["queryStringParameters"].get("page_key") if app.current_event["queryStringParameters"] else None
-
-    # For top view, page_key might be a JSON string containing sk and sk_top
-    page_key = None
-    if page_key_param:
-        try:
-
-            # Try to parse as JSON for complex pagination key
-            page_key = json.loads(page_key_param)
-        except (json.JSONDecodeError, TypeError):
-            # If it's not JSON, treat as simple string (backward compatibility)
-            page_key = page_key_param
 
     logger.info(f"page_key: {page_key}")
     logger.info(f"country: {country}")
@@ -135,16 +143,12 @@ def feed_top() -> dict:
         params=response_params,
     )
 
-    # Convert page_key back to JSON string if it's a dict for the client
-    if response.get("page_key") and isinstance(response["page_key"], dict):
-        response["page_key"] = json.dumps(response["page_key"])
-
     logger.info(response)
 
     return RESPONSE(response)
 
 
-def main(event: dict, context: LambdaContext):  # noqa: ANN201
+def main(event: dict, context: LambdaContext) -> dict:
     """
     The lambda handler method: It resolves the proxy route and invokes the appropriate method
     """
