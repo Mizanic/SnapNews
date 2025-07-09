@@ -1,4 +1,4 @@
-package com.anonymous.SnapNews
+package one.entropic.SnapNews
 
 import android.app.Application
 import android.content.res.Configuration

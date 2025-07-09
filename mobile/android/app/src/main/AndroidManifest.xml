@@ -25,7 +25,8 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.anonymous.SnapNews"/>
+        <data android:scheme="one.entropic.SnapNews"/>
+        <data android:scheme="exp+snapnews"/>
       </intent-filter>
     </activity>
   </application>
