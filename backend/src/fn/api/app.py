@@ -5,7 +5,6 @@
 
 # ==================================================================================================
 # Python imports
-import json
 from typing import Annotated, Optional
 
 # ==================================================================================================
@@ -37,14 +36,6 @@ app.enable_swagger(
     version="1.0.0",
     description="API for fetching news feeds for SnapNews",
 )
-
-
-@app.get("/docs/openapi.json")
-def openapi_schema() -> dict:
-    """
-    OpenAPI JSON schema endpoint
-    """
-    return json.loads(app.get_openapi_json_schema())
 
 
 @app.get("/")

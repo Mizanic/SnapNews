@@ -6,12 +6,17 @@ import { ProcessStack } from "./src/Process";
 import { UpdaterStack } from "./src/Updater";
 import { ApiStack } from "./src/Api";
 import { PARAMS, CONSTANTS } from "./constants";
+// import { AwsSolutionsChecks } from "cdk-nag";
+// import { Aspects } from "aws-cdk-lib";
 
 ////////////////////////////////////////////////////////////
 // STACKS
 ////////////////////////////////////////////////////////////
 
 const app = new App();
+
+// Add the cdk-nag AwsSolutions Pack with extra verbose logging enabled.
+// Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
 
 const APP_NAME = CONSTANTS.APP_NAME;
 
