@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.SnapNews'
+    namespace 'one.entropic.SnapNews'
     defaultConfig {
-        applicationId 'com.anonymous.SnapNews'
+        applicationId 'one.entropic.SnapNews'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

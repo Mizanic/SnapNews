@@ -1,8 +1,7 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, StyleSheet, Platform } from "react-native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { View, StyleSheet, Platform, TouchableOpacity, Text } from "react-native";
 import { MaterialCommunityIcons, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import TopNewsScreen from "./top";
 import LatestNewsScreen from "./index";
@@ -19,7 +18,7 @@ type TabParamList = {
     Bookmark: undefined;
 };
 
-const Tab = createBottomTabNavigator<TabParamList>();
+const Tab = createMaterialTopTabNavigator<TabParamList>();
 
 const MainTabs: React.FC = () => {
     const insets = useSafeAreaInsets();
@@ -27,45 +26,12 @@ const MainTabs: React.FC = () => {
     const colorScheme = useColorScheme();
 
     return (
-        <Tab.Navigator
-            screenOptions={({ route }) => {
-                const icons: Record<string, { name: string; lib: any }> = {
-                    "Top News": { name: "trending-up", lib: MaterialCommunityIcons },
-                    "Latest News": { name: "flash", lib: Ionicons },
-                    Bookmark: { name: "bookmark", lib: MaterialIcons },
-                };
-
-                const { name, lib: IconComponent } = icons[route.name];
-
-                return {
-                    tabBarIcon: ({ focused, size }) => (
-                        <View style={[styles.iconWrapper, focused && { backgroundColor: colors.primary[50] }]}>
-                            <View style={[styles.iconContainer, focused && { backgroundColor: colors.white, ...Shadows.sm }]}>
-                                <IconComponent
-                                    name={name}
-                                    size={focused ? size : size - 2}
-                                    color={focused ? colors.primary[600] : colors.gray[500]}
-                                />
-                            </View>
-                            {focused && <View style={[styles.focusedIndicator, { backgroundColor: colors.primary[600] }]} />}
-                        </View>
-                    ),
-                    tabBarShowLabel: false,
-                    tabBarBackground: () =>
-                        Platform.OS === "ios" ? (
-                            <BlurView intensity={95} tint={colorScheme === "dark" ? "dark" : "light"} style={StyleSheet.absoluteFill} />
-                        ) : (
-                            <View
-                                style={[
-                                    StyleSheet.absoluteFill,
-                                    {
-                                        backgroundColor: colors.backgroundColors.primary,
-                                        borderTopLeftRadius: BorderRadius.xl,
-                                        borderTopRightRadius: BorderRadius.xl,
-                                    },
-                                ]}
-                            />
-                        ),
+        <View style={{ flex: 1 }}>
+            <AppHeader />
+            <Tab.Navigator
+                initialRouteName="Latest News"
+                tabBarPosition="bottom"
+                screenOptions={{
                     tabBarStyle: {
                         height: 60 + insets.bottom,
                         paddingBottom: insets.bottom,
@@ -87,19 +53,113 @@ const MainTabs: React.FC = () => {
                             },
                         }),
                     },
-                    headerShown: true,
-                    header: () => <AppHeader />,
-                };
-            }}
-        >
-            <Tab.Screen name="Top News" component={TopNewsScreen} />
-            <Tab.Screen name="Latest News" component={LatestNewsScreen} />
-            <Tab.Screen name="Bookmark" component={BookmarkScreen} />
-        </Tab.Navigator>
+                    tabBarShowLabel: false,
+                    tabBarIndicatorStyle: { height: 0 }, // Hide the top indicator
+                    swipeEnabled: true,
+                }}
+                tabBar={(props) => <CustomTabBar {...props} colors={colors} insets={insets} colorScheme={colorScheme} />}
+            >
+                <Tab.Screen name="Top News" component={TopNewsScreen} />
+                <Tab.Screen name="Latest News" component={LatestNewsScreen} />
+                <Tab.Screen name="Bookmark" component={BookmarkScreen} />
+            </Tab.Navigator>
+        </View>
+    );
+};
+
+const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorScheme }: any) => {
+    const icons: Record<string, { name: string; lib: any }> = {
+        "Top News": { name: "trending-up", lib: MaterialCommunityIcons },
+        "Latest News": { name: "flash", lib: Ionicons },
+        Bookmark: { name: "bookmark", lib: MaterialIcons },
+    };
+
+    return (
+        <View style={[styles.tabBarContainer, { height: 60 + insets.bottom, paddingBottom: insets.bottom }]}>
+            {Platform.OS === "ios" && (
+                <BlurView intensity={95} tint={colorScheme === "dark" ? "dark" : "light"} style={StyleSheet.absoluteFill} />
+            )}
+            {Platform.OS !== "ios" && (
+                <View
+                    style={[
+                        StyleSheet.absoluteFill,
+                        {
+                            backgroundColor: colors.backgroundColors.primary,
+                            borderTopLeftRadius: BorderRadius.xl,
+                            borderTopRightRadius: BorderRadius.xl,
+                        },
+                    ]}
+                />
+            )}
+            <View style={styles.tabBarContent}>
+                {state.routes.map((route: any, index: number) => {
+                    const { options } = descriptors[route.key];
+                    const isFocused = state.index === index;
+                    const { name, lib: IconComponent } = icons[route.name];
+
+                    const onPress = () => {
+                        const event = navigation.emit({
+                            type: "tabPress",
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
+
+                        if (!isFocused && !event.defaultPrevented) {
+                            navigation.navigate(route.name);
+                        }
+                    };
+
+                    return (
+                        <TouchableOpacity
+                            key={route.key}
+                            onPress={onPress}
+                            style={[styles.iconWrapper, isFocused && { backgroundColor: colors.primary[50] }]}
+                            activeOpacity={0.7}
+                        >
+                            <View style={[styles.iconContainer, isFocused && { backgroundColor: colors.white, ...Shadows.sm }]}>
+                                <IconComponent
+                                    name={name}
+                                    size={isFocused ? 24 : 22}
+                                    color={isFocused ? colors.primary[600] : colors.gray[500]}
+                                />
+                            </View>
+                            {isFocused && <View style={[styles.focusedIndicator, { backgroundColor: colors.primary[600] }]} />}
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    tabBarContainer: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        borderTopLeftRadius: BorderRadius.xl,
+        borderTopRightRadius: BorderRadius.xl,
+        ...Shadows.lg,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: -8 },
+                shadowOpacity: 0.1,
+                shadowRadius: 16,
+            },
+            android: {
+                elevation: 8,
+            },
+        }),
+    },
+    tabBarContent: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+        paddingTop: Spacing.sm,
+    },
     iconWrapper: {
         alignItems: "center",
         justifyContent: "center",

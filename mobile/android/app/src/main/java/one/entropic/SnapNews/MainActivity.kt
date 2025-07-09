@@ -1,4 +1,4 @@
-package com.anonymous.SnapNews
+package one.entropic.SnapNews
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
