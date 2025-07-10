@@ -35,18 +35,29 @@ def main(event: SQSEvent, context: LambdaContext) -> dict:  # noqa: ARG001
     message = json.loads(event["Records"][0]["body"])
     logger.info(message)
 
+    article = article_exists(message)
+    logger.info(f"Article: {article}")
+
     try:
-        if article_exists(message) is None:
+        if article is None:
             logger.info(f"Item {message['item_hash']} does not exist in the database. Creating it.")
             table.put_item(Item=message)
         else:
             logger.info(f"Item {message['item_hash']} already exists in the database.")
             logger.info("Adding the category to the list of categories of the item")
+
+            # Get existing categories and new categories
+            existing_categories = article.categories
+            new_categories = message["categories"]
+
+            # Combine and deduplicate categories
+            merged_categories = list(set(existing_categories + new_categories))
+
             table.update_item(
-                Key={"pk": article_exists(message).pk, "sk": article_exists(message).sk},
+                Key={"pk": article.pk, "sk": article.sk},
                 UpdateExpression="SET #categories = :categories",
                 ExpressionAttributeNames={"#categories": "categories"},
-                ExpressionAttributeValues={":categories": [*article_exists(message).categories, message["categories"]]},
+                ExpressionAttributeValues={":categories": merged_categories},
             )
     except ClientError as dynamodb_error:
         logger.error(dynamodb_error)
