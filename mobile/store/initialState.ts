@@ -1,5 +1,5 @@
-import { BookmarkState } from "@/model/bookmarkState";
-import { LikeState } from "@/model/likeState";
+import { BookmarkState } from "@/features/bookmarks/types";
+import { LikeState } from "@/features/likes/types";
 
 export const bookmarkInitialState: BookmarkState = {};
 export const likeInitialState: LikeState = {};

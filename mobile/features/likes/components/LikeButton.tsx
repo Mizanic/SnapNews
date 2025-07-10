@@ -1,33 +1,32 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { addBookmark, removeBookmark } from "@/store/action/bookmark/bookmarkActions";
+import { addLike, removeLike } from "@/features/likes/state/likesStore";
 import { useDispatch } from "react-redux";
-import { NewsItem } from "@/model/newsItem";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
 
-interface BookmarkButtonProps {
-    news: NewsItem;
-    isBookmarked: boolean;
+interface LikeButtonProps {
+    item_hash: string;
+    isLiked: boolean;
 }
 
-const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
     const dispatch = useDispatch();
     const colors = useThemeColors();
 
-    const toggleBookmark = () => {
-        if (!isBookmarked) {
-            dispatch(addBookmark(news));
+    const toggleLike = () => {
+        if (!isLiked) {
+            dispatch(addLike(item_hash));
         } else {
-            dispatch(removeBookmark(news.item_hash));
+            dispatch(removeLike(item_hash));
         }
     };
 
     return (
         <TouchableOpacity
-            onPress={toggleBookmark}
+            onPress={toggleLike}
             style={[
                 styles.button,
                 {
@@ -35,9 +34,9 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
                     borderColor: colors.borderColors.medium,
                     shadowColor: colors.black,
                 },
-                isBookmarked && {
-                    backgroundColor: colors.accent.orange,
-                    borderColor: colors.accent.orange,
+                isLiked && {
+                    backgroundColor: colors.accent.red,
+                    borderColor: colors.accent.red,
                     ...Shadows.md,
                 },
             ]}
@@ -45,13 +44,13 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
         >
             <View style={styles.buttonContent}>
                 <Ionicons
-                    name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                    name={isLiked ? "heart" : "heart-outline"}
                     size={18}
-                    color={isBookmarked ? colors.white : colors.gray[600]}
+                    color={isLiked ? colors.white : colors.gray[600]}
                     style={{ marginRight: Spacing.xs }}
                 />
-                <Text style={[styles.buttonText, { color: colors.textColors.secondary }, isBookmarked && { color: colors.white }]}>
-                    {isBookmarked ? "Saved" : "Save"}
+                <Text style={[styles.buttonText, { color: colors.textColors.secondary }, isLiked && { color: colors.white }]}>
+                    {isLiked ? "Liked" : "Like"}
                 </Text>
             </View>
         </TouchableOpacity>
@@ -78,4 +77,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default BookmarkButton;
+export default LikeButton;

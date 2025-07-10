@@ -4,7 +4,7 @@ import NewsCard from "./NewsCard";
 import { Spacing } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { NewsItem } from "@/model/newsItem";
+import { NewsItem } from "@/features/news/types";
 
 // TODO: Add types
 const NewsList = ({

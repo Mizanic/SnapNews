@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Text, Dimensions, Platform, TouchableOpacity } from "react-native";
 import ImageSection from "./ImageSection";
 import ActionBar from "./ActionBar";
-import { NewsItem } from "@/model/newsItem";
+import { NewsItem } from "@/features/news/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { Typography } from "@/constants/Fonts";
 import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";

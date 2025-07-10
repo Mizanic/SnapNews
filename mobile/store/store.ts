@@ -1,8 +1,7 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import bookmarkReducer from "./reducer/bookmarkReducer";
-import LikeReducer from "./reducer/like/likeReducer";
+import rootReducer from "./rootReducer";
 import { likeEventMiddleware } from "./middleware/likeEventMiddleware";
 
 const persistConfig = {
@@ -10,11 +9,6 @@ const persistConfig = {
     storage: AsyncStorage,
     whitelist: ["bookmarks", "likes"],
 };
-
-const rootReducer = combineReducers({
-    bookmarks: bookmarkReducer,
-    likes: LikeReducer,
-});
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
