@@ -41,7 +41,7 @@ def main(event: SQSEvent, context: LambdaContext) -> dict:  # noqa: ARG001
     message = json.loads(event["Records"][0]["body"])
     logger.info(message)
 
-    article = article_exists(message["pk"], message["item_hash"])
+    article = article_exists(message)
     logger.info(f"Article: {article}")
 
     try:

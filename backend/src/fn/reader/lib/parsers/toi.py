@@ -90,3 +90,13 @@ class TOI:
         }
 
         return data
+
+
+class TimesOfIndia(TOI):
+    """
+    This class is used to read RSS feeds from Times of India.
+    This is a wrapper around the TOI class.
+    This is to have a consistent naming convention.
+    """
+
+    pass
