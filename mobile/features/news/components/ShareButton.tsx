@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import { useHaptics } from "@/hooks/useHaptics";
+import * as Haptics from "expo-haptics";
 
 interface ShareButtonProps {
     newsSourceUrl: string;
@@ -11,9 +13,11 @@ interface ShareButtonProps {
 
 const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
     const colors = useThemeColors();
+    const { triggerHaptic } = useHaptics();
 
     const handleShare = async () => {
         try {
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
             const result = await Share.share({
                 message: `Check out this news article: ${newsSourceUrl}`,
                 url: newsSourceUrl,
