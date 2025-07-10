@@ -39,6 +39,8 @@ def article_exists(item: dict) -> Optional[ArticleExistsResponse]:
         ExpressionAttributeValues={":pk": item["pk"], ":item_hash": item["item_hash"]},
     )
 
+    logger.info(f"Response: {response}")
+
     # Return the pk and sk of the item if it exists
     if response["Items"]:
         return ArticleExistsResponse(
