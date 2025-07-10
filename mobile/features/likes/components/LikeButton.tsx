@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import { useHaptics } from "@/hooks/useHaptics";
+import * as Haptics from "expo-haptics";
 
 interface LikeButtonProps {
     item_hash: string;
@@ -15,12 +17,15 @@ interface LikeButtonProps {
 const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
     const dispatch = useDispatch();
     const colors = useThemeColors();
+    const { triggerHaptic } = useHaptics();
 
     const toggleLike = () => {
         if (!isLiked) {
             dispatch(addLike(item_hash));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
         } else {
             dispatch(removeLike(item_hash));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
         }
     };
 

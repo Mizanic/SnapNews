@@ -7,6 +7,8 @@ import { NewsItem } from "@/features/news/types";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import { useHaptics } from "@/hooks/useHaptics";
+import * as Haptics from "expo-haptics";
 
 interface BookmarkButtonProps {
     news: NewsItem;
@@ -16,12 +18,15 @@ interface BookmarkButtonProps {
 const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) => {
     const dispatch = useDispatch();
     const colors = useThemeColors();
+    const { triggerHaptic } = useHaptics();
 
     const toggleBookmark = () => {
         if (!isBookmarked) {
             dispatch(addBookmark(news));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
         } else {
             dispatch(removeBookmark(news.item_hash));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
         }
     };
 
