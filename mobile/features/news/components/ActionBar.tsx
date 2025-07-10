@@ -1,9 +1,9 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ShareButton from "./ShareButton";
-import BookmarkButton from "./BookmarkButton";
-import { NewsItem } from "@/model/newsItem";
-import LikeButton from "./LikeButton";
+import BookmarkButton from "@/features/bookmarks/components/BookmarkButton";
+import { NewsItem } from "@/features/news/types";
+import LikeButton from "@/features/likes/components/LikeButton";
 import { Spacing, BorderRadius } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 

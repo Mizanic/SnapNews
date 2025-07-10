@@ -18,3 +18,7 @@ The app is mobile app that shows a feed of news articles.
 ## Data Model and Access Patterns
 
 This can be found in the @docs/access_patterns.md file.
+
+
+## Instructions
+1. Always use the full path

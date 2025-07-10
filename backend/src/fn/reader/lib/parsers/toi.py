@@ -5,6 +5,7 @@ This Module is used to read RSS feeds from Times of India
 
 # ==================================================================================================
 # Python imports
+from urllib.parse import urlsplit, urlunsplit
 from xml.etree.ElementTree import Element
 
 from pydantic import ValidationError
@@ -70,12 +71,17 @@ class TOI:
 
         logger.info(f"Clean summary: {clean_summary}")
 
+        # Sanitise the url to remove fragments
+        url = item.findtext("link")
+        url_parts = urlsplit(url)
+        sanitised_url = urlunsplit(url_parts._replace(fragment=""))
+
         data = {
             "source_name": "Times Of India",
             "source_id": "TOI",
             "country": country,
             "language": language,
-            "news_url": item.findtext("link"),
+            "news_url": sanitised_url,
             "headline": item.findtext("title"),
             "published": time_to_iso(item.findtext("pubDate")),
             "summary": clean_summary,
@@ -84,3 +90,13 @@ class TOI:
         }
 
         return data
+
+
+class TimesOfIndia(TOI):
+    """
+    This class is used to read RSS feeds from Times of India.
+    This is a wrapper around the TOI class.
+    This is to have a consistent naming convention.
+    """
+
+    pass

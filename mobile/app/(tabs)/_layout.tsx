@@ -1,6 +1,6 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { View, StyleSheet, Platform, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import TopNewsScreen from "./top";
@@ -9,7 +9,7 @@ import BookmarkScreen from "./bookmarks";
 import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import useColorScheme from "@/hooks/useColorScheme.web";
-import AppHeader from "@/components/news/AppHeader";
+import AppHeader from "@/features/news/components/AppHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabParamList = {
@@ -93,7 +93,6 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
             )}
             <View style={styles.tabBarContent}>
                 {state.routes.map((route: any, index: number) => {
-                    const { options } = descriptors[route.key];
                     const isFocused = state.index === index;
                     const { name, lib: IconComponent } = icons[route.name];
 

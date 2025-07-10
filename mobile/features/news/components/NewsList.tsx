@@ -1,10 +1,10 @@
 import React from "react";
-import { FlatList, ActivityIndicator, View, StyleSheet, Text, RefreshControl } from "react-native";
+import { FlatList, View, StyleSheet, RefreshControl, ActivityIndicator, Text } from "react-native";
 import NewsCard from "./NewsCard";
 import { Spacing } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { NewsItem } from "@/model/newsItem";
+import { NewsItem } from "@/features/news/types";
 
 // TODO: Add types
 const NewsList = ({
