@@ -14,6 +14,8 @@ const NewsList = ({
     likes,
     onRefresh,
     refreshing = false,
+    onEndReached,
+    loadingMore = false,
 }: {
     data: NewsItem[];
     loading: boolean;
@@ -21,8 +23,21 @@ const NewsList = ({
     likes: Set<string>;
     onRefresh?: () => void;
     refreshing?: boolean;
+    onEndReached?: () => void;
+    loadingMore?: boolean;
 }) => {
     const colors = useThemeColors();
+
+    const renderFooter = () => {
+        if (!loadingMore) return null;
+
+        return (
+            <View style={[styles.footerLoader, { backgroundColor: colors.backgroundColors.secondary }]}>
+                <ActivityIndicator size="small" color={colors.primary[600]} />
+                <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>Loading more...</Text>
+            </View>
+        );
+    };
 
     if (loading && !refreshing) {
         return (
@@ -58,6 +73,9 @@ const NewsList = ({
                     />
                 ) : undefined
             }
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.4}
+            ListFooterComponent={renderFooter}
         />
     );
 };
@@ -80,6 +98,10 @@ const styles = StyleSheet.create({
     },
     separator: {
         height: Spacing.xs,
+    },
+    footerLoader: {
+        paddingVertical: Spacing.md,
+        alignItems: "center",
     },
 });
 

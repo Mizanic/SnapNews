@@ -15,13 +15,29 @@ const TopNewsScreen: React.FC = () => {
     const colors = useThemeColors();
 
     const {
-        data: newsData,
+        data,
         isLoading,
         isError,
         error,
         refetch,
         isRefetching,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
     } = useTopNews();
+
+    // Flatten data pages into a single array of news items
+    const newsData = React.useMemo(() => {
+        if (!data?.pages) return [];
+        return data.pages.flatMap((page) => page.news);
+    }, [data?.pages]);
+
+    // Handle load more
+    const handleLoadMore = () => {
+        if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+        }
+    };
 
     if (isError) {
         return (
@@ -39,8 +55,10 @@ const TopNewsScreen: React.FC = () => {
                 loading={isLoading}
                 bookmarks={new Set(Object.keys(bookmarks))}
                 likes={new Set(Object.keys(likes))}
-                onRefresh={refetch}
+                onRefresh={() => refetch()}
                 refreshing={isRefetching}
+                onEndReached={handleLoadMore}
+                loadingMore={isFetchingNextPage}
             />
         </View>
     );
