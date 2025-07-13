@@ -5,7 +5,6 @@ This Module contains the utility functions for the parsers
 
 # ==================================================================================================
 # Python imports
-import re
 import time
 from datetime import datetime, timezone
 
@@ -14,28 +13,6 @@ from dateutil import parser
 # ==================================================================================================
 # Module imports
 from shared.logger import logger
-
-
-def _remove_html_tags(text: str) -> str:
-    """Remove HTML tags from a given string."""
-    clean = re.compile("<.*?>")
-    return re.sub(clean, "", text)
-
-
-def santise_content(content: str) -> str:
-    """
-    This function santises the content
-    """
-    # Remove HTML tags
-    content = _remove_html_tags(content)
-
-    # Remove newlines
-    content = content.replace("\n", "")
-
-    # Remove multiple spaces
-    content = re.sub(" +", " ", content)
-
-    return content
 
 
 def time_to_unix(time_stamp: str | None) -> int:
