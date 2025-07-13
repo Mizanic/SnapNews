@@ -12,10 +12,10 @@ from pydantic import ValidationError
 
 # ==================================================================================================
 # Module imports
+from shared.content import santise_content
 from shared.logger import logger
 from shared.news_model import NewsMediaModel, SourceNewsFeedModel, SourceNewsItemModel
-
-from .utils import santise_content, time_to_iso
+from shared.time import time_to_iso
 
 # ==================================================================================================
 
