@@ -17,8 +17,8 @@ from botocore.exceptions import ClientError
 
 # ==================================================================================================
 # Module imports
-from lib.utils import article_exists
 from shared.logger import logger
+from shared.utils import article_exists
 
 # ==================================================================================================
 # Global declarations
@@ -35,7 +35,7 @@ def main(event: SQSEvent, context: LambdaContext) -> dict:  # noqa: ARG001
     message = json.loads(event["Records"][0]["body"])
     logger.info(message)
 
-    article = article_exists(message)
+    article = article_exists(message["pk"], message["item_hash"])
     logger.info(f"Article: {article}")
 
     try:

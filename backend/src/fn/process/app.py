@@ -19,7 +19,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 # ==================================================================================================
 # Module imports
 from lib.aws_utils import get_feed_from_s3
-from lib.preprocess import inject_metadata, validate_feed_items
+from lib.preprocess import inject_data, validate_feed_items
 from shared.logger import logger
 from shared.news_model import ProcessedNewsItemModel
 
@@ -27,7 +27,7 @@ from shared.news_model import ProcessedNewsItemModel
 # Global declarations
 
 PROCESSED_NEWS_QUEUE_NAME = os.environ["PROCESSED_NEWS_QUEUE_NAME"]
-queue = boto3.resource("sqs").get_queue_by_name(QueueName=PROCESSED_NEWS_QUEUE_NAME)
+processed_news_queue = boto3.resource("sqs").get_queue_by_name(QueueName=PROCESSED_NEWS_QUEUE_NAME)
 
 
 @event_source(data_class=EventBridgeEvent)
@@ -52,7 +52,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
         logger.error(f"Validation error for feed {object_name}", exc_info=e)
         raise e
 
-    feed_with_metadata = inject_metadata(feed)
+    feed_with_metadata = inject_data(feed)
 
     validated_feed, defective_feed = validate_feed_items(feed_with_metadata.model_dump()["feed"])
 
@@ -65,7 +65,7 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
         ProcessedNewsItemModel.model_validate(item)
         # query dynamodb to see if the item exists by using "item_hash" as the sk in LSI named "byItemHash"
         try:
-            queue.send_message(MessageBody=json.dumps(item))
+            processed_news_queue.send_message(MessageBody=json.dumps(item))
         except Exception as e:
             logger.error(f"Error sending message to SQS: {e}")
             raise e
