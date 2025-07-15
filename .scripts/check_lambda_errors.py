@@ -11,7 +11,7 @@ LAMBDA_PREFIX = "/aws/lambda/SnapNews-"
 HOURS_LOOKBACK = 24  # Look back 24 hours only
 MAX_EVENTS_PER_GROUP = 10  # Reduced from 20 to save on data transfer
 MAX_MESSAGE_LENGTH = 150  # Reduced from 200 to save on data transfer
-FILTER_STRING = "DEBUG"
+FILTER_STRING = "ERROR"
 
 # === TIMEZONE ===
 IST = timezone(timedelta(hours=5, minutes=30))  # UTC+5:30
@@ -24,13 +24,15 @@ now_ms = int(time.time() * 1000)
 start_ms = now_ms - (HOURS_LOOKBACK * 60 * 60 * 1000)
 
 print(f"Searching logs for '{FILTER_STRING}' in last {HOURS_LOOKBACK} hours...")
+print("=" * 50)
 print(
     f"From: {datetime.fromtimestamp(start_ms/1000, IST).isoformat()}\n",
     f"To: {datetime.fromtimestamp(now_ms/1000, IST).isoformat()}\n",
 )
+print("=" * 50)
 
 # === GET ALL LOG GROUPS ===
-print("Fetching all log groups with prefix...")
+print(f"Fetching all log groups with prefix: {LAMBDA_PREFIX}")
 paginator = logs_client.get_paginator("describe_log_groups")
 log_groups = []
 
@@ -38,7 +40,8 @@ try:
     for page in paginator.paginate(logGroupNamePrefix=LAMBDA_PREFIX):
         for lg in page["logGroups"]:
             # Include all log groups with the prefix, regardless of last event time
-            log_groups.append(lg["logGroupName"])
+            if "BucketNotificationsHandler" not in lg["logGroupName"]:
+                log_groups.append(lg["logGroupName"])
 except ClientError as e:
     print(f"❌ Error fetching log groups: {e}")
     sys.exit(1)
