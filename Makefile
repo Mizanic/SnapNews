@@ -78,6 +78,15 @@ set-sources:
 	@echo ">>> Setting sources..."
 	python3 ./.scripts/set_sources.py
 
+check-errors:
+	@echo ">>> Finding errors..."
+	python3 ./.scripts/check_lambda_errors.py
+
+
+delete-logs:
+	@echo ">>> Deleting logs..."
+	./.scripts/delete-logs.sh
+
 
 # --- Admin Frontend ---
 
@@ -106,4 +115,4 @@ mobile-web:
 .PHONY: help deploy hotswap destroy \
 		deploy-all layers config-env \
 		test-reader create-user set-sources dev \
-		mobile-dev mobile-build mobile-web
+		mobile-dev mobile-build mobile-web check-errors
