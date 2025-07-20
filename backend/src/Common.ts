@@ -58,10 +58,32 @@ export class CommonStack extends Stack {
         // Processed Queue for holding processed news
         ////////////////////////////////////////////////////////////
 
+        const processedDLQ = new sqs.Queue(this, `${props.constants.APP_NAME}-ProcessedDLQ`, {
+            queueName: `${props.constants.APP_NAME}-ProcessedDLQ`,
+        });
+
+        const summarisedDLQ = new sqs.Queue(this, `${props.constants.APP_NAME}-SummarisedDLQ`, {
+            queueName: `${props.constants.APP_NAME}-SummarisedDLQ`,
+        });
+
         const processedQueue = new sqs.Queue(this, `${props.constants.APP_NAME}-ProcessedQueue`, {
             queueName: `${props.constants.APP_NAME}-ProcessedQueue`,
             removalPolicy: RemovalPolicy.DESTROY,
             visibilityTimeout: Duration.seconds(180),
+            deadLetterQueue: {
+                maxReceiveCount: 1,
+                queue: processedDLQ,
+            },
+        });
+
+        const summarisedQueue = new sqs.Queue(this, `${props.constants.APP_NAME}-SummarisedQueue`, {
+            queueName: `${props.constants.APP_NAME}-SummarisedQueue`,
+            removalPolicy: RemovalPolicy.DESTROY,
+            visibilityTimeout: Duration.seconds(180),
+            deadLetterQueue: {
+                maxReceiveCount: 1,
+                queue: summarisedDLQ,
+            },
         });
 
         ////////////////////////////////////////////////////////////
@@ -87,6 +109,13 @@ export class CommonStack extends Stack {
             stringValue: processedQueue.queueArn,
             tier: ssm.ParameterTier.STANDARD,
             description: `The ARN of the Processed Queue for ${props.constants.APP_NAME}`,
+        });
+
+        const summarisedQueueArnParameter = new ssm.StringParameter(this, `${props.constants.APP_NAME}-SummarisedQueueArn`, {
+            parameterName: props.params.SUMMARISED_QUEUE_ARN,
+            stringValue: summarisedQueue.queueArn,
+            tier: ssm.ParameterTier.STANDARD,
+            description: `The ARN of the Summarised Queue for ${props.constants.APP_NAME}`,
         });
     }
 }
