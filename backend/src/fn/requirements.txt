@@ -1,3 +1,4 @@
 -r admin/requirements.txt
 -r reader/requirements.txt
 -r process/requirements.txt
+-r summarise/requirements.txt

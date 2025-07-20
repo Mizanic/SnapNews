@@ -22,5 +22,5 @@
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${workspaceFolder}/backend/src"
     },
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "off"
 }

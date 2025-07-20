@@ -22,6 +22,12 @@ from shared.utils import article_exists
 
 # ==================================================================================================
 # Global declarations
+LOG_LEVEL = os.environ["POWERTOOLS_LOG_LEVEL"]
+
+logger.service = "Updater"
+logger.setLevel(LOG_LEVEL)
+
+
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["NEWS_TABLE_NAME"])
 

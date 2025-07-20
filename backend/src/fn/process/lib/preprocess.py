@@ -23,7 +23,6 @@ from shared.news_model import (
     SourceNewsItemModel,
 )
 from shared.url_hasher import hasher
-from shared.utils import article_exists
 
 # ==================================================================================================
 # Global declarations
@@ -51,11 +50,6 @@ def inject_data(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
         pk = f"NEWS#{item.country}#{item.language}"
         sk = str(uuid6.uuid7())
         item_hash = hasher(f"{pk}#{item.news_url}")
-
-        # Check if the item already exists in the database
-        if article_exists(pk, item_hash):
-            logger.info(f"Item already exists in the database: {item}")
-            continue
 
         sk_top = f"TOP#{str(0).zfill(10)}#{sk}"
 

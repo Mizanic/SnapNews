@@ -30,8 +30,8 @@ export class UpdaterStack extends Stack {
         // SSM parameters
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        const processedQueueArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-ProcessedQueueArn`, {
-            parameterName: props.params.PROCESSED_QUEUE_ARN,
+        const summarisedQueueArn = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-SummarisedQueueArn`, {
+            parameterName: props.params.SUMMARISED_QUEUE_ARN,
         });
 
         const tableName = ssm.StringParameter.fromStringParameterAttributes(this, `${props.constants.APP_NAME}-TableName`, {
@@ -42,8 +42,8 @@ export class UpdaterStack extends Stack {
             parameterName: props.params.COMMON_LAYER_ARN,
         });
 
-        // Get the processed queue
-        const processedQueue = sqs.Queue.fromQueueArn(this, `${props.constants.APP_NAME}-ProcessedQueue`, processedQueueArn.stringValue);
+        // Get the summarised queue
+        const summarisedQueue = sqs.Queue.fromQueueArn(this, `${props.constants.APP_NAME}-SummarisedQueue`, summarisedQueueArn.stringValue);
 
         // Fetch dynamodb main table and local index
         const newsTable = dynamodb.Table.fromTableAttributes(this, `${props.constants.APP_NAME}-NewsTable`, {
@@ -73,7 +73,6 @@ export class UpdaterStack extends Stack {
             layers: [commonLayer, powertoolsLayer],
             environment: {
                 NEWS_TABLE_NAME: newsTable.tableName,
-                PROCESSED_NEWS_QUEUE_NAME: processedQueue.queueName,
                 POWERTOOLS_LOG_LEVEL: props.constants.LOG_LEVEL,
             },
         });
@@ -85,12 +84,12 @@ export class UpdaterStack extends Stack {
         });
 
         // Grant the lambda function access to the queue and table
-        processedQueue.grantConsumeMessages(updaterFn);
+        summarisedQueue.grantConsumeMessages(updaterFn);
         newsTable.grantReadWriteData(updaterFn);
 
         // Create a rule to trigger the lambda function
         updaterFn.addEventSource(
-            new lambdaEventSources.SqsEventSource(processedQueue, {
+            new lambdaEventSources.SqsEventSource(summarisedQueue, {
                 enabled: true,
             })
         );
