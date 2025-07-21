@@ -14,7 +14,7 @@ MAX_MESSAGE_LENGTH = 150  # Reduced from 200 to save on data transfer
 SEARCH_TERMS = ["ERROR", "[ERROR]"]
 # For CloudWatch filter patterns, '?' provides OR logic.
 # Terms with non-alphanumeric characters must be quoted.
-FILTER_PATTERN = '?ERROR ?"[ERROR]"'
+FILTER_PATTERN = f'?{SEARCH_TERMS[0]} ?"[{SEARCH_TERMS[1]}]"'
 
 # === TIMEZONE ===
 IST = timezone(timedelta(hours=5, minutes=30))  # UTC+5:30
@@ -106,7 +106,7 @@ for log_group in log_groups:
                 error_summary[error_key] = error_summary.get(error_key, 0) + 1
 
         if group_error_count == 0:
-            print(f"✅ No error logs found in this group.")
+            print("✅ No error logs found in this group.")
         else:
             print(f"📊 Total errors in this group: {group_error_count}")
 
