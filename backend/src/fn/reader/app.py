@@ -36,9 +36,9 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
     logger.info(f"Event: {event.raw_event}")
     logger.info(f"Context: {context}")
 
-    news_source: str = event.get("NewsSource")
-    country: str = event.get("Country")
-    language: str = event.get("Language")
+    news_source = str(event.get("NewsSource"))
+    country = str(event.get("Country"))
+    language = str(event.get("Language"))
 
     source_metadata = get_source_metadata(news_source, country, language)
 
@@ -46,7 +46,9 @@ def main(event: EventBridgeEvent, context: LambdaContext) -> dict:
         logger.error(f"Invalid source metadata structure received for {news_source}: {source_metadata}")
         return {"statusCode": 400, "body": "Invalid source metadata data"}
 
-    for category, feed_url in source_metadata.get("feeds").items():
+    items = source_metadata.get("feeds", {}).items()
+
+    for category, feed_url in items:
         logger.info(f"Processing category: {category}, URL: {feed_url}")
         try:
             feed = get_feed_from_rss(news_source, feed_url, category, language, country)

@@ -17,11 +17,17 @@ from botocore.exceptions import ClientError
 
 # ==================================================================================================
 # Module imports
-from lib.utils import article_exists
 from shared.logger import logger
+from shared.utils import article_exists
 
 # ==================================================================================================
 # Global declarations
+LOG_LEVEL = os.environ["POWERTOOLS_LOG_LEVEL"]
+
+logger.service = "Updater"
+logger.setLevel(LOG_LEVEL)
+
+
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["NEWS_TABLE_NAME"])
 
@@ -35,7 +41,7 @@ def main(event: SQSEvent, context: LambdaContext) -> dict:  # noqa: ARG001
     message = json.loads(event["Records"][0]["body"])
     logger.info(message)
 
-    article = article_exists(message)
+    article = article_exists(message["pk"], message["item_hash"])
     logger.info(f"Article: {article}")
 
     try:

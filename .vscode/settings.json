@@ -21,5 +21,6 @@
     "python.analysis.extraPaths": ["backend/src"],
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${workspaceFolder}/backend/src"
-    }
+    },
+    "python.analysis.typeCheckingMode": "off"
 }

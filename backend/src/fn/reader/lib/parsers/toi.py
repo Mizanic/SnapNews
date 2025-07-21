@@ -12,10 +12,10 @@ from pydantic import ValidationError
 
 # ==================================================================================================
 # Module imports
+from shared.content import santise_content
 from shared.logger import logger
 from shared.news_model import NewsMediaModel, SourceNewsFeedModel, SourceNewsItemModel
-
-from .utils import santise_content, time_to_iso
+from shared.time import time_to_iso
 
 # ==================================================================================================
 
@@ -90,13 +90,3 @@ class TOI:
         }
 
         return data
-
-
-class TimesOfIndia(TOI):
-    """
-    This class is used to read RSS feeds from Times of India.
-    This is a wrapper around the TOI class.
-    This is to have a consistent naming convention.
-    """
-
-    pass

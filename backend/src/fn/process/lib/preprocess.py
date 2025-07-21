@@ -30,7 +30,15 @@ from shared.url_hasher import hasher
 TTL_DAYS = int(os.environ.get("NEWS_TTL_DAYS", "14"))  # TODO: To be changed to parameter in future
 
 
-def inject_metadata(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
+class FeedError(Exception):
+    """Base exception for feed handling errors."""
+
+
+class ParserNotFoundError(FeedError):
+    """Parser class for the source not found."""
+
+
+def inject_data(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
     """
     Inject metadata into news items.
     Assumes 'published' is an ISO 8601 string. Calculates 'ttl' as a Unix timestamp.
@@ -38,9 +46,11 @@ def inject_metadata(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
     news_items_with_metadata: list[ProcessedNewsItemModel] = []
     for item in news_items.feed:
         SourceNewsItemModel.model_validate(item)
+
         pk = f"NEWS#{item.country}#{item.language}"
         sk = str(uuid6.uuid7())
         item_hash = hasher(f"{pk}#{item.news_url}")
+
         sk_top = f"TOP#{str(0).zfill(10)}#{sk}"
 
         # Calculate TTL based on the ISO published string
