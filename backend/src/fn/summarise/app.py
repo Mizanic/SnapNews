@@ -17,7 +17,7 @@ from lib import scrapers
 
 # ==================================================================================================
 # Module imports
-from shared.ai import GEMINI
+from lib.ai import GEMINI
 from shared.logger import logger
 from shared.news_model import ProcessedNewsItemModel
 from shared.utils import article_exists
@@ -25,6 +25,7 @@ from shared.utils import article_exists
 # ==================================================================================================
 # Global declarations
 
+NEWS_TABLE_NAME = os.environ["NEWS_TABLE_NAME"]
 SUMMARISED_QUEUE_NAME = os.environ["SUMMARISED_NEWS_QUEUE_NAME"]
 SSM_GEMINI_API_KEY = os.environ["SSM_GEMINI_API_KEY"]
 GEMINI_MODEL_NAME = os.environ["GEMINI_MODEL_NAME"]
@@ -87,7 +88,7 @@ def main(event: SQSEvent, context: LambdaContext) -> dict:  # noqa: ARG001
     for record in event.records:
         processed_item = ProcessedNewsItemModel.model_validate_json(record.body)
 
-        stored_item = article_exists(processed_item.pk, processed_item.item_hash)
+        stored_item = article_exists(NEWS_TABLE_NAME, processed_item.pk, processed_item.item_hash)
 
         if stored_item is None:
             summary = get_summary(processed_item)
