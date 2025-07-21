@@ -8,10 +8,13 @@ from botocore.exceptions import ClientError
 # === CONFIG ===
 REGION = "us-east-1"
 LAMBDA_PREFIX = "/aws/lambda/SnapNews-"
-HOURS_LOOKBACK = 24  # Look back 24 hours only
+HOURS_LOOKBACK = 24 * 3  # Look back 24 hours only
 MAX_EVENTS_PER_GROUP = 10  # Reduced from 20 to save on data transfer
 MAX_MESSAGE_LENGTH = 150  # Reduced from 200 to save on data transfer
-FILTER_STRING = "ERROR"
+SEARCH_TERMS = ["ERROR", "[ERROR]"]
+# For CloudWatch filter patterns, '?' provides OR logic.
+# Terms with non-alphanumeric characters must be quoted.
+FILTER_PATTERN = f'?{SEARCH_TERMS[0]} ?"[{SEARCH_TERMS[1]}]"'
 
 # === TIMEZONE ===
 IST = timezone(timedelta(hours=5, minutes=30))  # UTC+5:30
@@ -23,7 +26,7 @@ logs_client = boto3.client("logs", region_name=REGION)
 now_ms = int(time.time() * 1000)
 start_ms = now_ms - (HOURS_LOOKBACK * 60 * 60 * 1000)
 
-print(f"Searching logs for '{FILTER_STRING}' in last {HOURS_LOOKBACK} hours...")
+print(f"Searching logs for '{' or '.join(SEARCH_TERMS)}' in last {HOURS_LOOKBACK} hours...")
 print("=" * 50)
 print(
     f"From: {datetime.fromtimestamp(start_ms/1000, IST).isoformat()}\n",
@@ -62,47 +65,49 @@ for log_group in log_groups:
     print(f"\n🔍 Checking log group: {log_group}")
 
     try:
-        # Use filter_log_events with pagination but limit results
         paginator = logs_client.get_paginator("filter_log_events")
-        group_error_count = 0
+        all_events = []
 
+        # We'll collect all events up to the API limit to ensure we scan the whole range
         for page in paginator.paginate(
             logGroupName=log_group,
-            filterPattern=FILTER_STRING,  # More precise filter pattern
+            filterPattern=FILTER_PATTERN,
             startTime=start_ms,
             endTime=now_ms,
-            PaginationConfig={"MaxItems": MAX_EVENTS_PER_GROUP},
+            limit=10000,  # Max limit to ensure we get everything in a large window
         ):
             events = page.get("events", [])
-
             if events:
-                group_error_count += len(events)
-                print(f"❌ Found {len(events)} {FILTER_STRING} log(s) in this batch:")
+                all_events.extend(events)
 
-                for event in events:
-                    ts = datetime.fromtimestamp(event["timestamp"] / 1000, IST).strftime("%Y-%m-%d %H:%M:%S")
-                    msg = event["message"].strip()
+        group_error_count = len(all_events)
+        if group_error_count > 0:
+            total_errors += group_error_count
+            display_events = all_events[:MAX_EVENTS_PER_GROUP]
 
-                    # Extract just the error part to save on output
-                    if FILTER_STRING in msg:
-                        error_part = msg[msg.find(FILTER_STRING) : msg.find(FILTER_STRING) + MAX_MESSAGE_LENGTH]
-                    else:
-                        error_part = msg[:MAX_MESSAGE_LENGTH]
+            print(f"❌ Found {group_error_count} error log(s). Showing up to {MAX_EVENTS_PER_GROUP}:")
 
-                    print(f"  [{ts}] {error_part}")
+            for event in display_events:
+                ts = datetime.fromtimestamp(event["timestamp"] / 1000, IST).strftime("%Y-%m-%d %H:%M:%S")
+                msg = event["message"].strip()
 
-                    # Track error patterns for summary
-                    error_key = error_part.split("\n")[0][:50]  # First line, first 50 chars
-                    error_summary[error_key] = error_summary.get(error_key, 0) + 1
+                # Extract just the error part to save on output
+                error_part = msg[:MAX_MESSAGE_LENGTH]
+                for term in SEARCH_TERMS:
+                    if term in msg:
+                        start_pos = msg.find(term)
+                        error_part = msg[start_pos : start_pos + MAX_MESSAGE_LENGTH]
+                        break
 
-            # If we got less than the max, we've seen all events
-            if len(events) < MAX_EVENTS_PER_GROUP:
-                break
+                print(f"  [{ts}] {error_part}")
+
+                # Track error patterns for summary from all found errors
+                error_key = error_part.split("\n")[0][:50]
+                error_summary[error_key] = error_summary.get(error_key, 0) + 1
 
         if group_error_count == 0:
-            print(f"✅ No {FILTER_STRING} logs found in this group.")
+            print("✅ No error logs found in this group.")
         else:
-            total_errors += group_error_count
             print(f"📊 Total errors in this group: {group_error_count}")
 
     except logs_client.exceptions.ResourceNotFoundException:
@@ -128,6 +133,6 @@ print("\n✅ Done checking logs.")
 print(
     f"From: {datetime.fromtimestamp(start_ms/1000, IST).strftime('%Y-%m-%d %H:%M:%S')}\n",
     f"To: {datetime.fromtimestamp(now_ms/1000, IST).strftime('%Y-%m-%d %H:%M:%S')}\n",
-    f"Total {FILTER_STRING}s: {total_errors}\n",
+    f"Total errors: {total_errors}\n",
     f"Log groups checked: {len(log_groups)}",
 )
