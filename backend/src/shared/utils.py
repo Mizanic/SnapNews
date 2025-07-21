@@ -6,7 +6,6 @@
 
 # ==================================================================================================
 # Python imports
-import os
 
 # ==================================================================================================
 # AWS imports
@@ -19,14 +18,14 @@ from shared.news_model import ProcessedNewsItemModel
 
 # ==================================================================================================
 # Global declarations
-NEWS_TABLE_NAME = os.environ["NEWS_TABLE_NAME"]
-table = boto3.resource("dynamodb").Table(NEWS_TABLE_NAME)
 
 
-def article_exists(pk: str, item_hash: str) -> ProcessedNewsItemModel | None:
+def article_exists(table_name: str, pk: str, item_hash: str) -> ProcessedNewsItemModel | None:
     """
     Check if the article exists in the database
     """
+    table = boto3.resource("dynamodb").Table(table_name)
+
     response = table.query(
         IndexName="byItemHash",
         KeyConditionExpression="pk = :pk AND item_hash = :item_hash",

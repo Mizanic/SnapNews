@@ -27,7 +27,7 @@ class GEMINI:
         self.model = model_name
 
     def generate_summary(self, article: str) -> str:
-        prompt = "Summarize the following article in 180 - 200 words: \n" + article
+        prompt = "Summarize the following article in 180 - 200 words. Only provide the summary, no other text. \n" + article
         logger.info(f"Prompt: {prompt}")
 
         contents = [
