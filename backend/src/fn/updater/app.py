@@ -23,6 +23,7 @@ from shared.utils import article_exists
 # ==================================================================================================
 # Global declarations
 LOG_LEVEL = os.environ["POWERTOOLS_LOG_LEVEL"]
+NEWS_TABLE_NAME = os.environ["NEWS_TABLE_NAME"]
 
 logger.service = "Updater"
 logger.setLevel(LOG_LEVEL)
@@ -41,7 +42,7 @@ def main(event: SQSEvent, context: LambdaContext) -> dict:  # noqa: ARG001
     message = json.loads(event["Records"][0]["body"])
     logger.info(message)
 
-    article = article_exists(message["pk"], message["item_hash"])
+    article = article_exists(table_name=NEWS_TABLE_NAME, pk=message["pk"], item_hash=message["item_hash"])
     logger.info(f"Article: {article}")
 
     try:
