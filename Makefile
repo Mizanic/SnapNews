@@ -1,118 +1,123 @@
-# Default stack target for CDK commands (use --all for clarity)
+# ===============================
+# SnapNews Project Makefile
+# ===============================
+
+# --- Core Configuration ---
 STACK ?= --all
+ENV ?= dev
+SOURCE ?= all
 
-# Construct full stack name based on STACK variable
-ifeq ($(STACK),--all)
-  FULL_STACK_NAME=$(STACK)
-else
-  FULL_STACK_NAME=SnapNews-$(STACK)Stack
-endif
+# --- Project Paths ---
+SCRIPTS_DIR := .scripts
+BACKEND_DIR := backend
+ADMIN_DIR := admin
+MOBILE_DIR := mobile
 
-# --- Help Target ---
+# --- Categorized Script Directories ---
+AWS_SCRIPTS_DIR := $(SCRIPTS_DIR)/aws
+TESTING_SCRIPTS_DIR := $(SCRIPTS_DIR)/testing
+BUILD_SCRIPTS_DIR := $(SCRIPTS_DIR)/build
+UTILS_SCRIPTS_DIR := $(SCRIPTS_DIR)/utils
+
+# --- Default Target ---
+.DEFAULT_GOAL := help
+
+# ===============================
+# MODULAR MAKEFILE INCLUDES
+# ===============================
+
+include .makefiles/infrastructure.mk
+include .makefiles/testing.mk
+include .makefiles/frontend.mk
+include .makefiles/setup.mk
+
+# ===============================
+# MAIN HELP SYSTEM
+# ===============================
+
 help:
+	@echo "SnapNews Project - Available Commands"
+	@echo "====================================="
+	@echo ""
 	@echo "Usage: make [target] [VAR=value]"
 	@echo ""
-	@echo "Targets:"
-	@echo "  help           Show this help message"
+	@echo "🏗️  Infrastructure:"
+	@echo "  deploy         Deploy stack(s) [STACK=name]"
+	@echo "  hotswap        Hotswap stack(s) for development"
+	@echo "  destroy        Destroy stack(s)"
+	@echo "  watch          Watch for changes"
 	@echo ""
-	@echo "  --- CDK Core Targets (use STACK=... to specify stack, defaults to --all) ---"
-	@echo "  deploy         Deploy specified stack(s) via CDK"
-	@echo "  hotswap        Hotswap specified stack(s) via CDK"
-	@echo "  destroy        Destroy specified stack(s) via CDK"
+	@echo "🧪 Testing:"
+	@echo "  test-reader    Test Lambda reader [SOURCE=name]"
+	@echo "  test-all       Run all tests"
+	@echo "  check-errors   Check Lambda errors"
 	@echo ""
-	@echo "  --- Helper Scripts & Tasks ---"
-	@echo "  layers         Create Lambda layers via script"
-	@echo "  config-env     Configure/Get environment variables via script"
-	@echo "  test-reader    Run reader test script"
-	@echo "  create-user    Run create user script"
-	@echo "  set-sources    Run set sources Python script"
+	@echo "🖥️  Frontend:"
+	@echo "  dev            Start admin dev server"
+	@echo "  mobile-dev     Start mobile dev server"
+	@echo "  build-all      Build all applications"
 	@echo ""
-	@echo "  --- Admin Frontend ---"
-	@echo "  dev            Run admin frontend dev server"
+	@echo "⚙️  Setup:"
+	@echo "  init-project   Initialize complete project"
+	@echo "  layers         Create Lambda layers"
+	@echo "  config-env     Configure environment"
 	@echo ""
-	@echo "Example:"
-	@echo "  make deploy STACK=SnapNews-ApiStack"
-	@echo "  make hotswap STACK=MyLambdaStack"
-	@echo "  make deploy-all"
+	@echo "🔧 Utilities:"
+	@echo "  clean          Clean build artifacts"
+	@echo "  status         Show project status"
+	@echo ""
+	@echo "📚 Detailed Help:"
+	@echo "  infrastructure-help  Show all infrastructure commands"
+	@echo "  testing-help        Show all testing commands"
+	@echo "  frontend-help       Show all frontend commands"
+	@echo "  setup-help          Show all setup commands"
+	@echo ""
+	@echo "📋 Quick Examples:"
+	@echo "  make deploy STACK=Api"
+	@echo "  make test-reader SOURCE=NDTV"
+	@echo "  make hotswap STACK=Lambda"
 
+# ===============================
+# LEGACY COMPATIBILITY
+# ===============================
+# The modular makefiles already define these targets
 
-# --- CDK Core Targets ---
-# These targets accept the STACK variable (e.g., make deploy STACK=MyStack)
+# ===============================
+# UTILITY TARGETS
+# ===============================
 
-deploy:
-	@echo ">>> Deploying stack(s): [$(FULL_STACK_NAME)]"
-	cd backend && cdk deploy $(FULL_STACK_NAME) --require-approval never
+clean:
+	@echo "🧹 Cleaning project..."
+	rm -f $(SCRIPTS_DIR)/*/response.json
+	rm -f $(SCRIPTS_DIR)/*/*/response.json
+	cd $(BACKEND_DIR) && rm -rf cdk.out || true
+	cd $(ADMIN_DIR) && rm -rf dist .next out node_modules/.cache || true
+	cd $(MOBILE_DIR) && rm -rf dist .expo node_modules/.cache || true
 
-hotswap:
-	@echo ">>> Hotswapping stack(s): [$(FULL_STACK_NAME)]"
-	cd backend && cdk deploy $(FULL_STACK_NAME) --hotswap
+status:
+	@echo "📊 SnapNews Project Status:"
+	@echo "=========================="
+	@echo "  Environment: $(ENV)"
+	@echo "  Current stack: $(STACK)"
+	@echo "  Test source: $(SOURCE)"
+	@echo "  Backend dir: $(BACKEND_DIR)"
+	@echo "  Admin dir: $(ADMIN_DIR)"
+	@echo "  Mobile dir: $(MOBILE_DIR)"
+	@echo ""
+	@echo "  Script directories:"
+	@echo "    AWS scripts: $(AWS_SCRIPTS_DIR)"
+	@echo "    Testing scripts: $(TESTING_SCRIPTS_DIR)"
+	@echo "    Build scripts: $(BUILD_SCRIPTS_DIR)"
+	@echo "    Utility scripts: $(UTILS_SCRIPTS_DIR)"
+	@echo ""
+	@echo "  Git status:"
+	@git status --porcelain | head -5 || echo "    (Not a git repository)"
+	@echo ""
+	@echo "  AWS profile:"
+	@aws sts get-caller-identity --query 'Arn' --output text 2>/dev/null || echo "    (AWS not configured)"
 
-destroy:
-	@echo ">>> Destroying stack(s): [$(FULL_STACK_NAME)]"
-	cd backend && cdk destroy $(FULL_STACK_NAME) # Add --force if needed
+# ===============================
+# PHONY TARGETS
+# ===============================
 
-watch:
-	@echo ">>> Watching stack(s): [$(FULL_STACK_NAME)]"
-	cd backend && cdk watch $(FULL_STACK_NAME)
-
-
-# --- Helper Scripts & Tasks ---
-
-layers:
-	@echo ">>> Creating layers..."
-	./.scripts/create-layers.sh
-
-config-env:
-	@echo ">>> Configuring environment..."
-	./.scripts/config-env.sh
-
-test-reader:
-	@echo ">>> Running reader test..."
-	./.scripts/test-reader.sh
-
-create-user:
-	@echo ">>> Creating user..."
-	./.scripts/create-user.sh
-
-set-sources:
-	@echo ">>> Setting sources..."
-	python3 ./.scripts/set_sources.py
-
-check-errors:
-	@echo ">>> Finding errors..."
-	python3 ./.scripts/check_lambda_errors.py
-
-
-delete-logs:
-	@echo ">>> Deleting logs..."
-	./.scripts/delete-logs.sh
-
-
-# --- Admin Frontend ---
-
-dev:
-	@echo ">>> Starting admin dev server..."
-	npm run --prefix ./admin/ dev
-
-
-# --- Mobile Frontend ---
-
-mobile-dev:
-	@echo ">>> Starting mobile dev server..."
-	./.scripts/mobile-dev.sh
-
-mobile-build:
-	@echo ">>> Building mobile app..."
-	./.scripts/mobile-build.sh
-
-mobile-web:
-	@echo ">>> Building mobile web app..."
-	cd mobile && npx expo start --web
-
-# --- Phony Targets ---
-# Ensures these targets run even if a file with the same name exists
-
-.PHONY: help deploy hotswap destroy \
-		deploy-all layers config-env \
-		test-reader create-user set-sources dev \
-		mobile-dev mobile-build mobile-web check-errors
+.PHONY: help clean status
