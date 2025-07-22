@@ -1,9 +1,14 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
+import { useSettingsStore } from "@/features/settings/state/settingsStore";
 
 export const useHaptics = () => {
-  const triggerHaptic = (style: Haptics.ImpactFeedbackStyle) => {
-    Haptics.impactAsync(style);
-  };
+    const { hapticFeedback } = useSettingsStore();
 
-  return { triggerHaptic };
+    const triggerHaptic = (style: Haptics.ImpactFeedbackStyle) => {
+        if (hapticFeedback === "enabled") {
+            Haptics.impactAsync(style);
+        }
+    };
+
+    return { triggerHaptic };
 };

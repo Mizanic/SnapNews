@@ -7,6 +7,7 @@ import { Spacing, BorderRadius } from "@/constants/Theme";
 import { Theme, COUNTRIES, LANGUAGES, Country, Language } from "../types";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
 export default function SettingsScreen() {
     const { theme, hapticFeedback, country, language, setTheme, setHapticFeedback, setCountry, setLanguage } = useSettingsStore();
@@ -21,6 +22,22 @@ export default function SettingsScreen() {
         { label: "System", value: "system" },
     ];
 
+    const handleThemeChange = (newTheme: Theme) => {
+        // Trigger haptic feedback if enabled
+        if (hapticFeedback === "enabled") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        setTheme(newTheme);
+    };
+
+    const handleHapticFeedbackChange = (value: boolean) => {
+        // Always trigger feedback when turning ON, but not when turning OFF
+        if (value) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }
+        setHapticFeedback(value ? "enabled" : "disabled");
+    };
+
     const renderCountryItem = ({ item }: { item: Country }) => (
         <TouchableOpacity
             style={[
@@ -31,6 +48,9 @@ export default function SettingsScreen() {
                 },
             ]}
             onPress={() => {
+                if (hapticFeedback === "enabled") {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
                 setCountry(item);
                 setShowCountryModal(false);
             }}
@@ -61,6 +81,9 @@ export default function SettingsScreen() {
                 },
             ]}
             onPress={() => {
+                if (hapticFeedback === "enabled") {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
                 setLanguage(item);
                 setShowLanguageModal(false);
             }}
@@ -99,7 +122,7 @@ export default function SettingsScreen() {
                                         backgroundColor: theme === option.value ? colors.primary[500] : "transparent",
                                     },
                                 ]}
-                                onPress={() => setTheme(option.value)}
+                                onPress={() => handleThemeChange(option.value)}
                             >
                                 <Text
                                     style={{
@@ -116,7 +139,7 @@ export default function SettingsScreen() {
                 {/* Haptic Feedback Setting */}
                 <View style={styles.settingContainer}>
                     <ThemedText style={styles.label}>Haptic Feedback</ThemedText>
-                    <Switch value={hapticFeedback === "enabled"} onValueChange={(value) => setHapticFeedback(value ? "enabled" : "disabled")} />
+                    <Switch value={hapticFeedback === "enabled"} onValueChange={(value) => handleHapticFeedbackChange(value)} />
                 </View>
 
                 {/* Country Setting */}
