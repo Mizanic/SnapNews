@@ -84,26 +84,26 @@ export default function SettingsScreen() {
     );
 
     return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={[{ flex: 1 }, { backgroundColor: colors.backgroundColors.primary }]}>
             <ThemedView style={styles.container}>
                 {/* Theme Setting */}
                 <View style={styles.settingContainer}>
                     <ThemedText style={styles.label}>Theme</ThemedText>
-                    <View style={styles.segmentedControl}>
+                    <View style={[styles.segmentedControl, { backgroundColor: colors.backgroundColors.secondary }]}>
                         {themeOptions.map((option) => (
                             <Pressable
                                 key={option.value}
                                 style={[
                                     styles.segment,
                                     {
-                                        backgroundColor: theme === option.value ? colors.primary[500] : colors.backgroundColors.secondary,
+                                        backgroundColor: theme === option.value ? colors.primary[500] : "transparent",
                                     },
                                 ]}
                                 onPress={() => setTheme(option.value)}
                             >
                                 <Text
                                     style={{
-                                        color: theme === option.value ? colors.white : colors.text,
+                                        color: theme === option.value ? colors.white : colors.textColors.primary,
                                     }}
                                 >
                                     {option.label}
@@ -206,7 +206,6 @@ const styles = StyleSheet.create({
     },
     segmentedControl: {
         flexDirection: "row",
-        backgroundColor: "#eee",
         borderRadius: BorderRadius.md,
         overflow: "hidden",
     },

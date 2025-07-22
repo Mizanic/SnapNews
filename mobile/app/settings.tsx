@@ -16,9 +16,15 @@ export default function Settings() {
                     title: "Settings",
                     headerShown: true,
                     presentation: "modal",
+                    headerStyle: {
+                        backgroundColor: colors.backgroundColors.primary,
+                    },
+                    headerTitleStyle: {
+                        color: colors.textColors.primary,
+                    },
                     headerLeft: () => (
                         <TouchableOpacity onPress={() => router.back()}>
-                            <Ionicons name="close" size={24} color={colors.textColors.primary} />
+                            <Ionicons name="arrow-back" size={24} color={colors.textColors.primary} />
                         </TouchableOpacity>
                     ),
                 }}
