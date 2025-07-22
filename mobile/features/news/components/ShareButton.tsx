@@ -34,7 +34,9 @@ const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl, viewShotRef })
                 await Share.open(shareOptions);
             }
         } catch (error) {
-            if (error.message !== "User did not share") {
+            // When the user cancels the share dialog, react-native-share throws an error.
+            // We check if the error message indicates a user cancellation to avoid showing an unnecessary alert.
+            if (!(error instanceof Error && error.message.includes("User did not share"))) {
                 Alert.alert("Error", "Unable to share this article");
             }
         }
