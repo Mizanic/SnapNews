@@ -8,6 +8,7 @@ import { Theme, COUNTRIES, LANGUAGES, Country, Language } from "../types";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { detectDeviceLocale, getLocaleDetectionSummary } from "@/utils/localeDetection";
 
 export default function SettingsScreen() {
     const { theme, hapticFeedback, country, language, setTheme, setHapticFeedback, setCountry, setLanguage } = useSettingsStore();
@@ -36,6 +37,16 @@ export default function SettingsScreen() {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         }
         setHapticFeedback(value ? "enabled" : "disabled");
+    };
+
+    const handleDetectLocale = () => {
+        if (hapticFeedback === "enabled") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }
+
+        const deviceLocale = detectDeviceLocale();
+        setCountry(deviceLocale.country);
+        setLanguage(deviceLocale.language);
     };
 
     const renderCountryItem = ({ item }: { item: Country }) => (
@@ -179,6 +190,29 @@ export default function SettingsScreen() {
                             <Text style={[styles.selectorSubtext, { color: colors.textColors.secondary }]}>{language.nativeName}</Text>
                         </View>
                         <Ionicons name="chevron-down" size={20} color={colors.textColors.secondary} />
+                    </Pressable>
+                </View>
+
+                {/* Locale Detection Info */}
+                <View style={styles.settingContainer}>
+                    <ThemedText style={styles.label}>Locale Detection</ThemedText>
+                    <Pressable
+                        style={[
+                            styles.selector,
+                            {
+                                backgroundColor: colors.backgroundColors.secondary,
+                                borderColor: colors.borderColors.medium,
+                            },
+                        ]}
+                        onPress={handleDetectLocale}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <Text style={[styles.selectorText, { color: colors.textColors.primary }]}>Auto-detect from device</Text>
+                            <Text style={[styles.selectorSubtext, { color: colors.textColors.secondary }]}>
+                                Tap to re-detect country & language
+                            </Text>
+                        </View>
+                        <Ionicons name="refresh" size={20} color={colors.textColors.secondary} />
                     </Pressable>
                 </View>
 
