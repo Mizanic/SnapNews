@@ -21,14 +21,14 @@ interface NewsCardProps {
 const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     const colors = useThemeColors();
     const colorScheme = useColorScheme();
-    const viewShotRef = useRef<ViewShot>(null);
+    const shareViewShotRef = useRef<ViewShot>(null);
     const [isCapturing, setIsCapturing] = useState(false);
 
     useEffect(() => {
         if (isCapturing) {
             const captureAndShare = async () => {
                 try {
-                    const uri = await viewShotRef.current?.capture?.();
+                    const uri = await shareViewShotRef.current?.capture?.();
                     if (uri) {
                         const shareOptions = {
                             title: "Check out this news article",
@@ -61,78 +61,118 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
         }
     };
 
-    return (
-        <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} style={styles.touchableCard}>
-            <ViewShot ref={viewShotRef} options={{ format: "jpg", quality: 0.9, result: "data-uri" }}>
+    // Render the shareable content (without action bar)
+    const renderShareableContent = () => (
+        <View
+            style={[
+                styles.card,
+                {
+                    backgroundColor: colors.backgroundColors.primary,
+                    borderColor: colors.borderColors.light,
+                    shadowColor: colors.black,
+                },
+            ]}
+        >
+            <View style={styles.imageWrapper}>
+                <ImageSection image={news.media.image_url} sourceName={news.source_name} timeLabel={formatRelativeTime(news.published)} />
+                <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                    <View style={styles.titleContainer}>
+                        <Text
+                            style={[
+                                styles.headlineText,
+                                {
+                                    color: colors.white,
+                                    textShadowColor: colors.shadowColors.dark,
+                                },
+                            ]}
+                            numberOfLines={3}
+                        >
+                            {news.headline}
+                        </Text>
+                    </View>
+                </LinearGradient>
+            </View>
+
+            {/* Always show branding in shareable content */}
+            <View style={styles.brandingContainer}>
                 <View
                     style={[
-                        styles.card,
+                        styles.brandingInner,
                         {
                             backgroundColor: colors.backgroundColors.primary,
-                            borderColor: colors.borderColors.light,
-                            shadowColor: colors.black,
                         },
                     ]}
                 >
-                    <View style={styles.imageWrapper}>
-                        <ImageSection
-                            image={news.media.image_url}
-                            sourceName={news.source_name}
-                            timeLabel={formatRelativeTime(news.published)}
-                        />
-                        <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
-                            <View style={styles.titleContainer}>
-                                <Text
-                                    style={[
-                                        styles.headlineText,
-                                        {
-                                            color: colors.white,
-                                            textShadowColor: colors.shadowColors.dark,
-                                        },
-                                    ]}
-                                    numberOfLines={3}
-                                >
-                                    {news.headline}
-                                </Text>
-                            </View>
-                        </LinearGradient>
-                    </View>
+                    <Text style={[styles.brandingText, { color: colors.accent.redditRed }]}>SnapNews</Text>
+                </View>
+            </View>
 
-                    {/* The branding container is now positioned absolutely relative to the card */}
-                    {isCapturing && (
-                        <View style={styles.brandingContainer}>
-                            <View
+            <View style={styles.shareContentContainer}>
+                <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                    {news.summary}
+                </Text>
+            </View>
+        </View>
+    );
+
+    return (
+        <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} style={styles.touchableCard}>
+            {/* Hidden ViewShot for sharing - positioned absolutely and invisible */}
+            <View style={styles.shareViewContainer}>
+                <ViewShot ref={shareViewShotRef} options={{ format: "jpg", quality: 0.9, result: "data-uri" }}>
+                    {renderShareableContent()}
+                </ViewShot>
+            </View>
+
+            {/* Visible card content */}
+            <View
+                style={[
+                    styles.card,
+                    {
+                        backgroundColor: colors.backgroundColors.primary,
+                        borderColor: colors.borderColors.light,
+                        shadowColor: colors.black,
+                    },
+                ]}
+            >
+                <View style={styles.imageWrapper}>
+                    <ImageSection image={news.media.image_url} sourceName={news.source_name} timeLabel={formatRelativeTime(news.published)} />
+                    <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                        <View style={styles.titleContainer}>
+                            <Text
                                 style={[
-                                    styles.brandingInner,
+                                    styles.headlineText,
                                     {
-                                        backgroundColor: colors.backgroundColors.primary,
+                                        color: colors.white,
+                                        textShadowColor: colors.shadowColors.dark,
                                     },
                                 ]}
+                                numberOfLines={3}
                             >
-                                <Text style={[styles.brandingText, { color: colors.accent.redditRed }]}>SnapNews</Text>
-                            </View>
+                                {news.headline}
+                            </Text>
                         </View>
-                    )}
-
-                    <View style={styles.contentContainer}>
-                        <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
-                            {news.summary}
-                        </Text>
-                    </View>
-
-                    <View
-                        style={[
-                            styles.actionBarWrapper,
-                            {
-                                backgroundColor: colors.backgroundColors.primary,
-                                borderTopColor: colors.borderColors.light,
-                            },
-                        ]}
-                    >
-                        <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} onShare={handleSharePress} />
-                    </View>
+                    </LinearGradient>
                 </View>
-            </ViewShot>
+
+                <View style={styles.contentContainer}>
+                    <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                        {news.summary}
+                    </Text>
+                </View>
+
+                <View
+                    style={[
+                        styles.actionBarWrapper,
+                        {
+                            backgroundColor: colors.backgroundColors.primary,
+                            borderTopColor: colors.borderColors.light,
+                        },
+                    ]}
+                >
+                    <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} onShare={handleSharePress} />
+                </View>
+            </View>
         </TouchableOpacity>
     );
 };
@@ -160,6 +200,13 @@ const styles = StyleSheet.create({
     touchableCard: {
         marginBottom: Spacing.md,
         marginHorizontal: Spacing.xs,
+    },
+    shareViewContainer: {
+        position: "absolute",
+        top: -9999,
+        left: -9999,
+        opacity: 0,
+        pointerEvents: "none",
     },
     card: {
         borderRadius: BorderRadius.sm,
@@ -193,6 +240,9 @@ const styles = StyleSheet.create({
         textShadowRadius: 2,
     },
     contentContainer: {
+        padding: Spacing.md,
+    },
+    shareContentContainer: {
         padding: Spacing.md,
         // Add top padding to ensure space for the overlayed branding element
         paddingTop: Spacing.xl,
