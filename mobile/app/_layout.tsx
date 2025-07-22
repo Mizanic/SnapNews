@@ -7,20 +7,36 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 
-import useColorScheme from "@/hooks/useColorScheme.web";
-
 import { Provider } from "react-redux";
 import store, { persistor } from "@/store/store";
 import { PersistGate } from "redux-persist/integration/react";
-import { useThemeColors } from "@/hooks/useThemeColor";
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
+function AppContent() {
+    const { colorScheme } = useTheme();
+
+    return (
+        <SafeAreaProvider>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+            <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                    name="settings"
+                    options={{
+                        presentation: "modal",
+                        headerShown: false,
+                    }}
+                />
+            </Stack>
+        </SafeAreaProvider>
+    );
+}
+
 export default function RootLayout() {
-    const colorScheme = useColorScheme();
-    const colors = useThemeColors();
     const [loaded] = useFonts({
         SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     });
@@ -39,19 +55,9 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
-                    <SafeAreaProvider>
-                        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} backgroundColor={colors.primary[600]} />
-                        <Stack screenOptions={{ headerShown: false }}>
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                            <Stack.Screen
-                                name="settings"
-                                options={{
-                                    presentation: "modal",
-                                    headerShown: false,
-                                }}
-                            />
-                        </Stack>
-                    </SafeAreaProvider>
+                    <ThemeProvider>
+                        <AppContent />
+                    </ThemeProvider>
                 </PersistGate>
             </Provider>
         </QueryClientProvider>
