@@ -6,22 +6,69 @@ import { Country, Language, COUNTRIES, LANGUAGES, findCountryByCode, findLanguag
  */
 export const detectDeviceLocale = () => {
     try {
-        // Get the device locale (e.g., "en-US", "es-ES", "fr-FR")
-        const locale = Localization.getLocales()[0];
+        // Get all device locales
+        const locales = Localization.getLocales();
+        const primaryLocale = locales[0];
 
-        if (!locale) {
+        if (!primaryLocale) {
             return getDefaultLocale();
         }
 
-        // Extract language code (e.g., "en" from "en-US")
-        const languageCode = locale.languageCode?.toLowerCase();
+        // Strategy 1: Get language from the primary locale
+        const languageCode = primaryLocale.languageCode?.toLowerCase();
 
-        // Extract region code (e.g., "US" from "en-US")
-        const regionCode = locale.regionCode?.toUpperCase();
+        // Strategy 2: Try multiple approaches for country detection
+        let detectedCountryCode = null;
+
+        // Method A: Use Localization.region (primary method)
+        const region = Localization.region;
+        detectedCountryCode = region;
+
+        // Method B: If region doesn't match our countries, try regionCode from primary locale
+        if (!detectedCountryCode || !findCountryByCode(detectedCountryCode)) {
+            detectedCountryCode = primaryLocale.regionCode;
+        }
+
+        // Method C: Try to extract from timezone if available
+        if (!detectedCountryCode || !findCountryByCode(detectedCountryCode)) {
+            const timezone = Localization.timezone;
+            if (timezone) {
+                // Extract country from timezone like "Asia/Kolkata" -> "IN"
+                const timezoneCountry = getCountryFromTimezone(timezone);
+                if (timezoneCountry) {
+                    detectedCountryCode = timezoneCountry;
+                }
+            }
+        }
+
+        // Method D: Try currency code as last resort
+        if (!detectedCountryCode || !findCountryByCode(detectedCountryCode)) {
+            const currencyCode = primaryLocale.currencyCode;
+            if (currencyCode) {
+                const currencyCountry = getCountryFromCurrency(currencyCode);
+                if (currencyCountry) {
+                    detectedCountryCode = currencyCountry;
+                }
+            }
+        }
 
         // Find matching country and language
-        const detectedCountry = regionCode ? findCountryByCode(regionCode) : null;
+        const detectedCountry = detectedCountryCode ? findCountryByCode(detectedCountryCode) : null;
         const detectedLanguage = languageCode ? findLanguageByCode(languageCode) : null;
+
+        // Enhanced logging for debugging
+        console.log("🌍 Locale Detection Debug:", {
+            "Localization.region": region,
+            "primaryLocale.regionCode": primaryLocale.regionCode,
+            "primaryLocale.languageCode": primaryLocale.languageCode,
+            "primaryLocale.languageTag": primaryLocale.languageTag,
+            "primaryLocale.currencyCode": primaryLocale.currencyCode,
+            timezone: Localization.timezone,
+            finalDetectedCountryCode: detectedCountryCode,
+            detectedCountry: detectedCountry?.name,
+            detectedLanguage: detectedLanguage?.name,
+            allLocales: locales.map((l) => l.languageTag),
+        });
 
         return {
             country: detectedCountry || getDefaultCountry(),
@@ -35,6 +82,70 @@ export const detectDeviceLocale = () => {
         console.warn("Failed to detect device locale:", error);
         return getDefaultLocale();
     }
+};
+
+/**
+ * Maps timezone to country code
+ */
+const getCountryFromTimezone = (timezone: string): string | null => {
+    const timezoneToCountry: Record<string, string> = {
+        // Asia
+        "Asia/Kolkata": "IN",
+        "Asia/Mumbai": "IN",
+        "Asia/Delhi": "IN",
+        "Asia/Tokyo": "JP",
+        "Asia/Shanghai": "CN",
+        "Asia/Hong_Kong": "CN",
+        "Asia/Seoul": "KR",
+        "Asia/Dubai": "AE",
+
+        // Europe
+        "Europe/London": "GB",
+        "Europe/Paris": "FR",
+        "Europe/Berlin": "DE",
+        "Europe/Rome": "IT",
+        "Europe/Madrid": "ES",
+        "Europe/Moscow": "RU",
+
+        // Americas
+        "America/New_York": "US",
+        "America/Los_Angeles": "US",
+        "America/Chicago": "US",
+        "America/Denver": "US",
+        "America/Toronto": "CA",
+        "America/Vancouver": "CA",
+        "America/Mexico_City": "MX",
+        "America/Sao_Paulo": "BR",
+
+        // Australia
+        "Australia/Sydney": "AU",
+        "Australia/Melbourne": "AU",
+        "Australia/Perth": "AU",
+    };
+
+    return timezoneToCountry[timezone] || null;
+};
+
+/**
+ * Maps currency code to country code
+ */
+const getCountryFromCurrency = (currencyCode: string): string | null => {
+    const currencyToCountry: Record<string, string> = {
+        USD: "US",
+        EUR: "DE", // Default to Germany for EUR
+        GBP: "GB",
+        INR: "IN",
+        JPY: "JP",
+        CNY: "CN",
+        KRW: "KR",
+        CAD: "CA",
+        AUD: "AU",
+        MXN: "MX",
+        BRL: "BR",
+        RUB: "RU",
+    };
+
+    return currencyToCountry[currencyCode] || null;
 };
 
 /**

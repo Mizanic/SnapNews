@@ -1,7 +1,7 @@
 import { ThemedView } from "@/components/common/ThemedView";
 import { ThemedText } from "@/components/common/ThemedText";
 import { useSettingsStore } from "../state/settingsStore";
-import { View, Switch, StyleSheet, Pressable, Text, ScrollView, Modal, FlatList, TouchableOpacity } from "react-native";
+import { View, Switch, StyleSheet, Pressable, Text, ScrollView, Modal, FlatList, TouchableOpacity, Alert } from "react-native";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, BorderRadius } from "@/constants/Theme";
 import { Theme, COUNTRIES, LANGUAGES, Country, Language } from "../types";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { detectDeviceLocale, getLocaleDetectionSummary } from "@/utils/localeDetection";
+import * as Localization from "expo-localization";
 
 export default function SettingsScreen() {
     const { theme, hapticFeedback, country, language, setTheme, setHapticFeedback, setCountry, setLanguage } = useSettingsStore();
@@ -16,6 +17,7 @@ export default function SettingsScreen() {
 
     const [showCountryModal, setShowCountryModal] = useState(false);
     const [showLanguageModal, setShowLanguageModal] = useState(false);
+    const [showDebugInfo, setShowDebugInfo] = useState(false);
 
     const themeOptions: { label: string; value: Theme }[] = [
         { label: "Light", value: "light" },
@@ -47,6 +49,35 @@ export default function SettingsScreen() {
         const deviceLocale = detectDeviceLocale();
         setCountry(deviceLocale.country);
         setLanguage(deviceLocale.language);
+    };
+
+    const showDebugData = () => {
+        try {
+            const locales = Localization.getLocales();
+            const region = Localization.region;
+            const timezone = Localization.timezone;
+
+            const debugInfo = {
+                region: region,
+                timezone: timezone,
+                locales: locales.map((locale) => ({
+                    languageCode: locale.languageCode,
+                    regionCode: locale.regionCode,
+                    languageTag: locale.languageTag,
+                    textDirection: locale.textDirection,
+                    digitGroupingSeparator: locale.digitGroupingSeparator,
+                    decimalSeparator: locale.decimalSeparator,
+                    measurementSystem: locale.measurementSystem,
+                    currencyCode: locale.currencyCode,
+                    currencySymbol: locale.currencySymbol,
+                })),
+                primaryLocale: locales[0],
+            };
+
+            Alert.alert("Locale Debug Info", JSON.stringify(debugInfo, null, 2), [{ text: "OK" }], { cancelable: true });
+        } catch (error) {
+            Alert.alert("Debug Error", `Failed to get locale info: ${error}`);
+        }
     };
 
     const renderCountryItem = ({ item }: { item: Country }) => (
@@ -213,6 +244,24 @@ export default function SettingsScreen() {
                             </Text>
                         </View>
                         <Ionicons name="refresh" size={20} color={colors.textColors.secondary} />
+                    </Pressable>
+                </View>
+
+                {/* Debug Info Button */}
+                <View style={styles.settingContainer}>
+                    <ThemedText style={styles.label}>Debug Locale Info</ThemedText>
+                    <Pressable
+                        style={[
+                            styles.selector,
+                            {
+                                backgroundColor: colors.backgroundColors.secondary,
+                                borderColor: colors.borderColors.medium,
+                            },
+                        ]}
+                        onPress={showDebugData}
+                    >
+                        <Text style={[styles.selectorText, { color: colors.textColors.primary }]}>Show Raw Locale Data</Text>
+                        <Ionicons name="bug" size={20} color={colors.textColors.secondary} />
                     </Pressable>
                 </View>
 
