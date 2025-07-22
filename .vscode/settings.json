@@ -17,7 +17,6 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "python.envFile": "${workspaceFolder}/.env",
     "python.analysis.extraPaths": ["backend/src"],
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${workspaceFolder}/backend/src"
