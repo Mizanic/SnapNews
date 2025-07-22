@@ -6,11 +6,13 @@ import { Spacing, Shadows } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import useColorScheme from "@/hooks/useColorScheme.web";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
     const colorScheme = useColorScheme();
+    const router = useRouter();
 
     const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
     const statusBarBg = colors.backgroundColors.primary;
@@ -21,8 +23,7 @@ const AppHeader: React.FC = () => {
     };
 
     const handleSettingsPress = () => {
-        // TODO: Implement settings functionality
-        console.log("Settings pressed");
+        router.push("/settings");
     };
 
     return (

@@ -1,11 +1,11 @@
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import MainTabs from "@/app/(tabs)/_layout";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
 
 import useColorScheme from "@/hooks/useColorScheme.web";
 
@@ -41,7 +41,16 @@ export default function RootLayout() {
                 <PersistGate loading={null} persistor={persistor}>
                     <SafeAreaProvider>
                         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} backgroundColor={colors.primary[600]} />
-                        <MainTabs />
+                        <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                            <Stack.Screen
+                                name="settings"
+                                options={{
+                                    presentation: "modal",
+                                    headerShown: false,
+                                }}
+                            />
+                        </Stack>
                     </SafeAreaProvider>
                 </PersistGate>
             </Provider>
