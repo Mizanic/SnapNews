@@ -59,7 +59,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
 
     return (
         <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} style={styles.touchableCard}>
-            <ViewShot ref={viewShotRef}>
+            <ViewShot ref={viewShotRef} options={{ format: "jpg", quality: 0.9, result: "data-uri" }}>
                 <View
                     style={[
                         styles.card,

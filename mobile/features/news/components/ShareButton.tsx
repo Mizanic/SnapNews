@@ -22,17 +22,14 @@ const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl, viewShotRef })
         try {
             triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
 
-            const uri = await viewShotRef.current?.capture?.({
-                format: "jpg",
-                quality: 0.9,
-                result: "data-uri",
-            });
+            // The capture options are now in NewsCard.tsx, so we call capture() without arguments.
+            const uri = await viewShotRef.current?.capture?.();
 
             if (uri) {
                 const shareOptions = {
                     title: "Check out this news article",
                     message: `Check out this news article: ${newsSourceUrl}`,
-                    url: uri,
+                    url: uri, // The result from capture() is already a data-uri
                 };
                 await Share.open(shareOptions);
             }
