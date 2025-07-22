@@ -11,7 +11,12 @@ interface ImageSectionProps {
 
 const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabel }) => (
     <View style={styles.imageContainer}>
-        <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
+        {/* Background blurred image */}
+        <Image source={{ uri: image }} style={styles.backgroundImage} resizeMode="cover" blurRadius={25} />
+        <View style={styles.backgroundOverlay} />
+
+        {/* Foreground image */}
+        <Image source={{ uri: image }} style={styles.foregroundImage} resizeMode="contain" />
 
         {/* Top overlay with both time and source labels */}
         {(timeLabel || sourceName) && (
@@ -34,14 +39,27 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
 const styles = StyleSheet.create({
     imageContainer: {
         width: "100%",
-        aspectRatio: 16 / 9,
-        position: "relative",
-    },
-    image: {
-        width: "100%",
         height: "100%",
+        position: "relative",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "black",
+        overflow: "hidden",
         borderTopLeftRadius: BorderRadius.sm,
         borderTopRightRadius: BorderRadius.sm,
+    },
+    backgroundImage: {
+        ...StyleSheet.absoluteFillObject,
+        width: "100%",
+        height: "100%",
+    },
+    backgroundOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(0,0,0,0.3)",
+    },
+    foregroundImage: {
+        width: "100%",
+        height: "100%",
     },
     overlayContainer: {
         position: "absolute",
