@@ -1,39 +1,45 @@
 import React from "react";
-import { TouchableOpacity, StyleSheet, Text, View, Share, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useHaptics } from "@/hooks/useHaptics";
 import * as Haptics from "expo-haptics";
+import ViewShot from "react-native-view-shot";
+import Share from "react-native-share";
 
 interface ShareButtonProps {
     newsSourceUrl: string;
+    viewShotRef: React.RefObject<ViewShot>;
 }
 
-const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
+const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl, viewShotRef }) => {
     const colors = useThemeColors();
     const { triggerHaptic } = useHaptics();
 
     const handleShare = async () => {
         try {
             triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-            const result = await Share.share({
-                message: `Check out this news article: ${newsSourceUrl}`,
-                url: newsSourceUrl,
+
+            const uri = await viewShotRef.current?.capture?.({
+                format: "jpg",
+                quality: 0.9,
+                result: "data-uri",
             });
 
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    // shared with activity type of result.activityType
-                } else {
-                    // shared
-                }
-            } else if (result.action === Share.dismissedAction) {
-                // dismissed
+            if (uri) {
+                const shareOptions = {
+                    title: "Check out this news article",
+                    message: `Check out this news article: ${newsSourceUrl}`,
+                    url: uri,
+                };
+                await Share.open(shareOptions);
             }
         } catch (error) {
-            Alert.alert("Error", "Unable to share this article");
+            if (error.message !== "User did not share") {
+                Alert.alert("Error", "Unable to share this article");
+            }
         }
     };
 

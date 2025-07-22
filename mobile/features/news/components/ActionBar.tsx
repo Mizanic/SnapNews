@@ -6,14 +6,16 @@ import { NewsItem } from "@/features/news/types";
 import LikeButton from "@/features/likes/components/LikeButton";
 import { Spacing, BorderRadius } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import ViewShot from "react-native-view-shot";
 
 interface ActionBarProps {
     news: NewsItem;
     isBookmarked: boolean;
     isLiked: boolean;
+    viewShotRef: React.RefObject<ViewShot>;
 }
 
-const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked }) => {
+const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, viewShotRef }) => {
     const colors = useThemeColors();
 
     return (
@@ -35,7 +37,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked }) =>
             </View>
 
             <View style={styles.actionGroup}>
-                <ShareButton newsSourceUrl={news.news_url} />
+                <ShareButton newsSourceUrl={news.news_url} viewShotRef={viewShotRef} />
             </View>
         </View>
     );

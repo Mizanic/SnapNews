@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, StyleSheet, Text, Dimensions, Platform, TouchableOpacity } from "react-native";
 import ImageSection from "./ImageSection";
 import ActionBar from "./ActionBar";
@@ -8,6 +8,7 @@ import { Typography } from "@/constants/Fonts";
 import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import * as WebBrowser from "expo-web-browser";
+import ViewShot from "react-native-view-shot";
 
 interface NewsCardProps {
     news: NewsItem;
@@ -17,6 +18,7 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     const colors = useThemeColors();
+    const viewShotRef = useRef<ViewShot>(null);
 
     const formatRelativeTime = (dateValue: string | number) => {
         const publishedDate =
@@ -57,57 +59,63 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
 
     return (
         <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} style={styles.touchableCard}>
-            <View
-                style={[
-                    styles.card,
-                    {
-                        backgroundColor: colors.backgroundColors.primary,
-                        borderColor: colors.borderColors.light,
-                        shadowColor: colors.black,
-                    },
-                ]}
-            >
-                <View style={styles.imageWrapper}>
-                    <ImageSection image={news.media.image_url} sourceName={news.source_name} timeLabel={formatRelativeTime(news.published)} />
-
-                    {/* Bottom gradient overlay with title */}
-                    <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
-                        <View style={styles.titleContainer}>
-                            <Text
-                                style={[
-                                    styles.headlineText,
-                                    {
-                                        color: colors.white,
-                                        textShadowColor: colors.shadowColors.dark,
-                                    },
-                                ]}
-                                numberOfLines={3}
-                            >
-                                {news.headline}
-                            </Text>
-                        </View>
-                    </LinearGradient>
-                </View>
-
-                <View style={[styles.contentContainer, { backgroundColor: colors.backgroundColors.primary }]}>
-                    <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
-                        {news.summary}
-                    </Text>
-                </View>
-
-                {/* Always visible action bar */}
+            <ViewShot ref={viewShotRef}>
                 <View
                     style={[
-                        styles.actionBarWrapper,
+                        styles.card,
                         {
                             backgroundColor: colors.backgroundColors.primary,
-                            borderTopColor: colors.borderColors.light,
+                            borderColor: colors.borderColors.light,
+                            shadowColor: colors.black,
                         },
                     ]}
                 >
-                    <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} />
+                    <View style={styles.imageWrapper}>
+                        <ImageSection
+                            image={news.media.image_url}
+                            sourceName={news.source_name}
+                            timeLabel={formatRelativeTime(news.published)}
+                        />
+
+                        {/* Bottom gradient overlay with title */}
+                        <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                            <View style={styles.titleContainer}>
+                                <Text
+                                    style={[
+                                        styles.headlineText,
+                                        {
+                                            color: colors.white,
+                                            textShadowColor: colors.shadowColors.dark,
+                                        },
+                                    ]}
+                                    numberOfLines={3}
+                                >
+                                    {news.headline}
+                                </Text>
+                            </View>
+                        </LinearGradient>
+                    </View>
+
+                    <View style={[styles.contentContainer, { backgroundColor: colors.backgroundColors.primary }]}>
+                        <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                            {news.summary}
+                        </Text>
+                    </View>
+
+                    {/* Always visible action bar */}
+                    <View
+                        style={[
+                            styles.actionBarWrapper,
+                            {
+                                backgroundColor: colors.backgroundColors.primary,
+                                borderTopColor: colors.borderColors.light,
+                            },
+                        ]}
+                    >
+                        <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} viewShotRef={viewShotRef} />
+                    </View>
                 </View>
-            </View>
+            </ViewShot>
         </TouchableOpacity>
     );
 };
