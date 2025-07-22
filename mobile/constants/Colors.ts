@@ -50,6 +50,7 @@ export const Colors = {
             red: "#ef4444",
             purple: "#8b5cf6",
             yellow: "#f59e0b",
+            redditRed: "#FF4500",
         },
 
         // Semantic Colors
@@ -148,6 +149,7 @@ export const Colors = {
             red: "#ef4444",
             purple: "#8b5cf6",
             yellow: "#f59e0b",
+            redditRed: "#FF4500",
         },
 
         // Semantic Colors

@@ -15,9 +15,6 @@ const AppHeader: React.FC = () => {
     const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
     const statusBarBg = colors.backgroundColors.primary;
 
-    // Reddit red color
-    const redditRed = "#FF4500";
-
     const handleMenuPress = () => {
         // TODO: Implement menu functionality
         console.log("Menu pressed");
@@ -50,9 +47,9 @@ const AppHeader: React.FC = () => {
 
                     {/* Center - Logo */}
                     <View style={styles.logoContainer}>
-                        <Text style={[styles.logoText, { color: redditRed }]}>
-                            <Text style={[styles.logoBold, { color: redditRed }]}>Snap</Text>
-                            <Text style={[styles.logoLight, { color: redditRed }]}>News</Text>
+                        <Text style={[styles.logoText, { color: colors.accent.redditRed }]}>
+                            <Text style={[styles.logoBold, { color: colors.accent.redditRed }]}>Snap</Text>
+                            <Text style={[styles.logoLight, { color: colors.accent.redditRed }]}>News</Text>
                         </Text>
                     </View>
 
