@@ -54,8 +54,9 @@ export default function SettingsScreen() {
     const showDebugData = () => {
         try {
             const locales = Localization.getLocales();
-            const region = Localization.region;
-            const timezone = Localization.timezone;
+            const calendars = Localization.getCalendars();
+            const region = Localization.getLocales()[0].regionCode;
+            const timezone = calendars[0]?.timeZone;
 
             const debugInfo = {
                 region: region,
@@ -71,6 +72,7 @@ export default function SettingsScreen() {
                     currencyCode: locale.currencyCode,
                     currencySymbol: locale.currencySymbol,
                 })),
+                calendars: calendars,
                 primaryLocale: locales[0],
             };
 

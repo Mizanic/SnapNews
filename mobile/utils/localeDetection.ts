@@ -21,24 +21,12 @@ export const detectDeviceLocale = () => {
         let detectedCountryCode = null;
 
         // Method A: Use Localization.region (primary method)
-        const region = Localization.region;
+        const region = Localization.getLocales()[0].regionCode;
         detectedCountryCode = region;
 
         // Method B: If region doesn't match our countries, try regionCode from primary locale
         if (!detectedCountryCode || !findCountryByCode(detectedCountryCode)) {
             detectedCountryCode = primaryLocale.regionCode;
-        }
-
-        // Method C: Try to extract from timezone if available
-        if (!detectedCountryCode || !findCountryByCode(detectedCountryCode)) {
-            const timezone = Localization.timezone;
-            if (timezone) {
-                // Extract country from timezone like "Asia/Kolkata" -> "IN"
-                const timezoneCountry = getCountryFromTimezone(timezone);
-                if (timezoneCountry) {
-                    detectedCountryCode = timezoneCountry;
-                }
-            }
         }
 
         // Method D: Try currency code as last resort
@@ -63,7 +51,6 @@ export const detectDeviceLocale = () => {
             "primaryLocale.languageCode": primaryLocale.languageCode,
             "primaryLocale.languageTag": primaryLocale.languageTag,
             "primaryLocale.currencyCode": primaryLocale.currencyCode,
-            timezone: Localization.timezone,
             finalDetectedCountryCode: detectedCountryCode,
             detectedCountry: detectedCountry?.name,
             detectedLanguage: detectedLanguage?.name,
