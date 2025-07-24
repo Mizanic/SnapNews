@@ -74,7 +74,7 @@ const NewsList = ({
                 ) : undefined
             }
             onEndReached={onEndReached}
-            onEndReachedThreshold={0.4}
+            onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
         />
     );
