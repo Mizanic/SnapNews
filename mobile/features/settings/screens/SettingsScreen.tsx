@@ -12,7 +12,8 @@ import { detectDeviceLocale, getLocaleDetectionSummary } from "@/utils/localeDet
 import * as Localization from "expo-localization";
 
 export default function SettingsScreen() {
-    const { theme, hapticFeedback, country, language, setTheme, setHapticFeedback, setCountry, setLanguage } = useSettingsStore();
+    const { theme, hapticFeedback, country, language, setTheme, setHapticFeedback, setCountry, setLanguage, forceDetectLocale } =
+        useSettingsStore();
     const colors = useThemeColors();
 
     const [showCountryModal, setShowCountryModal] = useState(false);
@@ -46,9 +47,7 @@ export default function SettingsScreen() {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         }
 
-        const deviceLocale = detectDeviceLocale();
-        setCountry(deviceLocale.country);
-        setLanguage(deviceLocale.language);
+        forceDetectLocale();
     };
 
     const showDebugData = () => {

@@ -40,6 +40,8 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
                 )}
             </View>
         </View>
+
+        {/* Remove bottom overlay since source is now at top */}
     </View>
 );
 
@@ -110,18 +112,6 @@ const styles = StyleSheet.create({
         ...Shadows.sm,
     },
     timeText: {
-        ...Typography.captionText.medium,
-        color: Colors.white,
-        fontWeight: "600",
-    },
-    sourceChip: {
-        backgroundColor: Colors.background.opaque,
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: 6,
-        borderRadius: BorderRadius.md,
-        ...Shadows.sm,
-    },
-    sourceText: {
         ...Typography.captionText.medium,
         color: Colors.white,
         fontWeight: "600",
