@@ -18,6 +18,7 @@ from lib import scrapers
 # ==================================================================================================
 # Module imports
 from lib.ai import GEMINI
+from shared.content import santise_content
 from shared.logger import logger
 from shared.news_model import ProcessedNewsItemModel
 from shared.utils import article_exists
@@ -77,7 +78,7 @@ def get_summary(item: ProcessedNewsItemModel) -> str:
         logger.info(f"Keeping the original summary for {item.news_url}")
         summary = item.summary
 
-    return summary
+    return santise_content(summary)
 
 
 @event_source(data_class=SQSEvent)
