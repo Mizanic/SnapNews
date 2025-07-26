@@ -74,7 +74,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             ]}
         >
             <View style={styles.imageWrapper}>
-                <ImageSection image={news.media.image_url} sourceName={news.source_name} timeLabel={formatRelativeTime(news.published)} />
+                <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
                 <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
                     <View style={styles.titleContainer}>
                         <Text
@@ -136,7 +136,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                 ]}
             >
                 <View style={styles.imageWrapper}>
-                    <ImageSection image={news.media.image_url} sourceName={news.source_name} timeLabel={formatRelativeTime(news.published)} />
+                    <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
                     <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
                         <View style={styles.titleContainer}>
                             <Text

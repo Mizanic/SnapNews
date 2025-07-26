@@ -7,9 +7,10 @@ interface ImageSectionProps {
     image: string;
     sourceName?: string;
     timeLabel?: string;
+    categories?: string[];
 }
 
-const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabel }) => (
+const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabel, categories }) => (
     <View style={styles.imageContainer}>
         {/* Background blurred image */}
         <Image source={{ uri: image }} style={styles.backgroundImage} resizeMode="cover" blurRadius={25} />
@@ -18,21 +19,27 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
         {/* Foreground image */}
         <Image source={{ uri: image }} style={styles.foregroundImage} resizeMode="contain" />
 
-        {/* Top overlay with both time and source labels */}
-        {(timeLabel || sourceName) && (
-            <View style={styles.overlayContainer}>
+        {/* Top overlay with categories on left and time on right */}
+        <View style={styles.overlayContainer}>
+            {/* Left side - Categories */}
+            <View style={styles.leftContainer}>
+                {categories &&
+                    categories.slice(0, 3).map((category, index) => (
+                        <View key={index} style={styles.categoryChip}>
+                            <Text style={styles.categoryText}>{category}</Text>
+                        </View>
+                    ))}
+            </View>
+
+            {/* Right side - Time */}
+            <View style={styles.rightContainer}>
                 {timeLabel && (
                     <View style={styles.timeChip}>
                         <Text style={styles.timeText}>{timeLabel}</Text>
                     </View>
                 )}
-                {sourceName && (
-                    <View style={styles.sourceChip}>
-                        <Text style={styles.sourceText}>{sourceName}</Text>
-                    </View>
-                )}
             </View>
-        )}
+        </View>
     </View>
 );
 
@@ -70,6 +77,30 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "flex-start",
         padding: Spacing.md,
+    },
+    leftContainer: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        flex: 1,
+        flexWrap: "wrap",
+    },
+    rightContainer: {
+        alignItems: "flex-end",
+    },
+    categoryChip: {
+        backgroundColor: Colors.background.opaque,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: 4,
+        borderRadius: BorderRadius.sm,
+        marginRight: Spacing.xs,
+        marginBottom: Spacing.xs,
+        ...Shadows.sm,
+    },
+    categoryText: {
+        ...Typography.captionText.small,
+        color: Colors.white,
+        fontWeight: "600",
+        fontSize: 11,
     },
     timeChip: {
         backgroundColor: Colors.background.opaque,
