@@ -62,12 +62,20 @@ def get_source_metadata(news_source: str, country: str, language: str) -> tuple[
     logger.info(f"Item: {item}")
 
     if item:
+        # Process the feeds to handle both single URLs and arrays of URLs
+        raw_feeds = item.get("Feeds", [])
+        processed_feeds = {}
+
+        if raw_feeds and len(raw_feeds) > 0:
+            feeds_data = raw_feeds[0]  # Get the first (and likely only) feed group
+            processed_feeds = feeds_data
+
         source_metadata = {
             "name_short": item.get("Name").get("Short"),
             "name_long": item.get("Name").get("Long"),
             "language": item.get("Language"),
             "country": item.get("Country"),
-            "feeds": item.get("Feeds")[0],
+            "feeds": processed_feeds,
         }
         return source_metadata
 

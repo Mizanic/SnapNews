@@ -9,11 +9,19 @@
             },
             "FEEDS": [
                 {
+                    "INDIA": [
+                        "https://feeds.feedburner.com/ndtvnews-india-news",
+                        "https://feeds.feedburner.com/ndtvnews-south",
+                        "https://feeds.feedburner.com/ndtvnews-cities-news",
+                        "https://feeds.feedburner.com/ndtvnews-people",
+                        "https://feeds.feedburner.com/ndtvnews-indians-abroad"
+                    ],
+                    "TECH": "https://feeds.feedburner.com/gadgets360-latest",
+                    "WORLD": "https://feeds.feedburner.com/ndtvnews-world-news",
+                    "SPORTS": "https://feeds.feedburner.com/ndtvsports-latest",
+                    "BUSINESS": "https://feeds.feedburner.com/ndtvprofit-latest",
                     "CRICKET": "https://feeds.feedburner.com/ndtvsports-cricket",
-                    "INDIA": "https://feeds.feedburner.com/ndtvnews-india-news",
-                    "LATEST": "https://feeds.feedburner.com/ndtvnews-latest",
-                    "TOP": "https://feeds.feedburner.com/ndtvnews-top-stories",
-                    "TRENDING": "https://feeds.feedburner.com/ndtvnews-trending-news"
+                    "HEALTH": "https://feeds.feedburner.com/ndtvcooks-latest"
                 }
             ]
         },
