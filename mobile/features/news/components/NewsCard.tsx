@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     actionBarWrapper: {
-        borderTopWidth: 1,
+        borderTopWidth: 0.5,
     },
     sourceContainer: {
         flexDirection: "row",
