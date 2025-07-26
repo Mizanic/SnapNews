@@ -85,8 +85,6 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
                         StyleSheet.absoluteFill,
                         {
                             backgroundColor: colors.backgroundColors.primary,
-                            borderTopLeftRadius: BorderRadius.xl,
-                            borderTopRightRadius: BorderRadius.xl,
                         },
                     ]}
                 />
@@ -115,7 +113,7 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
                             style={[styles.iconWrapper, isFocused && { backgroundColor: colors.primary[50] }]}
                             activeOpacity={0.7}
                         >
-                            <View style={[styles.iconContainer, isFocused && { backgroundColor: colors.white, ...Shadows.sm }]}>
+                            <View style={[isFocused && { backgroundColor: colors.white, ...Shadows.sm }]}>
                                 <IconComponent
                                     name={name}
                                     size={isFocused ? 24 : 22}
@@ -164,17 +162,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingVertical: Spacing.sm,
         paddingHorizontal: Spacing.md,
-        borderRadius: BorderRadius.lg,
         minWidth: 60,
         minHeight: 44,
-    },
-    iconContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        width: 32,
-        height: 32,
-        borderRadius: BorderRadius.md,
-        marginBottom: 2,
     },
     focusedIndicator: {
         width: 24,
