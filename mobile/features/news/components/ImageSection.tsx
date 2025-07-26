@@ -107,14 +107,15 @@ const styles = StyleSheet.create({
     timeChip: {
         backgroundColor: Colors.background.opaque,
         paddingHorizontal: Spacing.sm,
-        paddingVertical: 6,
-        borderRadius: BorderRadius.md,
+        paddingVertical: 4,
+        borderRadius: BorderRadius.sm,
         ...Shadows.sm,
     },
     timeText: {
-        ...Typography.captionText.medium,
+        ...Typography.captionText.small,
         color: Colors.white,
         fontWeight: "600",
+        fontSize: 11,
     },
 });
 
