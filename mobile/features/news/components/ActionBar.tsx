@@ -74,16 +74,13 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                     />
                     <Text style={[styles.actionText, { color: isBookmarked ? colors.accent.orange : colors.gray[500] }]}>Save</Text>
                 </TouchableOpacity>
-
-                {/* Share Button */}
-                <TouchableOpacity style={styles.actionButton} onPress={handleSharePress} activeOpacity={0.7}>
-                    <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
-                    <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
-                </TouchableOpacity>
             </View>
 
-            {/* Right side - Source */}
-            <Text style={[styles.sourceText, { color: colors.gray[500] }]}>{news.source_name}</Text>
+            {/* Right side - Share Button */}
+            <TouchableOpacity style={styles.actionButton} onPress={handleSharePress} activeOpacity={0.7}>
+                <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
+                <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
+            </TouchableOpacity>
         </View>
     );
 };

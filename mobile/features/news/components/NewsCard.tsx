@@ -5,12 +5,11 @@ import ActionBar from "./ActionBar";
 import { NewsItem } from "@/features/news/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { Typography } from "@/constants/Fonts";
-import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
+import { Spacing, Shadows, BorderRadius, Colors } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import * as WebBrowser from "expo-web-browser";
 import ViewShot from "react-native-view-shot";
 import Share from "react-native-share";
-import { Colors } from "@/constants/Colors";
 
 interface NewsCardProps {
     news: NewsItem;
@@ -74,8 +73,21 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             ]}
         >
             <View style={styles.imageWrapper}>
-                <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
+                <ImageSection
+                    image={news.media.image_url}
+                    timeLabel={formatRelativeTime(news.published)}
+                    sourceName={news.source_name}
+                    categories={news.categories}
+                />
                 <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                    {/* Source name above headline */}
+                    {news.source_name && (
+                        <View style={styles.sourceContainer}>
+                            <View style={styles.sourceChip}>
+                                <Text style={styles.sourceText}>{news.source_name}</Text>
+                            </View>
+                        </View>
+                    )}
                     <View style={styles.titleContainer}>
                         <Text
                             style={[
@@ -136,8 +148,21 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                 ]}
             >
                 <View style={styles.imageWrapper}>
-                    <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
+                    <ImageSection
+                        image={news.media.image_url}
+                        timeLabel={formatRelativeTime(news.published)}
+                        sourceName={news.source_name}
+                        categories={news.categories}
+                    />
                     <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                        {/* Source name above headline */}
+                        {news.source_name && (
+                            <View style={styles.sourceContainer}>
+                                <View style={styles.sourceChip}>
+                                    <Text style={styles.sourceText}>{news.source_name.toUpperCase()}</Text>
+                                </View>
+                            </View>
+                        )}
                         <View style={styles.titleContainer}>
                             <Text
                                 style={[
@@ -278,6 +303,23 @@ const styles = StyleSheet.create({
     },
     actionBarWrapper: {
         borderTopWidth: 1,
+    },
+    sourceContainer: {
+        flexDirection: "row",
+        marginBottom: Spacing.xs,
+    },
+    sourceChip: {
+        backgroundColor: Colors.background.opaque,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: 4,
+        borderRadius: BorderRadius.sm,
+        ...Shadows.sm,
+    },
+    sourceText: {
+        ...Typography.captionText.small,
+        color: Colors.white,
+        fontWeight: "600",
+        fontSize: 11,
     },
 });
 
