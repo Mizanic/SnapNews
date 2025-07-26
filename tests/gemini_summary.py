@@ -12,9 +12,9 @@ table = dynamodb.Table("SnapNews-Table")
 
 
 ## Get item with pk: APP#DATA and sk: GEMINI
-item = table.get_item(Key={"pk": "APP#DATA", "sk": "GEMINI"})
+item = table.get_item(Key={"pk": "APP#DATA", "sk": "SECRETS"})
 
-GEMINI_API_KEY = item["Item"]["API_KEY"]
+GEMINI_API_KEY = item["Item"]["GEMINI_API_KEY"]
 MODEL_NAME = "gemma-3-27b-it"
 # MODEL_NAME = "gemini-embedding-001"
 
@@ -86,7 +86,8 @@ def santise_content(content: str) -> str:
 
 
 if __name__ == "__main__":
-    url = "https://www.ndtv.com/india-news/pm-narendra-modi-greets-defence-minister-rajnath-singh-on-his-birthday-today-8852566"
+    # url = "https://www.ndtv.com/india-news/pm-narendra-modi-greets-defence-minister-rajnath-singh-on-his-birthday-today-8852566"
+    url = "https://timesofindia.indiatimes.com/india/-manifests-savarn-and-shudras-mp-hc-flags-caste-system-in-judiciary-calls-out-feudal-mindset/articleshow/122918371.cms"
     article = get_article(url)
     # print(article)
     # summary = generate(article)

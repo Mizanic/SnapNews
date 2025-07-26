@@ -1,6 +1,6 @@
 """
 # --*-- coding: utf-8 --*--
-This Module is used to scrape the content from NDTV
+This Module is used to scrape the content from TOI
 """
 
 # ==================================================================================================
@@ -14,9 +14,9 @@ from shared.content import santise_content
 # ==================================================================================================
 
 
-class NDTV:
+class TOI:
     """
-    This class is used to scrape the content from NDTV
+    This class is used to scrape the content from TOI
     """
 
     def get_article(self, url: str) -> str:
