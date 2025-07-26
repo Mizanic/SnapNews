@@ -1,28 +1,37 @@
-"""
-# --*-- coding: utf-8 --*--
-This Module is used to santise the content
-"""
-
-# ==================================================================================================
-# Python imports
 import re
-
-# ==================================================================================================
-# Module imports
 
 
 def santise_content(content: str) -> str:
     """
-    This function santises the content
+    Sanitizes content by removing HTML tags, normalizing whitespace,
+    removing wrapping quotes, and cleaning up formatting.
+
+    Args:
+        content: The string content to sanitize
+
+    Returns:
+        Cleaned and sanitized string
     """
-    clean = re.compile("<.*?>")
-    # Remove HTML tags
-    content = re.sub(clean, "", content)
+    if not content or not isinstance(content, str):
+        return ""
 
-    # Remove newlines
-    content = content.replace("\n", "")
+    # Remove HTML/XML tags (more comprehensive pattern)
+    content = re.sub(r"<[^<>]*>", r"", content)
 
-    # Remove multiple spaces
-    content = re.sub(" +", " ", content)
+    # Remove HTML entities
+    content = re.sub(r"&[a-zA-Z0-9#]+;", r" ", content)
+
+    # Normalize all whitespace characters (spaces, tabs, newlines, etc.)
+    content = re.sub(r"\s+", r" ", content)
+
+    # Remove matching quotes only if they wrap the entire content
+    content = re.sub(r"^(['\"])(.*?)\1$", r"\2", content)
+
+    # Remove leading/trailing whitespace
+    content = content.strip()
+
+    # Handle edge case where content becomes empty after quote removal
+    if not content:
+        return ""
 
     return content
