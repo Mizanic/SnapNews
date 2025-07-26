@@ -4,19 +4,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { Typography } from "@/constants/Fonts";
 import { Spacing, Shadows } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import useColorScheme from "@/hooks/useColorScheme.web";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
-    const colorScheme = useColorScheme();
+    const { colorScheme } = useTheme();
+    const router = useRouter();
 
     const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
     const statusBarBg = colors.backgroundColors.primary;
-
-    // Reddit red color
-    const redditRed = "#FF4500";
 
     const handleMenuPress = () => {
         // TODO: Implement menu functionality
@@ -24,8 +23,7 @@ const AppHeader: React.FC = () => {
     };
 
     const handleSettingsPress = () => {
-        // TODO: Implement settings functionality
-        console.log("Settings pressed");
+        router.push("/settings");
     };
 
     return (
@@ -50,9 +48,9 @@ const AppHeader: React.FC = () => {
 
                     {/* Center - Logo */}
                     <View style={styles.logoContainer}>
-                        <Text style={[styles.logoText, { color: redditRed }]}>
-                            <Text style={[styles.logoBold, { color: redditRed }]}>Snap</Text>
-                            <Text style={[styles.logoLight, { color: redditRed }]}>News</Text>
+                        <Text style={[styles.logoText, { color: colors.accent.redditRed }]}>
+                            <Text style={[styles.logoBold, { color: colors.accent.redditRed }]}>Snap</Text>
+                            <Text style={[styles.logoLight, { color: colors.accent.redditRed }]}>News</Text>
                         </Text>
                     </View>
 

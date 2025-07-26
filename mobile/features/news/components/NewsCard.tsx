@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet, Text, Dimensions, Platform, TouchableOpacity } from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import { View, StyleSheet, Text, TouchableOpacity, Alert, useColorScheme } from "react-native";
 import ImageSection from "./ImageSection";
 import ActionBar from "./ActionBar";
 import { NewsItem } from "@/features/news/types";
@@ -8,6 +8,9 @@ import { Typography } from "@/constants/Fonts";
 import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import * as WebBrowser from "expo-web-browser";
+import ViewShot from "react-native-view-shot";
+import Share from "react-native-share";
+import { Colors } from "@/constants/Colors";
 
 interface NewsCardProps {
     news: NewsItem;
@@ -17,36 +20,37 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     const colors = useThemeColors();
+    const colorScheme = useColorScheme();
+    const shareViewShotRef = useRef<ViewShot>(null);
+    const [isCapturing, setIsCapturing] = useState(false);
 
-    const formatRelativeTime = (dateValue: string | number) => {
-        const publishedDate =
-            !isNaN(Number(dateValue)) && String(dateValue).length === 10
-                ? new Date(parseInt(String(dateValue)) * 1000)
-                : new Date(dateValue);
-
-        const now = new Date();
-        const diffInSeconds = Math.floor((now.getTime() - publishedDate.getTime()) / 1000);
-
-        const minute = 60;
-        const hour = minute * 60;
-        const day = hour * 24;
-        const week = day * 7;
-
-        if (diffInSeconds < minute) {
-            return "just now";
-        } else if (diffInSeconds < hour) {
-            const minutes = Math.floor(diffInSeconds / minute);
-            return `${minutes}m ago`;
-        } else if (diffInSeconds < day) {
-            const hours = Math.floor(diffInSeconds / hour);
-            return `${hours}h ago`;
-        } else if (diffInSeconds < week) {
-            const days = Math.floor(diffInSeconds / day);
-            return `${days}d ago`;
-        } else {
-            const weeks = Math.floor(diffInSeconds / week);
-            return `${weeks}w ago`;
+    useEffect(() => {
+        if (isCapturing) {
+            const captureAndShare = async () => {
+                try {
+                    const uri = await shareViewShotRef.current?.capture?.();
+                    if (uri) {
+                        const shareOptions = {
+                            title: "Check out this news article",
+                            message: `Check out this news article: ${news.news_url}`,
+                            url: uri,
+                        };
+                        await Share.open(shareOptions);
+                    }
+                } catch (error) {
+                    if (!(error instanceof Error && error.message.includes("User did not share"))) {
+                        Alert.alert("Error", "Unable to share this article");
+                    }
+                } finally {
+                    setIsCapturing(false);
+                }
+            };
+            setTimeout(captureAndShare, 100);
         }
+    }, [isCapturing, news.news_url]);
+
+    const handleSharePress = () => {
+        setIsCapturing(true);
     };
 
     const handleCardPress = async () => {
@@ -57,8 +61,70 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
         }
     };
 
+    // Render the shareable content (without action bar)
+    const renderShareableContent = () => (
+        <View
+            style={[
+                styles.card,
+                {
+                    backgroundColor: colors.backgroundColors.primary,
+                    borderColor: colors.borderColors.light,
+                    shadowColor: colors.black,
+                },
+            ]}
+        >
+            <View style={styles.imageWrapper}>
+                <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
+                <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                    <View style={styles.titleContainer}>
+                        <Text
+                            style={[
+                                styles.headlineText,
+                                {
+                                    color: colors.white,
+                                    textShadowColor: colors.shadowColors.dark,
+                                },
+                            ]}
+                            numberOfLines={3}
+                        >
+                            {news.headline}
+                        </Text>
+                    </View>
+                </LinearGradient>
+            </View>
+
+            {/* Always show branding in shareable content */}
+            <View style={styles.brandingContainer}>
+                <View
+                    style={[
+                        styles.brandingInner,
+                        {
+                            backgroundColor: colors.backgroundColors.primary,
+                        },
+                    ]}
+                >
+                    <Text style={[styles.brandingText, { color: colors.accent.redditRed }]}>SnapNews</Text>
+                </View>
+            </View>
+
+            <View style={styles.shareContentContainer}>
+                <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                    {news.summary}
+                </Text>
+            </View>
+        </View>
+    );
+
     return (
         <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} style={styles.touchableCard}>
+            {/* Hidden ViewShot for sharing - positioned absolutely and invisible */}
+            <View style={styles.shareViewContainer}>
+                <ViewShot ref={shareViewShotRef} options={{ format: "jpg", quality: 0.9, result: "data-uri" }}>
+                    {renderShareableContent()}
+                </ViewShot>
+            </View>
+
+            {/* Visible card content */}
             <View
                 style={[
                     styles.card,
@@ -70,13 +136,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                 ]}
             >
                 <View style={styles.imageWrapper}>
-                    <ImageSection
-                        image={news.media.image_url}
-                        sourceName={news.source_name}
-                        timeLabel={formatRelativeTime(news.published)}
-                    />
-
-                    {/* Bottom gradient overlay with title */}
+                    <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
                     <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
                         <View style={styles.titleContainer}>
                             <Text
@@ -95,13 +155,12 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                     </LinearGradient>
                 </View>
 
-                <View style={[styles.contentContainer, { backgroundColor: colors.backgroundColors.primary }]}>
-                    <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={11}>
+                <View style={styles.contentContainer}>
+                    <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
                         {news.summary}
                     </Text>
                 </View>
 
-                {/* Always visible action bar */}
                 <View
                     style={[
                         styles.actionBarWrapper,
@@ -111,17 +170,43 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                         },
                     ]}
                 >
-                    <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} />
+                    <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} onShare={handleSharePress} />
                 </View>
             </View>
         </TouchableOpacity>
     );
 };
 
+const formatRelativeTime = (dateValue: string | number) => {
+    const publishedDate =
+        !isNaN(Number(dateValue)) && String(dateValue).length === 10 ? new Date(parseInt(String(dateValue)) * 1000) : new Date(dateValue);
+
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - publishedDate.getTime()) / 1000);
+
+    const minute = 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+    const week = day * 7;
+
+    if (diffInSeconds < minute) return "just now";
+    if (diffInSeconds < hour) return `${Math.floor(diffInSeconds / minute)}m ago`;
+    if (diffInSeconds < day) return `${Math.floor(diffInSeconds / hour)}h ago`;
+    if (diffInSeconds < week) return `${Math.floor(diffInSeconds / day)}d ago`;
+    return `${Math.floor(diffInSeconds / week)}w ago`;
+};
+
 const styles = StyleSheet.create({
     touchableCard: {
         marginBottom: Spacing.md,
         marginHorizontal: Spacing.xs,
+    },
+    shareViewContainer: {
+        position: "absolute",
+        top: -9999,
+        left: -9999,
+        opacity: 0,
+        pointerEvents: "none",
     },
     card: {
         borderRadius: BorderRadius.sm,
@@ -135,7 +220,6 @@ const styles = StyleSheet.create({
         aspectRatio: 16 / 9,
         overflow: "hidden",
     },
-
     gradientOverlay: {
         position: "absolute",
         bottom: 0,
@@ -157,6 +241,36 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         padding: Spacing.md,
+    },
+    shareContentContainer: {
+        padding: Spacing.md,
+        // Add top padding to ensure space for the overlayed branding element
+        paddingTop: Spacing.xl,
+    },
+    brandingContainer: {
+        // Position absolutely over the card
+        position: "absolute",
+        // Set top to the exact aspect ratio of the image
+        top: 0,
+        left: 0,
+        right: 0,
+        // Use aspect ratio to define the container's height, matching the image
+        aspectRatio: 16 / 9,
+        // Center the branding element at the bottom of this container
+        justifyContent: "flex-end",
+        alignItems: "center",
+        zIndex: 1,
+    },
+    brandingInner: {
+        paddingVertical: Spacing.xs,
+        paddingHorizontal: Spacing.md,
+        borderRadius: BorderRadius.md,
+        // A small negative margin to perfectly center on the edge
+        marginBottom: -15,
+    },
+    brandingText: {
+        ...Typography.captionText.large,
+        fontWeight: "bold",
     },
     summaryText: {
         ...Typography.bodyText.medium,

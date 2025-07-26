@@ -6,17 +6,7 @@ import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { NewsItem } from "@/features/news/types";
 
-// TODO: Add types
-const NewsList = ({
-    data,
-    loading,
-    bookmarks,
-    likes,
-    onRefresh,
-    refreshing = false,
-    onEndReached,
-    loadingMore = false,
-}: {
+interface NewsListProps {
     data: NewsItem[];
     loading: boolean;
     bookmarks: Set<string>;
@@ -25,6 +15,17 @@ const NewsList = ({
     refreshing?: boolean;
     onEndReached?: () => void;
     loadingMore?: boolean;
+}
+
+const NewsList: React.FC<NewsListProps> = ({
+    data,
+    loading,
+    bookmarks,
+    likes,
+    onRefresh,
+    refreshing = false,
+    onEndReached,
+    loadingMore = false,
 }) => {
     const colors = useThemeColors();
 
@@ -74,7 +75,7 @@ const NewsList = ({
                 ) : undefined
             }
             onEndReached={onEndReached}
-            onEndReachedThreshold={0.4}
+            onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
         />
     );

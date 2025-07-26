@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, StyleSheet, Text, View, Share, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
 import { Typography } from "@/constants/Fonts";
@@ -8,38 +8,21 @@ import { useHaptics } from "@/hooks/useHaptics";
 import * as Haptics from "expo-haptics";
 
 interface ShareButtonProps {
-    newsSourceUrl: string;
+    onPress: () => void;
 }
 
-const ShareButton: React.FC<ShareButtonProps> = ({ newsSourceUrl }) => {
+const ShareButton: React.FC<ShareButtonProps> = ({ onPress }) => {
     const colors = useThemeColors();
     const { triggerHaptic } = useHaptics();
 
-    const handleShare = async () => {
-        try {
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-            const result = await Share.share({
-                message: `Check out this news article: ${newsSourceUrl}`,
-                url: newsSourceUrl,
-            });
-
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    // shared with activity type of result.activityType
-                } else {
-                    // shared
-                }
-            } else if (result.action === Share.dismissedAction) {
-                // dismissed
-            }
-        } catch (error) {
-            Alert.alert("Error", "Unable to share this article");
-        }
+    const handlePress = () => {
+        triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+        onPress();
     };
 
     return (
         <TouchableOpacity
-            onPress={handleShare}
+            onPress={handlePress}
             style={[
                 styles.button,
                 {

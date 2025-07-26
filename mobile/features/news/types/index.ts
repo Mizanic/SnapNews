@@ -14,7 +14,6 @@ export const NewsItemSchema = z.object({
     ttl: z.string(),
     source_name: z.string(),
     source_id: z.string(),
-    category: z.string(),
     country: z.string(),
     language: z.string(),
     news_url: z.string(),

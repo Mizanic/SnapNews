@@ -1,20 +1,52 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import ShareButton from "./ShareButton";
-import BookmarkButton from "@/features/bookmarks/components/BookmarkButton";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { addLike, removeLike } from "@/features/likes/state/likesStore";
+import { addBookmark, removeBookmark } from "@/features/bookmarks/state/bookmarksStore";
 import { NewsItem } from "@/features/news/types";
-import LikeButton from "@/features/likes/components/LikeButton";
 import { Spacing, BorderRadius } from "@/constants/Theme";
+import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import { useHaptics } from "@/hooks/useHaptics";
+import * as Haptics from "expo-haptics";
 
 interface ActionBarProps {
     news: NewsItem;
     isBookmarked: boolean;
     isLiked: boolean;
+    onShare: () => void;
 }
 
-const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked }) => {
+const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onShare }) => {
     const colors = useThemeColors();
+    const dispatch = useDispatch();
+    const { triggerHaptic } = useHaptics();
+
+    const handleLikePress = () => {
+        if (!isLiked) {
+            dispatch(addLike(news.item_hash));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+        } else {
+            dispatch(removeLike(news.item_hash));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
+        }
+    };
+
+    const handleBookmarkPress = () => {
+        if (!isBookmarked) {
+            dispatch(addBookmark(news));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+        } else {
+            dispatch(removeBookmark(news.item_hash));
+            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
+        }
+    };
+
+    const handleSharePress = () => {
+        triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+        onShare();
+    };
 
     return (
         <View
@@ -22,21 +54,36 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked }) =>
                 styles.actionBar,
                 {
                     backgroundColor: colors.backgroundColors.primary,
-                    borderTopColor: colors.borderColors.light,
                 },
             ]}
         >
-            <View style={styles.actionGroup}>
-                <LikeButton item_hash={news.item_hash} isLiked={isLiked} />
+            {/* Left side - Action buttons */}
+            <View style={styles.actionsContainer}>
+                {/* Like Button with Count */}
+                <TouchableOpacity style={styles.actionButton} onPress={handleLikePress} activeOpacity={0.7}>
+                    <Ionicons name={isLiked ? "heart" : "heart-outline"} size={18} color={isLiked ? colors.accent.red : colors.gray[500]} />
+                    <Text style={[styles.actionText, { color: isLiked ? colors.accent.red : colors.gray[500] }]}>{news.metrics.likes}</Text>
+                </TouchableOpacity>
+
+                {/* Save Button */}
+                <TouchableOpacity style={styles.actionButton} onPress={handleBookmarkPress} activeOpacity={0.7}>
+                    <Ionicons
+                        name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                        size={18}
+                        color={isBookmarked ? colors.accent.orange : colors.gray[500]}
+                    />
+                    <Text style={[styles.actionText, { color: isBookmarked ? colors.accent.orange : colors.gray[500] }]}>Save</Text>
+                </TouchableOpacity>
+
+                {/* Share Button */}
+                <TouchableOpacity style={styles.actionButton} onPress={handleSharePress} activeOpacity={0.7}>
+                    <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
+                    <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
+                </TouchableOpacity>
             </View>
 
-            <View style={styles.actionGroup}>
-                <BookmarkButton news={news} isBookmarked={isBookmarked} />
-            </View>
-
-            <View style={styles.actionGroup}>
-                <ShareButton newsSourceUrl={news.news_url} />
-            </View>
+            {/* Right side - Source */}
+            <Text style={[styles.sourceText, { color: colors.gray[500] }]}>{news.source_name}</Text>
         </View>
     );
 };
@@ -44,20 +91,30 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked }) =>
 const styles = StyleSheet.create({
     actionBar: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: Spacing.sm,
-        paddingHorizontal: Spacing.md,
-        borderTopWidth: 1,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
     },
-    actionGroup: {
-        flex: 1,
+    actionsContainer: {
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: Spacing.xs,
-        paddingHorizontal: Spacing.sm,
-        borderRadius: BorderRadius.md,
-        minHeight: 44,
+    },
+    actionButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginRight: 24,
+        paddingVertical: 4,
+        paddingHorizontal: 4,
+    },
+    actionText: {
+        fontSize: 14,
+        fontWeight: "400",
+        marginLeft: 6,
+    },
+    sourceText: {
+        fontSize: 14,
+        fontWeight: "400",
     },
 });
 

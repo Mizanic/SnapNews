@@ -24,25 +24,22 @@ export const removeLike = (item_hash: string) => {
 const likeInitialState: LikeState = {};
 
 // Reducer
-const LikeReducer = (
-  state: LikeState = likeInitialState,
-  action: AnyAction
-): LikeState => {
-  switch (action.type) {
-    case LIKE:
-      return {
-        ...state,
-        [action.payload]: true,
-      };
+const LikeReducer = (state: LikeState = likeInitialState, action: AnyAction): LikeState => {
+    switch (action.type) {
+        case LIKE:
+            return {
+                ...state,
+                [action.payload]: true,
+            };
 
-    case UNLIKE:
-      const newState = { ...state };
-      delete newState[action.payload];
-      return newState;
+        case UNLIKE:
+            const newState = { ...state };
+            delete newState[action.payload];
+            return newState;
 
-    default:
-      return state;
-  }
+        default:
+            return state;
+    }
 };
 
 export default LikeReducer;

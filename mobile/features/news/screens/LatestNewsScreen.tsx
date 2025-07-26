@@ -5,8 +5,8 @@ import { Spacing } from "@/constants/Theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Typography } from "@/constants/Fonts";
-import { useLatestNews } from "../hooks/useNewsQueries";
-import NewsList from "../components/NewsList";
+import { useLatestNews } from "@/features/news/hooks/useNewsQueries";
+import NewsList from "@/features/news/components/NewsList";
 
 const LatestNewsScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
@@ -14,17 +14,7 @@ const LatestNewsScreen: React.FC = () => {
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
 
-    const {
-        data,
-        isLoading,
-        isError,
-        error,
-        refetch,
-        isRefetching,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-    } = useLatestNews();
+    const { data, isLoading, isError, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useLatestNews();
 
     // Flatten data pages into a single array of news items
     const newsData = React.useMemo(() => {
