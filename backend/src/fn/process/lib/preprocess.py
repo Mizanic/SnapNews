@@ -5,12 +5,12 @@ Inserts metadata into news items
 
 # ==================================================================================================
 # Python imports
-import os
+import os  # noqa: I001
 from datetime import datetime, timedelta, timezone
 
-import uuid6
 from dateutil import parser
 from pydantic import ValidationError
+from uuid6 import uuid7
 
 # ==================================================================================================
 # Module imports
@@ -48,7 +48,7 @@ def inject_data(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
         SourceNewsItemModel.model_validate(item)
 
         pk = f"NEWS#{item.country}#{item.language}"
-        sk = str(uuid6.uuid7())
+        sk = str(uuid7())
         item_hash = hasher(f"{pk}#{item.news_url}")
 
         sk_top = f"TOP#{str(0).zfill(10)}#{sk}"
