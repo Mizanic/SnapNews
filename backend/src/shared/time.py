@@ -42,7 +42,7 @@ def time_to_unix(time_stamp: str | None) -> int:
 
 def time_to_iso(time_stamp: str | None) -> str:
     """
-    This function converts a string timestamp to ISO 8601 format
+    This function converts a string timestamp to ISO 8601 format in UTC
     """
     if time_stamp is None:
         # If time_stamp is None, return current UTC time in ISO format
@@ -51,14 +51,9 @@ def time_to_iso(time_stamp: str | None) -> str:
     try:
         # Use dateutil.parser.parse for robust parsing
         dt_object = parser.parse(time_stamp)
-        # Convert to ISO 8601 format
-        # Ensure the datetime object is timezone-aware if it's naive
-        if dt_object.tzinfo is None:
-            # Assuming local timezone if naive, convert to UTC for consistency
-            # Or handle as appropriate for the application context
-            # For now, let's keep it simple and use isoformat directly
-            # If specific timezone handling (like assuming UTC for naive) is needed, adjust here.
-            pass  # Keep dt_object as is for now
+
+        # Ensure the datetime object is in UTC
+        dt_object = dt_object.replace(tzinfo=timezone.utc) if dt_object.tzinfo is None else dt_object.astimezone(timezone.utc)
 
         return dt_object.isoformat()
     except (ValueError, parser.ParserError) as e:
