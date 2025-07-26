@@ -10,11 +10,11 @@ from datetime import datetime, timedelta, timezone
 
 from dateutil import parser
 from pydantic import ValidationError
-from uuid6 import uuid7
 
 # ==================================================================================================
 # Module imports
 from shared.logger import logger
+from shared.time import time_to_unix
 from shared.news_model import (
     MetricsModel,
     ProcessedNewsFeedModel,
@@ -23,6 +23,7 @@ from shared.news_model import (
     SourceNewsItemModel,
 )
 from shared.url_hasher import hasher
+from shared.uuid import uuid7
 
 # ==================================================================================================
 # Global declarations
@@ -48,7 +49,7 @@ def inject_data(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
         SourceNewsItemModel.model_validate(item)
 
         pk = f"NEWS#{item.country}#{item.language}"
-        sk = str(uuid7())
+        sk = str(uuid7(time_to_unix(item.published)))
         item_hash = hasher(f"{pk}#{item.news_url}")
 
         sk_top = f"TOP#{str(0).zfill(10)}#{sk}"
