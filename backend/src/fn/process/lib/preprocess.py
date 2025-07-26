@@ -15,6 +15,7 @@ from pydantic import ValidationError
 # Module imports
 from shared.logger import logger
 from shared.time import time_to_unix
+from shared.score import calculate_score, set_random_counts
 from shared.news_model import (
     MetricsModel,
     ProcessedNewsFeedModel,
@@ -52,7 +53,7 @@ def inject_data(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
         sk = str(uuid7(time_to_unix(item.published)))
         item_hash = hasher(f"{pk}#{item.news_url}")
 
-        sk_top = f"TOP#{str(0).zfill(10)}#{sk}"
+        sk_top = calculate_score(set_random_counts(), sk)
 
         # Calculate TTL based on the ISO published string
         ttl = _calculate_ttl(item.published)
