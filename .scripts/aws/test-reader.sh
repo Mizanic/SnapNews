@@ -91,8 +91,11 @@ invoke_lambda() {
         log_success "Lambda invocation successful"
         echo "Response:"
         if jq '.' "$RESPONSE_FILE" 2>/dev/null; then
-            # JSON response, already formatted
-            :
+            # JSON response, check for errors
+            if jq -e '.errorMessage or .errorType' "$RESPONSE_FILE" >/dev/null 2>&1; then
+                log_warning "Lambda function returned an error for source: $source"
+                return 1
+            fi
         else
             # Non-JSON response, show raw
             cat "$RESPONSE_FILE"
