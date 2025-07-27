@@ -5,10 +5,9 @@ import { useDispatch } from "react-redux";
 import { addLike, removeLike } from "@/features/likes/state/likesStore";
 import { addBookmark, removeBookmark } from "@/features/bookmarks/state/bookmarksStore";
 import { NewsItem } from "@/features/news/types";
-import { Spacing, BorderRadius } from "@/constants/Theme";
-import { Typography } from "@/constants/Fonts";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useHaptics } from "@/hooks/useHaptics";
+import { formatCount } from "@/utils/numberFormatter";
 import * as Haptics from "expo-haptics";
 
 interface ActionBarProps {
@@ -62,7 +61,9 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 {/* Like Button with Count */}
                 <TouchableOpacity style={styles.actionButton} onPress={handleLikePress} activeOpacity={0.7}>
                     <Ionicons name={isLiked ? "heart" : "heart-outline"} size={18} color={isLiked ? colors.accent.red : colors.gray[500]} />
-                    <Text style={[styles.actionText, { color: isLiked ? colors.accent.red : colors.gray[500] }]}>{news.metrics.likes}</Text>
+                    <Text style={[styles.actionText, { color: isLiked ? colors.accent.red : colors.gray[500] }]}>
+                        {formatCount(news.metrics.likes)}
+                    </Text>
                 </TouchableOpacity>
 
                 {/* Save Button */}
@@ -76,11 +77,20 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 </TouchableOpacity>
             </View>
 
-            {/* Right side - Share Button */}
-            <TouchableOpacity style={styles.actionButton} onPress={handleSharePress} activeOpacity={0.7}>
-                <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
-                <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
-            </TouchableOpacity>
+            {/* Right side - Views and Share Button */}
+            <View style={styles.actionsContainer}>
+                {/* Views Display */}
+                <View style={styles.actionButton}>
+                    <Ionicons name="eye-outline" size={18} color={colors.gray[500]} />
+                    <Text style={[styles.actionText, { color: colors.gray[500] }]}>{formatCount(news.metrics.views)}</Text>
+                </View>
+
+                {/* Share Button */}
+                <TouchableOpacity style={[styles.actionButton, styles.lastActionButton]} onPress={handleSharePress} activeOpacity={0.7}>
+                    <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
+                    <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -112,6 +122,9 @@ const styles = StyleSheet.create({
     sourceText: {
         fontSize: 14,
         fontWeight: "400",
+    },
+    lastActionButton: {
+        marginRight: 0,
     },
 });
 
