@@ -53,12 +53,20 @@ def inject_data(news_items: SourceNewsFeedModel) -> ProcessedNewsFeedModel:
         sk = str(uuid7(time_to_unix(item.published)))
         item_hash = hasher(f"{pk}#{item.news_url}")
 
-        sk_top = calculate_score(set_random_counts(), sk)
+        random_counts = set_random_counts()
+
+        sk_top = calculate_score(random_counts, sk)
 
         # Calculate TTL based on the ISO published string
         ttl = _calculate_ttl(item.published)
 
-        metrics = MetricsModel(views=0, likes=0, shares=0, bookmarks=0)
+        # TODO: This is a temporary solution to set the metrics. This will be set to 0 in the future.
+        metrics = MetricsModel(
+            views=random_counts["view"],
+            likes=random_counts["like"],
+            shares=random_counts["share"],
+            bookmarks=random_counts["bookmark"],
+        )
 
         news_items_with_metadata.append(
             ProcessedNewsItemModel(
