@@ -8,6 +8,5 @@ export interface BatchItem {
 
 
 export interface Batch {
-    batchId: string;
     queue: BatchItem[];
 }

@@ -23,11 +23,16 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
     const { triggerHaptic } = useHaptics();
 
     const handleLikePress = () => {
+        const payload = {
+            url_hash: news.item_hash,
+            pk: news.pk,
+            sk: news.sk,
+        };
         if (!isLiked) {
-            dispatch(addLike(news.item_hash));
+            dispatch(addLike(payload));
             triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
         } else {
-            dispatch(removeLike(news.item_hash));
+            dispatch(removeLike(payload));
             triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
         }
     };
