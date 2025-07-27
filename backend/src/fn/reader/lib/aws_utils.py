@@ -63,12 +63,11 @@ def get_source_metadata(news_source: str, country: str, language: str) -> tuple[
 
     if item:
         # Process the feeds to handle both single URLs and arrays of URLs
-        raw_feeds = item.get("Feeds", [])
+        raw_feeds = item.get("Feeds", {})
         processed_feeds = {}
 
-        if raw_feeds and len(raw_feeds) > 0:
-            feeds_data = raw_feeds[0]  # Get the first (and likely only) feed group
-            processed_feeds = feeds_data
+        if raw_feeds and isinstance(raw_feeds, dict):
+            processed_feeds = raw_feeds
 
         source_metadata = {
             "name_short": item.get("Name").get("Short"),
