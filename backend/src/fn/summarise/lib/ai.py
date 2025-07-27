@@ -51,12 +51,12 @@ class GEMINI:
         api_key: str,
         model_name: str,
         max_retries: int = 3,
-        base_delay: int = 5,
+        rate_limit_delay: int = 60,
     ) -> None:
         self.client = genai.Client(api_key=api_key)
         self.model = model_name
         self.max_retries = max_retries
-        self.base_delay = base_delay
+        self.rate_limit_delay = rate_limit_delay
 
     def generate_summary(self, article: str) -> str:
         prompt = "Summarize the following article in 99 words. Only provide the summary, no other text. \n" + article
@@ -92,13 +92,8 @@ class GEMINI:
             except Exception as e:
                 if is_rate_limit_error(e):
                     if attempt < self.max_retries:
-                        # Extract retry delay from error response, or use exponential backoff
-                        retry_delay = extract_retry_delay(e)
-                        if retry_delay is None:
-                            retry_delay = self.base_delay * (2**attempt)  # Exponential backoff
-
-                        logger.warning(f"Rate limit error on attempt {attempt + 1}. Retrying in {retry_delay} seconds...")
-                        time.sleep(retry_delay)
+                        logger.warning(f"Rate limit error on attempt {attempt + 1}. Retrying in {self.rate_limit_delay} seconds...")
+                        time.sleep(self.rate_limit_delay)
                         continue
                     logger.error(f"Rate limit error after {self.max_retries + 1} attempts. Giving up.")
                     raise
