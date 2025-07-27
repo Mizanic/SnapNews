@@ -1,6 +1,6 @@
 import { BATCH_SIZE } from "@/globalConfig";
 import BatchInterface from "./batchInterface";
-import { Batch, BatchItem } from "./types/batchTypes";
+import { Batch, BatchItem, BatchResponse } from "./types/batchTypes";
 
 class BatchImpl implements BatchInterface {
     private batch: Batch;
@@ -14,26 +14,24 @@ class BatchImpl implements BatchInterface {
     }
 
     
-    public enqueue(batchItem: BatchItem): BatchItem {
+public enqueue(batchItem: BatchItem): BatchResponse {
     if (this.getBatchSize() < BATCH_SIZE) {
-        console.info(`${batchItem.payload} has been added to the batch.`);
         this.batch.queue.push(batchItem);
-        console.log(`Current batch size: ${this.getBatchSize()}`);
-        console.log(`Current batch queue: ${JSON.stringify(this.batch.queue)}`);
+        console.info(`Item added to batch. Current size: ${this.getBatchSize()}`);
     }
 
-    if (this.getBatchSize() == BATCH_SIZE) {
+    if (this.getBatchSize() === BATCH_SIZE) {
         console.warn("Batch is full");
-        this.flush();
+        return this.flush();
     }
 
-    return batchItem;
+    return { batch: this.batch, isFlushed: false };
 }
 
-public flush(): void {
-    console.log(`Flushing batch`);
-    console.log("Batch data to send:", JSON.stringify(this.batch.queue));
+public flush(): BatchResponse {
+    const flushedBatch = { queue: this.batch.queue };
     this.batch.queue = [];
+    return { batch: flushedBatch, isFlushed: true };
 }
 
 public convertToBatchItem(payload: { pk: string, sk: string, url_hash: string }): BatchItem {

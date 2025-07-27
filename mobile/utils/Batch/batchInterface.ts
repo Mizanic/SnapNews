@@ -1,8 +1,8 @@
-import { BatchItem } from "./types/batchTypes";
+import { Batch, BatchItem, BatchResponse } from "./types/batchTypes";
 
 interface BatchInterface {
-    enqueue(batchItem: BatchItem): BatchItem;
-    flush(): void;
+    enqueue(batchItem: BatchItem): BatchResponse;
+    flush(): BatchResponse;
 }
 
 export default BatchInterface;

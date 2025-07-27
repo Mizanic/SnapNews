@@ -10,3 +10,8 @@ export interface BatchItem {
 export interface Batch {
     queue: BatchItem[];
 }
+
+export interface BatchResponse {
+    batch: Batch;
+    isFlushed: boolean;
+}
