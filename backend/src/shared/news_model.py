@@ -83,3 +83,21 @@ class ProcessedNewsFeedModel(BaseModel):
     """
 
     feed: list[ProcessedNewsItemModel]
+
+
+class ActionModel(BaseModel):
+    """
+    This class defines the data model for the action object in the news feed
+    """
+
+    pk: str
+    sk: str
+    metrics: MetricsModel
+
+
+class BatchActionModel(BaseModel):
+    """
+    This class defines the data model for the batch action object in the news feed
+    """
+
+    actions: list[ActionModel]

@@ -10,7 +10,7 @@ from typing import Annotated, Optional
 # ==================================================================================================
 # AWS imports
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
-from aws_lambda_powertools.event_handler.openapi.params import Query
+from aws_lambda_powertools.event_handler.openapi.params import Body, Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # ==================================================================================================
@@ -18,6 +18,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from lib.feed_handler import get_feed
 from shared.lambda_response import RESPONSE
 from shared.logger import logger
+from shared.news_model import BatchActionModel
 
 # ==================================================================================================
 # Global declarations
@@ -58,8 +59,8 @@ def feed() -> dict:
 
 @app.get("/feed/latest")
 def feed_latest(
-    country: Annotated[str, Query(description="Country code ('IND')")],
-    language: Annotated[str, Query(description="Language code ('ENG')")],
+    country: Annotated[str, Query(description="Country code ('IN')")],
+    language: Annotated[str, Query(description="Language code ('EN')")],
     page_key: Annotated[Optional[str], Query(description="Pagination key for next page")] = None,
 ) -> dict:
     """
@@ -104,8 +105,8 @@ def feed_latest(
 
 @app.get("/feed/top")
 def feed_top(
-    country: Annotated[str, Query(description="Country code ('IND')")],
-    language: Annotated[str, Query(description="Language code ('ENG')")],
+    country: Annotated[str, Query(description="Country code ('IN')")],
+    language: Annotated[str, Query(description="Language code ('EN')")],
     page_key: Annotated[Optional[str], Query(description="Pagination key for next page")] = None,
 ) -> dict:
     """
@@ -146,6 +147,31 @@ def feed_top(
     logger.info(response)
 
     return RESPONSE(response)
+
+
+@app.post("/actions")
+def actions(batch_action: Annotated[BatchActionModel, Body(description="Batch of actions to perform on news items")]) -> dict:
+    """
+    Handle actions on a news item
+
+    Args:
+        batch_action: Batch of actions containing news item IDs and metrics updates
+
+    Returns:
+        dict: Response with message indicating success or failure
+    """
+    logger.info(f"Received batch action: {batch_action.model_dump()}")
+
+    # Process the validated batch action
+    # The data is already validated by AWS Lambda Powertools using the BatchActionModel
+
+    # TODO: Implement actual action processing logic here
+    # For example:
+    # - Update metrics in database
+    # - Send analytics events
+    # - Update recommendation scores
+
+    return RESPONSE(status_code=200, body={"message": f"Successfully processed {len(batch_action.actions)} actions"})
 
 
 def main(event: dict, context: LambdaContext) -> dict:
