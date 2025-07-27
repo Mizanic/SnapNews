@@ -66,35 +66,28 @@ def transform_source_to_dynamodb_item(source_data: dict) -> dict | None:
             "Name": {"M": {"Long": {"S": source_data.get("Name", {}).get("Long", "")}, "Short": {"S": short_name}}},
         }
 
-        # Handle the 'FEEDS' list transformation - new structure
-        input_feeds_list = source_data.get("FEEDS", [])
-        dynamodb_feeds_list = []
+        # Handle the 'FEEDS' object transformation - new structure
+        input_feeds = source_data.get("FEEDS", {})
+        dynamodb_feeds_map = {}
 
-        if isinstance(input_feeds_list, list):
-            # FEEDS is an array of objects
-            for feed_group in input_feeds_list:
-                if isinstance(feed_group, dict):
-                    # Each feed_group is an object with category keys
-                    inner_dynamodb_map = {}
-                    for category, feeds in feed_group.items():
-                        if isinstance(feeds, list):
-                            # Handle array of URLs (like INDIA category in NDTV)
-                            feeds_list = []
-                            for feed_url in feeds:
-                                feeds_list.append({"S": str(feed_url).strip('"')})
-                            inner_dynamodb_map[category] = {"L": feeds_list}
-                        elif isinstance(feeds, str):
-                            # Handle single URL string (like TECH, WORLD, etc.)
-                            inner_dynamodb_map[category] = {"S": str(feeds).strip('"')}
-                        else:
-                            # Handle other types by converting to string
-                            inner_dynamodb_map[category] = {"S": str(feeds).strip('"')}
+        if isinstance(input_feeds, dict):
+            # FEEDS is now a single object with category keys
+            for category, feeds in input_feeds.items():
+                if isinstance(feeds, list):
+                    # Handle array of URLs (like INDIA category in NDTV)
+                    feeds_list = []
+                    for feed_url in feeds:
+                        feeds_list.append({"S": str(feed_url).strip('"')})
+                    dynamodb_feeds_map[category] = {"L": feeds_list}
+                elif isinstance(feeds, str):
+                    # Handle single URL string (like TECH, WORLD, etc.)
+                    dynamodb_feeds_map[category] = {"S": str(feeds).strip('"')}
+                else:
+                    # Handle other types by converting to string
+                    dynamodb_feeds_map[category] = {"S": str(feeds).strip('"')}
 
-                    if inner_dynamodb_map:  # Only add if map is not empty
-                        dynamodb_feeds_list.append({"M": inner_dynamodb_map})
-
-        # Assign the transformed list to the 'Feeds' key in the DynamoDB item
-        dynamodb_item["Feeds"] = {"L": dynamodb_feeds_list}
+        # Assign the transformed map to the 'Feeds' key in the DynamoDB item
+        dynamodb_item["Feeds"] = {"M": dynamodb_feeds_map}
 
         return dynamodb_item
 

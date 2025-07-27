@@ -7,23 +7,21 @@
                 "Short": "NDTV",
                 "Long": "NDTV"
             },
-            "FEEDS": [
-                {
-                    "INDIA": [
-                        "https://feeds.feedburner.com/ndtvnews-india-news",
-                        "https://feeds.feedburner.com/ndtvnews-south",
-                        "https://feeds.feedburner.com/ndtvnews-cities-news",
-                        "https://feeds.feedburner.com/ndtvnews-people",
-                        "https://feeds.feedburner.com/ndtvnews-indians-abroad"
-                    ],
-                    "TECH": "https://feeds.feedburner.com/gadgets360-latest",
-                    "WORLD": "https://feeds.feedburner.com/ndtvnews-world-news",
-                    "SPORTS": "https://feeds.feedburner.com/ndtvsports-latest",
-                    "BUSINESS": "https://feeds.feedburner.com/ndtvprofit-latest",
-                    "CRICKET": "https://feeds.feedburner.com/ndtvsports-cricket",
-                    "HEALTH": "https://feeds.feedburner.com/ndtvcooks-latest"
-                }
-            ]
+            "FEEDS": {
+                "INDIA": [
+                    "https://feeds.feedburner.com/ndtvnews-india-news",
+                    "https://feeds.feedburner.com/ndtvnews-south",
+                    "https://feeds.feedburner.com/ndtvnews-cities-news",
+                    "https://feeds.feedburner.com/ndtvnews-people",
+                    "https://feeds.feedburner.com/ndtvnews-indians-abroad"
+                ],
+                "TECH": "https://feeds.feedburner.com/gadgets360-latest",
+                "WORLD": "https://feeds.feedburner.com/ndtvnews-world-news",
+                "SPORTS": "https://feeds.feedburner.com/ndtvsports-latest",
+                "BUSINESS": "https://feeds.feedburner.com/ndtvprofit-latest",
+                "CRICKET": "https://feeds.feedburner.com/ndtvsports-cricket",
+                "HEALTH": "https://feeds.feedburner.com/ndtvcooks-latest"
+            }
         },
         {
             "Language": "EN",
@@ -32,13 +30,11 @@
                 "Short": "TOI",
                 "Long": "Times of India"
             },
-            "FEEDS": [
-                {
-                    "CRICKET": "https://timesofindia.indiatimes.com/rssfeeds/54829575.cms",
-                    "INDIA": "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
-                    "TOP": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"
-                }
-            ]
+            "FEEDS": {
+                "CRICKET": "https://timesofindia.indiatimes.com/rssfeeds/54829575.cms",
+                "INDIA": "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms",
+                "TOP": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"
+            }
         }
     ]
 }
