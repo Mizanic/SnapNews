@@ -9,6 +9,7 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useHaptics } from "@/hooks/useHaptics";
 import { formatCount } from "@/utils/numberFormatter";
 import * as Haptics from "expo-haptics";
+import { share } from "@/features/share/state/shareStore";
 
 interface ActionBarProps {
     news: NewsItem;
@@ -49,6 +50,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
 
     const handleSharePress = () => {
         triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+        dispatch(share(news.pk, news.sk));
         onShare();
     };
 

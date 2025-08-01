@@ -1,5 +1,5 @@
 import { Middleware } from 'redux';
-import { ADD_BOOKMARK, LIKE } from '@/store/actionTypes';
+import { ADD_BOOKMARK, LIKE, SHARE } from '@/store/actionTypes';
 import batch from '@/utils/Batch/invokeBatch';
 import { TELEMETRY_API_URL } from '@/globalConfig';
 import axios from 'axios';
@@ -18,7 +18,7 @@ const sendBatchToTelemetry = async (batchData: any) => {
 export const viewCountMiddleware: Middleware = store => next => async (action: any) => {
   next(action);
 
-  if (action.type === LIKE || action.type === ADD_BOOKMARK) {
+  if (action.type === LIKE || action.type === ADD_BOOKMARK || action.type === SHARE) {
     const batchResponse = batch.enqueue(batch.convertToBatchItem(action));
     console.info(`Batch queue: ${JSON.stringify(batchResponse.batch)}`);
 

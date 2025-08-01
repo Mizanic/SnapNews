@@ -1,7 +1,7 @@
 import { BATCH_SIZE } from "@/globalConfig";
 import BatchInterface from "./batchInterface";
 import { Batch, BatchItem, BatchResponse } from "./types/batchTypes";
-import { ADD_BOOKMARK, LIKE } from "@/store/actionTypes";
+import { ADD_BOOKMARK, LIKE, SHARE } from "@/store/actionTypes";
 
 class BatchImpl implements BatchInterface {
     private batch: Batch;
@@ -36,15 +36,22 @@ public flush(): BatchResponse {
 }
 
     public convertToBatchItem(action: any): BatchItem {
-        const actionType = action.type.toLowerCase().trim();
-        const payload = action.payload;
+        console.info(`Creating Batch of ${JSON.stringify(action)}`);
+        
+        const { type, payload } = action;
+        let actionType = type.toLowerCase().trim();
         let pk, sk;
-        if (action.type === ADD_BOOKMARK) {
+        
+        if (type === ADD_BOOKMARK) {
             const firstKey = Object.keys(payload)[0];
-            ({ pk, sk } = payload[firstKey] || {});
-        } else if (action.type === LIKE) {
+            if (payload[firstKey]) {
+                ({ pk, sk } = payload[firstKey]);
+            }
+            actionType = "bookmark";
+        } else if (type === LIKE || type === SHARE) {
             ({ pk, sk } = payload || {});
         }
+        
         return { pk, sk, actionType };
     }
 }
