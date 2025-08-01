@@ -1,6 +1,7 @@
 import { BATCH_SIZE } from "@/globalConfig";
 import BatchInterface from "./batchInterface";
 import { Batch, BatchItem, BatchResponse } from "./types/batchTypes";
+import { ADD_BOOKMARK, LIKE } from "@/store/actionTypes";
 
 class BatchImpl implements BatchInterface {
     private batch: Batch;
@@ -34,16 +35,18 @@ public flush(): BatchResponse {
     return { batch: flushedBatch, isFlushed: true };
 }
 
-public convertToBatchItem(payload: { pk: string, sk: string, url_hash: string }): BatchItem {
-    console.log(`Converting event to BatchItem: ${JSON.stringify(payload)}`);
-    return {
-        payload: {
-            pk: payload.pk,
-            sk: payload.sk
-        },
-        date: new Date(),
-    };
-}
+    public convertToBatchItem(action: any): BatchItem {
+        const actionType = action.type.toLowerCase().trim();
+        const payload = action.payload;
+        let pk, sk;
+        if (action.type === ADD_BOOKMARK) {
+            const firstKey = Object.keys(payload)[0];
+            ({ pk, sk } = payload[firstKey] || {});
+        } else if (action.type === LIKE) {
+            ({ pk, sk } = payload || {});
+        }
+        return { pk, sk, actionType };
+    }
 }
 
 export default BatchImpl;

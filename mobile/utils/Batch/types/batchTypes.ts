@@ -1,9 +1,7 @@
 export interface BatchItem {
-  payload: {
     pk: string;
     sk: string;
-  };
-  date: Date;
+    actionType: string;
 }
 
 
