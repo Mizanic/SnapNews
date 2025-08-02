@@ -41,6 +41,11 @@ class TaskImplementation implements TaskInterface {
    * @param task The task to store in memory
    */
   private storeTaskInMemory(task: Task): void {
+    if (!task.id) {
+      // Generate a simple timestamp-based ID for new tasks
+      task.id = Date.now().toString();
+    }
+    
     const existingIndex = this.memoryTasks.findIndex(t => t.id === task.id);
     if (existingIndex >= 0) {
       this.memoryTasks[existingIndex] = task;
@@ -53,23 +58,36 @@ class TaskImplementation implements TaskInterface {
   /**
    * Adds a new task to the database
    * @param task The task to push to the database
+   * @returns The task with its assigned ID
    */
-  async pushTask(task: Task): Promise<void> {
+  async pushTask(task: Task): Promise<Task> {
     // Clone the task to avoid modifying the original object
     const taskToSave = { ...task };
     
     if (!sqlite.isAvailable) {
+      // For in-memory tasks, generate a simple ID if one doesn't exist
+      if (!taskToSave.id) {
+        taskToSave.id = Date.now().toString();
+      }
       this.storeTaskInMemory(taskToSave);
-      return;
+      return taskToSave;
     }
     
     try {
-      await sqlInsertTask(taskToSave);
+      // sqlInsertTask now returns the task with its ID
+      const savedTask = await sqlInsertTask(taskToSave);
+      return savedTask;
     } catch (error) {
       console.error('Error inserting task:', error);
       // Fallback to in-memory if SQLite fails
       sqlite.isAvailable = false;
+      
+      // For in-memory tasks, generate a simple ID if one doesn't exist
+      if (!taskToSave.id) {
+        taskToSave.id = Date.now().toString();
+      }
       this.storeTaskInMemory(taskToSave);
+      return taskToSave;
     }
   }
 
@@ -221,10 +239,11 @@ class TaskImplementation implements TaskInterface {
   /**
    * Updates a task in the database
    * @param task The task to update
+   * @returns The updated task
    */
-  async updateTask(task: Task): Promise<void> {
+  async updateTask(task: Task): Promise<Task> {
     // Use pushTask since it handles both insert and update
-    await this.pushTask(task);
+    return await this.pushTask(task);
   }
 }
 

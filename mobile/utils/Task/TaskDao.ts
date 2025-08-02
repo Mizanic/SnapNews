@@ -16,7 +16,7 @@ export async function createTaskTable(): Promise<void> {
     if (database) {
       await database.executeSql(`
         CREATE TABLE IF NOT EXISTS tasks (
-          id TEXT PRIMARY KEY NOT NULL,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           description TEXT,
           actionName TEXT,
           payload TEXT,
@@ -55,28 +55,66 @@ export function parseTaskFromRow(row: any): Task {
 /**
  * Insert a task into the database
  * @param task Task to insert
+ * @returns Task with assigned ID (if it was a new task)
  */
-export async function sqlInsertTask(task: Task): Promise<void> {
+export async function sqlInsertTask(task: Task): Promise<Task> {
   if (!sqlite.isAvailable) {
-    return;
+    return task;
   }
   
   const database = await openDatabase();
   if (database) {
-    await database.executeSql(
-      `INSERT OR REPLACE INTO tasks (id, description, actionName, payload, completed, retryCount, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        task.id,
-        task.description,
-        task.actionName,
-        JSON.stringify(task.payload),
-        task.completed ? 1 : 0,
-        task.retryCount,
-        task.createdAt.toISOString(),
-        task.updatedAt.toISOString()
-      ]
-    );
+    if (task.id) {
+      // Update existing task
+      await database.executeSql(
+        `UPDATE tasks SET 
+          description = ?, 
+          actionName = ?, 
+          payload = ?, 
+          completed = ?, 
+          retryCount = ?, 
+          createdAt = ?, 
+          updatedAt = ? 
+        WHERE id = ?`,
+        [
+          task.description,
+          task.actionName,
+          JSON.stringify(task.payload),
+          task.completed ? 1 : 0,
+          task.retryCount,
+          task.createdAt.toISOString(),
+          task.updatedAt.toISOString(),
+          task.id
+        ]
+      );
+      return task;
+    } else {
+      // Insert new task, let SQLite generate the ID
+      const result = await database.executeSql(
+        `INSERT INTO tasks (description, actionName, payload, completed, retryCount, createdAt, updatedAt) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          task.description,
+          task.actionName,
+          JSON.stringify(task.payload),
+          task.completed ? 1 : 0,
+          task.retryCount,
+          task.createdAt.toISOString(),
+          task.updatedAt.toISOString()
+        ]
+      );
+      
+      // Get the inserted ID
+      const insertId = result[0].insertId;
+      
+      // Return the task with the new ID
+      return {
+        ...task,
+        id: insertId.toString() // Convert to string to maintain compatibility
+      };
+    }
   }
+  return task;
 }
 
 /**
