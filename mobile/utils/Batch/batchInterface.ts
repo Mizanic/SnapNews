@@ -1,4 +1,4 @@
-import { Batch, BatchItem, BatchResponse } from "./types/batchTypes";
+import { BatchItem, BatchResponse } from "./types/batchTypes";
 
 interface BatchInterface {
     enqueue(batchItem: BatchItem): BatchResponse;

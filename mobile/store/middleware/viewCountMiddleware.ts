@@ -4,15 +4,118 @@ import batch from '@/utils/Batch/invokeBatch';
 import { TELEMETRY_API_URL } from '@/globalConfig';
 import axios from 'axios';
 import { sharedQueryClient } from '@/utils/sharedQueryClient';
+import { insertTask, getAllTasks, createTaskTable } from '@/utils/Task/TaskDB';
+import uuid from 'react-native-uuid';
 
 const queryClient = sharedQueryClient;
 
+// Initialize the task database
+(async () => {
+  try {
+    await createTaskTable();
+    console.log('Task database initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize task database:', error);
+  }
+})();
+
+/**
+ * Process failed tasks and retry them
+ * This can be called periodically to retry failed operations
+ */
+export const processFailedTasks = async () => {
+  try {
+    const tasks = await getAllTasks();
+    console.log(`Processing ${tasks.length} failed tasks`);
+    
+    const incompleteTasks = tasks.filter(task => !task.completed);
+    
+    for (const task of incompleteTasks) {
+      if (task.retryCount >= 5) {
+        console.log(`Task ${task.id} has been retried too many times, marking as completed`);
+        task.completed = true;
+        await insertTask(task);
+        continue;
+      }
+      
+      try {
+        console.log(`Retrying task ${task.id}: ${task.actionName}`);
+        
+        if (task.actionName === 'SEND_TELEMETRY') {
+          await sendBatchToTelemetry(task.payload);
+          console.log(`Successfully retried task ${task.id}`);
+          
+          // Mark as completed
+          task.completed = true;
+          await insertTask(task);
+        }
+      } catch (error) {
+        console.error(`Failed to retry task ${task.id}:`, error);
+        
+        // Increment retry count
+        task.retryCount += 1;
+        task.updatedAt = new Date();
+        await insertTask(task);
+      }
+    }
+    
+    return incompleteTasks.length;
+  } catch (error) {
+    console.error('Error processing failed tasks:', error);
+    return 0;
+  }
+};
+
+/**
+ * Sends batch data to the telemetry API
+ * @param batchData The batch data to send
+ * @returns The response from the telemetry API
+ * @throws Error if the request fails
+ */
 const sendBatchToTelemetry = async (batchData: any) => {
-  const response = await axios.post(TELEMETRY_API_URL, batchData, {
-    headers: { 'Content-Type': 'application/json' },
-    timeout: 10000,
-  });
-  return response.data;
+  try {
+    const response = await axios.post(TELEMETRY_API_URL, batchData, {
+      headers: { 'Content-Type': 'application/json' },
+      timeout: 10000,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Network request failed in sendBatchToTelemetry:', error);
+    throw error; // Re-throw to be handled by the caller
+  }
+};
+
+/**
+ * Creates a task for a failed operation and stores it in the SQLite database
+ * @param actionName The name of the action to be retried later
+ * @param payload The data payload for the action
+ * @param description Optional description of the task
+ */
+const createFailedTask = async (
+  actionName: string,
+  payload: any,
+  description: string = 'Failed operation'
+) => {
+  const task = {
+    id: uuid.v4() as string,
+    description,
+    actionName,
+    payload,
+    completed: false,
+    retryCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+  
+  await insertTask(task);
+  console.log(`Created task for failed operation: ${actionName}`, task.id);
+  
+  // Log all available tasks
+  const allTasks = await getAllTasks();
+  console.log(`Available tasks in database: ${allTasks.length}`, 
+    allTasks.map(t => ({ id: t.id, actionName: t.actionName, completed: t.completed })));
+  
+  return task;
 };
 
 export const viewCountMiddleware: Middleware = store => next => async (action: any) => {
@@ -28,12 +131,33 @@ export const viewCountMiddleware: Middleware = store => next => async (action: a
       try {
         console.log('Sending batch to telemetry API');
         await queryClient.getMutationCache().build(queryClient, {
-          mutationFn: sendBatchToTelemetry
+          mutationFn: sendBatchToTelemetry,
+          onError: (error) => {
+            console.log('Error caught in mutation handler:', error);
+          }
         }).execute(batchResponse.batch);
         
+        console.log('Successfully sent batch to telemetry API');
       } catch (error) {
         console.error('Error sending batch to telemetry API:', error);
-        // Retry or local caching logic can go here
+        
+        // Create a task for failed telemetry API call
+        try {
+          const savedTask = await createFailedTask(
+            'SEND_TELEMETRY',
+            batchResponse.batch,
+            'Failed telemetry API call'
+          );
+          console.log('Successfully created task for failed operation:', savedTask.id);
+        } catch (dbError) {
+          console.error('Failed to store task in database:', dbError);
+          // Last resort fallback - log the operation that failed
+          console.warn('Failed operation that could not be saved:', {
+            action: 'SEND_TELEMETRY',
+            payload: batchResponse.batch,
+            timestamp: new Date().toISOString()
+          });
+        }
       }
     }
   }
