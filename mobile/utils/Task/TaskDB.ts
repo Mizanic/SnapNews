@@ -1,93 +1,18 @@
 import Task from '../Task/Task';
-import type { SQLiteDatabase } from 'react-native-sqlite-storage';
-
-// Database configuration
-const DB_CONFIG = {
-  name: 'TaskDB.db',
-  location: 'default',
-};
+import { 
+  sqlite, 
+  createTaskTable,
+  sqlInsertTask,
+  sqlGetAllTasks,
+  sqlGetTaskById,
+  sqlDeleteTask, 
+  sqlGetIncompleteTaskCount,
+  sqlGetTasksByAction,
+  sqlPurgeCompletedTasks
+} from './SQLiteDB';
 
 // In-memory fallback for when SQLite is not available
 let memoryTasks: Task[] = [];
-
-// SQLite state
-type SQLiteState = {
-  isAvailable: boolean;
-  instance: any;
-  connection: SQLiteDatabase | null;
-}
-
-const sqlite: SQLiteState = {
-  isAvailable: false,
-  instance: null,
-  connection: null
-};
-
-// Initialize SQLite if available
-try {
-  sqlite.instance = require('react-native-sqlite-storage');
-  sqlite.instance.enablePromise(true);
-  sqlite.isAvailable = true;
-  console.log('SQLite module loaded successfully');
-} catch (error) {
-  console.warn('SQLite not available, using in-memory fallback', error);
-}
-
-/**
- * Opens a connection to the SQLite database or returns the existing connection
- * @returns SQLite database connection or null if not available
- */
-export async function openDatabase(): Promise<SQLiteDatabase | null> {
-  if (!sqlite.isAvailable) {
-    console.log('Using in-memory database fallback');
-    return null;
-  }
-  
-  if (!sqlite.connection) {
-    try {
-      sqlite.connection = await sqlite.instance.openDatabase(DB_CONFIG);
-      console.log('SQLite database opened successfully');
-    } catch (error) {
-      console.error('Error opening database:', error);
-      sqlite.isAvailable = false;
-      return null;
-    }
-  }
-  return sqlite.connection;
-}
-
-/**
- * Creates the tasks table if it doesn't exist
- * @returns Promise that resolves when the table is created or when using in-memory storage
- */
-export async function createTaskTable(): Promise<void> {
-  if (!sqlite.isAvailable) {
-    console.log('SQLite not available, using in-memory storage');
-    return;
-  }
-  
-  try {
-    const database = await openDatabase();
-    if (database) {
-      await database.executeSql(`
-        CREATE TABLE IF NOT EXISTS tasks (
-          id TEXT PRIMARY KEY NOT NULL,
-          description TEXT,
-          actionName TEXT,
-          payload TEXT,
-          completed INTEGER,
-          retryCount INTEGER,
-          createdAt TEXT,
-          updatedAt TEXT
-        );
-      `);
-      console.log('Tasks table created or already exists');
-    }
-  } catch (error) {
-    console.error('Error creating task table:', error);
-    sqlite.isAvailable = false;
-  }
-}
 
 /**
  * Stores a task in memory
@@ -117,46 +42,13 @@ export async function insertTask(task: Task): Promise<void> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      await database.executeSql(
-        `INSERT OR REPLACE INTO tasks (id, description, actionName, payload, completed, retryCount, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          taskToSave.id,
-          taskToSave.description,
-          taskToSave.actionName,
-          JSON.stringify(taskToSave.payload),
-          taskToSave.completed ? 1 : 0,
-          taskToSave.retryCount,
-          taskToSave.createdAt.toISOString(),
-          taskToSave.updatedAt.toISOString()
-        ]
-      );
-    }
+    await sqlInsertTask(taskToSave);
   } catch (error) {
     console.error('Error inserting task:', error);
     // Fallback to in-memory if SQLite fails
     sqlite.isAvailable = false;
     storeTaskInMemory(taskToSave);
   }
-}
-
-/**
- * Creates a Task object from a database row
- * @param row Database row containing task data
- * @returns Task object
- */
-function parseTaskFromRow(row: any): Task {
-  return {
-    id: row.id,
-    description: row.description,
-    actionName: row.actionName,
-    payload: JSON.parse(row.payload),
-    completed: !!row.completed,
-    retryCount: row.retryCount,
-    createdAt: new Date(row.createdAt),
-    updatedAt: new Date(row.updatedAt)
-  };
 }
 
 /**
@@ -169,18 +61,8 @@ export async function getAllTasks(): Promise<Task[]> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      const results = await database.executeSql('SELECT * FROM tasks');
-      
-      // Optimize this with a direct mapping instead of forEach
-      const tasks = Array(results[0].rows.length);
-      for (let i = 0; i < results[0].rows.length; i++) {
-        tasks[i] = parseTaskFromRow(results[0].rows.item(i));
-      }
-      return tasks;
-    }
-    return [];
+    const tasks = await sqlGetAllTasks();
+    return tasks;
   } catch (error) {
     console.error('Error getting tasks:', error);
     sqlite.isAvailable = false;
@@ -199,14 +81,8 @@ export async function getTaskById(id: string): Promise<Task | null> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      const results = await database.executeSql('SELECT * FROM tasks WHERE id = ?', [id]);
-      if (results[0].rows.length > 0) {
-        return parseTaskFromRow(results[0].rows.item(0));
-      }
-    }
-    return null;
+    const task = await sqlGetTaskById(id);
+    return task;
   } catch (error) {
     console.error('Error getting task by ID:', error);
     sqlite.isAvailable = false;
@@ -230,10 +106,7 @@ export async function deleteTask(id: string): Promise<void> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      await database.executeSql('DELETE FROM tasks WHERE id = ?', [id]);
-    }
+    await sqlDeleteTask(id);
   } catch (error) {
     console.error('Error deleting task:', error);
     sqlite.isAvailable = false;
@@ -255,12 +128,8 @@ export async function getIncompleteTaskCount(): Promise<number> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      const results = await database.executeSql('SELECT COUNT(*) as count FROM tasks WHERE completed = 0');
-      return results[0].rows.item(0).count;
-    }
-    return 0;
+    const count = await sqlGetIncompleteTaskCount();
+    return count;
   } catch (error) {
     console.error('Error getting incomplete task count:', error);
     sqlite.isAvailable = false;
@@ -279,16 +148,8 @@ export async function getTasksByAction(actionName: string): Promise<Task[]> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      const results = await database.executeSql('SELECT * FROM tasks WHERE actionName = ?', [actionName]);
-      const tasks = Array(results[0].rows.length);
-      for (let i = 0; i < results[0].rows.length; i++) {
-        tasks[i] = parseTaskFromRow(results[0].rows.item(i));
-      }
-      return tasks;
-    }
-    return [];
+    const tasks = await sqlGetTasksByAction(actionName);
+    return tasks;
   } catch (error) {
     console.error(`Error getting tasks by action ${actionName}:`, error);
     sqlite.isAvailable = false;
@@ -327,17 +188,8 @@ export async function purgeCompletedTasks(): Promise<number> {
   }
   
   try {
-    const database = await openDatabase();
-    if (database) {
-      // Get count first
-      const countResults = await database.executeSql('SELECT COUNT(*) as count FROM tasks WHERE completed = 1');
-      const count = countResults[0].rows.item(0).count;
-      
-      // Delete completed tasks
-      await database.executeSql('DELETE FROM tasks WHERE completed = 1');
-      return count;
-    }
-    return 0;
+    const count = await sqlPurgeCompletedTasks();
+    return count;
   } catch (error) {
     console.error('Error purging completed tasks:', error);
     sqlite.isAvailable = false;
