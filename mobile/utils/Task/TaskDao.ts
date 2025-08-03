@@ -14,8 +14,12 @@ export async function createTaskTable(): Promise<void> {
   try {
     const database = await openDatabase();
     if (database) {
+      // Drop existing table if it exists to ensure we have the correct schema
+      await database.executeSql(`DROP TABLE IF EXISTS tasks;`);
+      
+      // Create the table with proper AUTOINCREMENT syntax
       await database.executeSql(`
-        CREATE TABLE IF NOT EXISTS tasks (
+        CREATE TABLE tasks (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           description TEXT,
           actionName TEXT,
@@ -26,7 +30,7 @@ export async function createTaskTable(): Promise<void> {
           updatedAt TEXT
         );
       `);
-      console.log('Tasks table created or already exists');
+      console.log('Tasks table recreated successfully');
     }
   } catch (error) {
     console.error('Error creating task table:', error);
@@ -41,7 +45,7 @@ export async function createTaskTable(): Promise<void> {
  */
 export function parseTaskFromRow(row: any): Task {
   return {
-    id: row.id,
+    id: typeof row.id === 'number' ? row.id : Number(row.id),
     description: row.description,
     actionName: row.actionName,
     payload: JSON.parse(row.payload),
@@ -59,8 +63,17 @@ export function parseTaskFromRow(row: any): Task {
  */
 export async function sqlInsertTask(task: Task): Promise<Task> {
   if (!sqlite.isAvailable) {
+    console.log('SQLite not available, returning task as-is');
     return task;
   }
+  
+  console.log('Attempting to insert/update task with:', 
+    JSON.stringify({ 
+      hasId: task.id !== undefined,
+      id: task.id, 
+      actionName: task.actionName 
+    })
+  );
   
   const database = await openDatabase();
   if (database) {
@@ -89,10 +102,10 @@ export async function sqlInsertTask(task: Task): Promise<Task> {
       );
       return task;
     } else {
-      // Insert new task, let SQLite generate the ID
+      // Insert new task, explicitly state we're letting SQLite generate the ID
       const result = await database.executeSql(
-        `INSERT INTO tasks (description, actionName, payload, completed, retryCount, createdAt, updatedAt) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO tasks (id, description, actionName, payload, completed, retryCount, createdAt, updatedAt) 
+         VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)`,
         [
           task.description,
           task.actionName,
@@ -104,13 +117,16 @@ export async function sqlInsertTask(task: Task): Promise<Task> {
         ]
       );
       
-      // Get the inserted ID
-      const insertId = result[0].insertId;
+      // Get the inserted ID - ensure it's always a number
+      let insertId = result[0].insertId;
+      if (typeof insertId !== 'number') {
+        insertId = Number(insertId);
+      }
       
-      // Return the task with the new ID
+      // Return the task with the new ID as number
       return {
         ...task,
-        id: insertId.toString() // Convert to string to maintain compatibility
+        id: insertId
       };
     }
   }
@@ -141,7 +157,7 @@ export async function sqlGetAllTasks(): Promise<Task[]> {
 /**
  * Get a task by its ID from the database
  */
-export async function sqlGetTaskById(id: string): Promise<Task | null> {
+export async function sqlGetTaskById(id: number): Promise<Task | null> {
   if (!sqlite.isAvailable) {
     return null;
   }
@@ -159,7 +175,7 @@ export async function sqlGetTaskById(id: string): Promise<Task | null> {
 /**
  * Delete a task by its ID from the database
  */
-export async function sqlDeleteTask(id: string): Promise<void> {
+export async function sqlDeleteTask(id: number): Promise<void> {
   if (!sqlite.isAvailable) {
     return;
   }

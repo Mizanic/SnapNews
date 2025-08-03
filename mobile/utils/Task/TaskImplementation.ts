@@ -11,6 +11,7 @@ import {
   sqlGetTasksByAction,
   sqlPurgeCompletedTasks
 } from "./TaskDao";
+import { openDatabase } from "./DBConfig";
 
 /**
  * Implementation of TaskInterface for managing tasks
@@ -21,8 +22,10 @@ class TaskImplementation implements TaskInterface {
   private memoryTasks: Task[] = [];
 
   constructor() {
-    // Initialize the database table
-    this.initializeDatabase();
+    // Initialize the database table - ensure this is awaited
+    this.initializeDatabase().catch(error => {
+      console.error('Failed to initialize task database in constructor:', error);
+    });
   }
 
   /**
@@ -30,9 +33,22 @@ class TaskImplementation implements TaskInterface {
    */
   private async initializeDatabase(): Promise<void> {
     try {
+      console.log('Initializing task database...');
       await createTaskTable();
+      console.log('Task database initialization complete');
+      
+      // Verify the table exists with a test query
+      if (sqlite.isAvailable) {
+        const database = await openDatabase();
+        if (database) {
+          const testResult = await database.executeSql("SELECT name FROM sqlite_master WHERE type='table' AND name='tasks';");
+          const tableExists = testResult[0]?.rows?.length > 0;
+          console.log('Tasks table exists:', tableExists);
+        }
+      }
     } catch (error) {
       console.error('Error initializing task database:', error);
+      sqlite.isAvailable = false; // Fallback to in-memory on initialization failure
     }
   }
 
@@ -42,10 +58,9 @@ class TaskImplementation implements TaskInterface {
    */
   private storeTaskInMemory(task: Task): void {
     if (!task.id) {
-      // Generate a simple timestamp-based ID for new tasks
-      task.id = Date.now().toString();
+      // Generate a numeric ID for new tasks
+      task.id = Date.now();
     }
-    
     const existingIndex = this.memoryTasks.findIndex(t => t.id === task.id);
     if (existingIndex >= 0) {
       this.memoryTasks[existingIndex] = task;
@@ -65,15 +80,33 @@ class TaskImplementation implements TaskInterface {
     const taskToSave = { ...task };
     
     if (!sqlite.isAvailable) {
-      // For in-memory tasks, generate a simple ID if one doesn't exist
+      // For in-memory tasks, generate a numeric ID if one doesn't exist
       if (!taskToSave.id) {
-        taskToSave.id = Date.now().toString();
+        taskToSave.id = Date.now();
       }
       this.storeTaskInMemory(taskToSave);
       return taskToSave;
     }
     
+    // For SQLite insertion of new tasks, make absolutely sure id is undefined
+    // not just falsy (0, null, etc.) to let SQLite handle ID generation
+    if (taskToSave.id === undefined || taskToSave.id === null || taskToSave.id === 0) {
+      console.log('Preparing new task for SQLite with no ID to let SQLite generate it');
+      delete taskToSave.id; // Ensure the property is completely removed
+    } else {
+      console.log('Task already has ID:', taskToSave.id);
+    }
+    
     try {
+      // Print debug info before insert
+      console.log('About to insert task:', 
+        JSON.stringify({
+          hasId: taskToSave.id !== undefined,
+          actionName: taskToSave.actionName,
+          completed: taskToSave.completed
+        })
+      );
+      
       // sqlInsertTask now returns the task with its ID
       const savedTask = await sqlInsertTask(taskToSave);
       return savedTask;
@@ -81,10 +114,8 @@ class TaskImplementation implements TaskInterface {
       console.error('Error inserting task:', error);
       // Fallback to in-memory if SQLite fails
       sqlite.isAvailable = false;
-      
-      // For in-memory tasks, generate a simple ID if one doesn't exist
       if (!taskToSave.id) {
-        taskToSave.id = Date.now().toString();
+        taskToSave.id = Date.now();
       }
       this.storeTaskInMemory(taskToSave);
       return taskToSave;
@@ -115,7 +146,7 @@ class TaskImplementation implements TaskInterface {
    * @param id The ID of the task to retrieve
    * @returns The task if found, null otherwise
    */
-  async getTaskById(id: string): Promise<Task | null> {
+  async getTaskById(id: number): Promise<Task | null> {
     if (!sqlite.isAvailable) {
       return this.memoryTasks.find(task => task.id === id) || null;
     }
@@ -135,7 +166,7 @@ class TaskImplementation implements TaskInterface {
    * Deletes a task by its ID
    * @param id The ID of the task to delete
    */
-  async deleteTaskById(id: string): Promise<void> {
+  async deleteTaskById(id: number): Promise<void> {
     if (!sqlite.isAvailable) {
       // Remove from memory
       const index = this.memoryTasks.findIndex(task => task.id === id);

@@ -49,8 +49,14 @@ export async function openDatabase(): Promise<SQLiteDatabase | null> {
   
   if (!sqlite.connection) {
     try {
+      console.log('Opening SQLite database with config:', JSON.stringify(DB_CONFIG));
       sqlite.connection = await sqlite.instance.openDatabase(DB_CONFIG);
       console.log('SQLite database opened successfully');
+      
+      // Verify database is accessible with a simple query
+      const testResult = await sqlite.connection.executeSql('SELECT 1 as test');
+      console.log('Database connection verified with test query result:', 
+                  testResult[0]?.rows?.item?.(0)?.test);
     } catch (error) {
       console.error('Error opening database:', error);
       sqlite.isAvailable = false;
