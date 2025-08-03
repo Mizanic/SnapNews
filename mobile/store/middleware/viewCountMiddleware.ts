@@ -1,7 +1,7 @@
 import { Middleware } from 'redux';
 import { ADD_BOOKMARK, LIKE, SHARE } from '@/store/actionTypes';
 import batch from '@/utils/Batch/invokeBatch';
-import { TELEMETRY_API_URL } from '@/globalConfig';
+import { TELEMETRY_ACTION, TELEMETRY_API_URL } from '@/globalConfig';
 import axios from 'axios';
 import { sharedQueryClient } from '@/utils/sharedQueryClient';
 import Task from '@/utils/Task/Task';
@@ -136,7 +136,7 @@ export const viewCountMiddleware: Middleware = store => next => async (action: a
         // Create a task for failed telemetry API call
         try {
           const savedTask = await createFailedTask(
-            'SEND_TELEMETRY',
+            TELEMETRY_ACTION,
             batchResponse.batch,
             'Failed telemetry API call'
           );

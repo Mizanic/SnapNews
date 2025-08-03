@@ -7,3 +7,5 @@ export const DB_LOCATION = "default";
 
 // In milliseconds
 export const SCHEDULER_INTERVAL = 60000;
+
+export const TELEMETRY_ACTION = "TELEMETRY";

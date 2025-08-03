@@ -1,4 +1,4 @@
-import { SCHEDULER_INTERVAL } from "@/globalConfig";
+import { SCHEDULER_INTERVAL, TELEMETRY_ACTION } from "@/globalConfig";
 import Task from "./Task";
 import TaskExecutor from "./TaskExecutor";
 import taskImpl from "./TaskImplementationInstance";
@@ -16,7 +16,15 @@ class TaskExecutorImplementation implements TaskExecutor {
     }
 
     async executeAllTasks(taskList: Task[]): Promise<void> {
-        
+        for (const task of taskList) {
+            const { id, payload, actionName, completed, retryCount } = task;
+            if (!completed && retryCount < 3) {
+                console.log(`Executing task ${id}`);
+                if(actionName === TELEMETRY_ACTION){
+                    console.log(`Its a telemetry task with payload:`, payload);
+                }
+            }
+        }
     }
         
     async invokeScheduler(): Promise<void> {
