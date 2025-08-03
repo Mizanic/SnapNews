@@ -6,17 +6,23 @@ const LIKE = "LIKE";
 const UNLIKE = "UNLIKE";
 
 // Actions
-export const addLike = (item_hash: string) => {
+export interface LikeActionPayload {
+    url_hash: string;
+    pk: string;
+    sk: string;
+}
+
+export const addLike = (payload: LikeActionPayload) => {
     return {
         type: LIKE,
-        payload: item_hash,
+        payload,
     };
 };
 
-export const removeLike = (item_hash: string) => {
+export const removeLike = (payload: LikeActionPayload) => {
     return {
         type: UNLIKE,
-        payload: item_hash,
+        payload,
     };
 };
 
@@ -29,12 +35,12 @@ const LikeReducer = (state: LikeState = likeInitialState, action: AnyAction): Li
         case LIKE:
             return {
                 ...state,
-                [action.payload]: true,
+                [action.payload.url_hash]: true,
             };
 
         case UNLIKE:
             const newState = { ...state };
-            delete newState[action.payload];
+            delete newState[action.payload.url_hash];
             return newState;
 
         default:

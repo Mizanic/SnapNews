@@ -1,7 +1,11 @@
-export const LIKE_API_URL = "/api/like";
-export const UNLIKE_API_URL = "/api/unlike";
+export const TELEMETRY_API_URL = "/api/like";
+export const BATCH_SIZE = 3;
 
-export const MAX_RETRY_ATTEMPTS = 3;
-export const BASE_RETRY_DELAY_MS = 300;
+// SQLite Database Configuration
+export const DB_NAME = "tasks.db";
+export const DB_LOCATION = "default";
 
-export const FAILED_LIKE_EVENTS_KEY = "FAILED_LIKE_EVENTS";
+// In milliseconds
+export const SCHEDULER_INTERVAL = 60000;
+
+export const TELEMETRY_ACTION = "TELEMETRY";
