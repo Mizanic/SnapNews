@@ -4,13 +4,10 @@ import batch from '@/utils/Batch/invokeBatch';
 import { TELEMETRY_API_URL } from '@/globalConfig';
 import axios from 'axios';
 import { sharedQueryClient } from '@/utils/sharedQueryClient';
-import TaskImplementation from '@/utils/Task/TaskImplementation';
 import Task from '@/utils/Task/Task';
+import taskImpl from '@/utils/Task/TaskImplementationInstance';
 
 const queryClient = sharedQueryClient;
-
-// Create a singleton instance of TaskImplementation
-const taskManager = new TaskImplementation();
 
 /**
  * Process failed tasks and retry them
@@ -18,16 +15,16 @@ const taskManager = new TaskImplementation();
  */
 export const processFailedTasks = async () => {
   try {
-    const tasks = await taskManager.getAllTasks();
+    const tasks = await taskImpl.getAllTasks();
     console.log(`Processing ${tasks.length} failed tasks`);
     
-    const incompleteTasks = await taskManager.getIncompleteTask();
+    const incompleteTasks = await taskImpl.getIncompleteTask();
     
     for (const task of incompleteTasks) {
       if (task.retryCount >= 5) {
         console.log(`Task ${task.id} has been retried too many times, marking as completed`);
         task.completed = true;
-        await taskManager.updateTask(task);
+        await taskImpl.updateTask(task);
         continue;
       }
       
@@ -40,7 +37,7 @@ export const processFailedTasks = async () => {
           
           // Mark as completed
           task.completed = true;
-          await taskManager.updateTask(task);
+          await taskImpl.updateTask(task);
         }
       } catch (error) {
         console.error(`Failed to retry task ${task.id}:`, error);
@@ -48,7 +45,7 @@ export const processFailedTasks = async () => {
         // Increment retry count
         task.retryCount += 1;
         task.updatedAt = new Date();
-        const updatedTask = await taskManager.updateTask(task);
+        const updatedTask = await taskImpl.updateTask(task);
         console.log(`Updated task retry count for ${updatedTask.id} to ${updatedTask.retryCount}`);
       }
     }
@@ -102,11 +99,11 @@ const createFailedTask = async (
   };
   
   // pushTask now returns the task with the generated ID
-  const savedTask = await taskManager.pushTask(taskData);
+  const savedTask = await taskImpl.pushTask(taskData);
   console.log(`Created task for failed operation: ${actionName}`, savedTask.id);
   
   // Log all available tasks
-  const allTasks = await taskManager.getAllTasks();
+  const allTasks = await taskImpl.getAllTasks();
   console.log(`Available tasks in database: ${allTasks.length}`, 
     allTasks.map(t => ({ id: t.id, actionName: t.actionName, completed: t.completed })));
   

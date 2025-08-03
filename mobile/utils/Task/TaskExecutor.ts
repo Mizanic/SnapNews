@@ -10,6 +10,11 @@ interface TaskExecutor {
      * @returns Array of results from executing all tasks (null for failed/skipped tasks)
      */
     executeAllTasks(taskList: Task[]): Promise<void>;
+    /**
+     * Invokes the task scheduler to process tasks.
+     * This method should be called periodically to ensure tasks are executed.
+     */
+    invokeScheduler(): void;
 }
 
 export default TaskExecutor;

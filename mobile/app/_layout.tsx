@@ -12,8 +12,11 @@ import store, { persistor } from "@/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { sharedQueryClient } from "@/utils/sharedQueryClient";
+import TaskExecutorImplementation from "@/utils/Task/TaskExecutorImplementation";
 
 SplashScreen.preventAutoHideAsync();
+const taskExecutorImpl = new TaskExecutorImplementation();
+taskExecutorImpl.invokeScheduler();
 
 function AppContent() {
     const { colorScheme } = useTheme();
