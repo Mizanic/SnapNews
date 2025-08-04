@@ -1,0 +1,6 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "backend/src"]
+addopts = ["-v", "--tb=short", "--log-cli-level=INFO"]
+log_cli = true
+log_cli_format = "[%(levelname)s] %(name)s: %(message)s"
