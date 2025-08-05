@@ -1,4 +1,5 @@
 import { NewsItem } from "../types";
+import { API_ENDPOINT } from "../../../globalConfig";
 
 export interface NewsResponse {
     news: NewsItem[];
@@ -6,7 +7,7 @@ export interface NewsResponse {
 }
 
 export const fetchLatestNews = async (pageKey?: string): Promise<NewsResponse> => {
-    let url = "https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed/latest?country=IN&language=EN";
+    let url = `${API_ENDPOINT}/feed/latest?country=IN&language=EN`;
 
     if (pageKey) {
         url += `&page_key=${pageKey}`;
@@ -30,7 +31,7 @@ export const fetchLatestNews = async (pageKey?: string): Promise<NewsResponse> =
 };
 
 export const fetchTopNews = async (pageKey?: string): Promise<NewsResponse> => {
-    let url = "https://5695pjsso7.execute-api.us-east-1.amazonaws.com/v1/feed/top?country=IN&language=EN";
+    let url = `${API_ENDPOINT}/feed/top?country=IN&language=EN`;
 
     if (pageKey) {
         url += `&page_key=${pageKey}`;
