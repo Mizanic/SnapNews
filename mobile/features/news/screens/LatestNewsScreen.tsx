@@ -1,10 +1,9 @@
 import React from "react";
 import { View, StyleSheet, Text, Button } from "react-native";
 import { useSelector } from "react-redux";
-import { Spacing } from "@/constants/Theme";
+import { Spacing, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Typography } from "@/constants/Fonts";
 import { useLatestNews } from "@/features/news/hooks/useNewsQueries";
 import NewsList from "@/features/news/components/NewsList";
 

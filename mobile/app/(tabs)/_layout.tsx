@@ -6,7 +6,7 @@ import { BlurView } from "expo-blur";
 import TopNewsScreen from "./top";
 import LatestNewsScreen from "./index";
 import BookmarkScreen from "./bookmarks";
-import { Spacing, Shadows, BorderRadius } from "@/constants/Theme";
+import { Spacing, Shadows, BorderRadius } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import useColorScheme from "@/hooks/useColorScheme.web";
 import AppHeader from "@/features/news/components/AppHeader";
@@ -74,6 +74,50 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
         Bookmark: { name: "bookmark", lib: MaterialIcons },
     };
 
+    const styles = StyleSheet.create({
+        tabBarContainer: {
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderTopLeftRadius: BorderRadius.xl,
+            borderTopRightRadius: BorderRadius.xl,
+            ...Shadows.lg,
+            ...Platform.select({
+                ios: {
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: -8 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 16,
+                },
+                android: {
+                    elevation: 8,
+                },
+            }),
+        },
+        tabBarContent: {
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingTop: Spacing.sm,
+        },
+        iconWrapper: {
+            alignItems: "center",
+            justifyContent: "center",
+            paddingVertical: Spacing.sm,
+            paddingHorizontal: Spacing.md,
+            minWidth: 60,
+            minHeight: 44,
+        },
+        focusedIndicator: {
+            width: 24,
+            height: 3,
+            borderRadius: BorderRadius.sm,
+            marginTop: 2,
+        },
+    });
+
     return (
         <View style={[styles.tabBarContainer, { height: 60 + insets.bottom, paddingBottom: insets.bottom }]}>
             {Platform.OS === "ios" && (
@@ -128,49 +172,5 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    tabBarContainer: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        borderTopLeftRadius: BorderRadius.xl,
-        borderTopRightRadius: BorderRadius.xl,
-        ...Shadows.lg,
-        ...Platform.select({
-            ios: {
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: -8 },
-                shadowOpacity: 0.1,
-                shadowRadius: 16,
-            },
-            android: {
-                elevation: 8,
-            },
-        }),
-    },
-    tabBarContent: {
-        flex: 1,
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        paddingTop: Spacing.sm,
-    },
-    iconWrapper: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: Spacing.sm,
-        paddingHorizontal: Spacing.md,
-        minWidth: 60,
-        minHeight: 44,
-    },
-    focusedIndicator: {
-        width: 24,
-        height: 3,
-        borderRadius: BorderRadius.sm,
-        marginTop: 2,
-    },
-});
 
 export default MainTabs;

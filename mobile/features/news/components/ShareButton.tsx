@@ -1,8 +1,7 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
-import { Typography } from "@/constants/Fonts";
+import { Spacing, BorderRadius, Shadows, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useHaptics } from "@/hooks/useHaptics";
 import * as Haptics from "expo-haptics";
@@ -19,6 +18,26 @@ const ShareButton: React.FC<ShareButtonProps> = ({ onPress }) => {
         triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
         onPress();
     };
+
+    const styles = StyleSheet.create({
+        button: {
+            borderRadius: BorderRadius.lg,
+            paddingVertical: Spacing.sm,
+            paddingHorizontal: Spacing.md,
+            borderWidth: 1,
+            minWidth: 80,
+            ...Shadows.sm,
+        },
+        buttonContent: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        buttonText: {
+            ...Typography.button.small,
+            fontWeight: "600",
+        },
+    });
 
     return (
         <TouchableOpacity
@@ -40,25 +59,5 @@ const ShareButton: React.FC<ShareButtonProps> = ({ onPress }) => {
         </TouchableOpacity>
     );
 };
-
-const styles = StyleSheet.create({
-    button: {
-        borderRadius: BorderRadius.lg,
-        paddingVertical: Spacing.sm,
-        paddingHorizontal: Spacing.md,
-        borderWidth: 1,
-        minWidth: 80,
-        ...Shadows.sm,
-    },
-    buttonContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    buttonText: {
-        ...Typography.button.small,
-        fontWeight: "600",
-    },
-});
 
 export default ShareButton;

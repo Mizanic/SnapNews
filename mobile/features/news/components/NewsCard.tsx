@@ -4,8 +4,7 @@ import ImageSection from "./ImageSection";
 import ActionBar from "./ActionBar";
 import { NewsItem } from "@/features/news/types";
 import { LinearGradient } from "expo-linear-gradient";
-import { Typography } from "@/constants/Fonts";
-import { Spacing, Shadows, BorderRadius, Colors } from "@/constants/Theme";
+import { Typography, Spacing, Shadows, BorderRadius } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import * as WebBrowser from "expo-web-browser";
 import ViewShot from "react-native-view-shot";
@@ -59,6 +58,108 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             console.error("Error opening URL:", error);
         }
     };
+
+    const styles = StyleSheet.create({
+        touchableCard: {
+            marginBottom: Spacing.md,
+            marginHorizontal: Spacing.xs,
+        },
+        shareViewContainer: {
+            position: "absolute",
+            top: -9999,
+            left: -9999,
+            opacity: 0,
+            pointerEvents: "none",
+        },
+        card: {
+            borderRadius: BorderRadius.sm,
+            overflow: "hidden",
+            ...Shadows.lg,
+            borderWidth: 1,
+        },
+        imageWrapper: {
+            position: "relative",
+            width: "100%",
+            aspectRatio: 16 / 9,
+            overflow: "hidden",
+        },
+        gradientOverlay: {
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            paddingHorizontal: Spacing.md,
+            paddingBottom: Spacing.sm,
+            paddingTop: Spacing.xxxl,
+            justifyContent: "flex-end",
+        },
+        titleContainer: {
+            marginBottom: Spacing.xs,
+        },
+        headlineText: {
+            ...Typography.heading.h3,
+            fontWeight: "700",
+            textShadowOffset: { width: 0, height: 1 },
+            textShadowRadius: 2,
+        },
+        contentContainer: {
+            padding: Spacing.md,
+        },
+        shareContentContainer: {
+            padding: Spacing.md,
+            // Add top padding to ensure space for the overlayed branding element
+            paddingTop: Spacing.xl,
+        },
+        brandingContainer: {
+            // Position absolutely over the card
+            position: "absolute",
+            // Set top to the exact aspect ratio of the image
+            top: 0,
+            left: 0,
+            right: 0,
+            // Use aspect ratio to define the container's height, matching the image
+            aspectRatio: 16 / 9,
+            // Center the branding element at the bottom of this container
+            justifyContent: "flex-end",
+            alignItems: "center",
+            zIndex: 1,
+        },
+        brandingInner: {
+            paddingVertical: Spacing.xs,
+            paddingHorizontal: Spacing.md,
+            borderRadius: BorderRadius.md,
+            // A small negative margin to perfectly center on the edge
+            marginBottom: -15,
+        },
+        brandingText: {
+            ...Typography.captionText.large,
+            fontWeight: "bold",
+        },
+        summaryText: {
+            ...Typography.bodyText.medium,
+            lineHeight: 22,
+        },
+        actionBarWrapper: {
+            borderTopWidth: 0.5,
+        },
+        sourceContainer: {
+            flexDirection: "row",
+            marginBottom: Spacing.xs,
+        },
+        sourceChip: {
+            backgroundColor: colors.backgroundColors.opaque,
+            paddingHorizontal: Spacing.sm,
+            paddingVertical: 4,
+            borderRadius: BorderRadius.sm,
+            ...Shadows.sm,
+        },
+        sourceText: {
+            ...Typography.captionText.small,
+            color: colors.white,
+            fontWeight: "600",
+            fontSize: 11,
+        },
+    });
 
     // Render the shareable content (without action bar)
     const renderShareableContent = () => (
@@ -220,107 +321,5 @@ const formatRelativeTime = (dateValue: string | number) => {
     if (diffInSeconds < week) return `${Math.floor(diffInSeconds / day)}d ago`;
     return `${Math.floor(diffInSeconds / week)}w ago`;
 };
-
-const styles = StyleSheet.create({
-    touchableCard: {
-        marginBottom: Spacing.md,
-        marginHorizontal: Spacing.xs,
-    },
-    shareViewContainer: {
-        position: "absolute",
-        top: -9999,
-        left: -9999,
-        opacity: 0,
-        pointerEvents: "none",
-    },
-    card: {
-        borderRadius: BorderRadius.sm,
-        overflow: "hidden",
-        ...Shadows.lg,
-        borderWidth: 1,
-    },
-    imageWrapper: {
-        position: "relative",
-        width: "100%",
-        aspectRatio: 16 / 9,
-        overflow: "hidden",
-    },
-    gradientOverlay: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        paddingHorizontal: Spacing.md,
-        paddingBottom: Spacing.sm,
-        paddingTop: Spacing.xxxl,
-        justifyContent: "flex-end",
-    },
-    titleContainer: {
-        marginBottom: Spacing.xs,
-    },
-    headlineText: {
-        ...Typography.heading.h3,
-        fontWeight: "700",
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 2,
-    },
-    contentContainer: {
-        padding: Spacing.md,
-    },
-    shareContentContainer: {
-        padding: Spacing.md,
-        // Add top padding to ensure space for the overlayed branding element
-        paddingTop: Spacing.xl,
-    },
-    brandingContainer: {
-        // Position absolutely over the card
-        position: "absolute",
-        // Set top to the exact aspect ratio of the image
-        top: 0,
-        left: 0,
-        right: 0,
-        // Use aspect ratio to define the container's height, matching the image
-        aspectRatio: 16 / 9,
-        // Center the branding element at the bottom of this container
-        justifyContent: "flex-end",
-        alignItems: "center",
-        zIndex: 1,
-    },
-    brandingInner: {
-        paddingVertical: Spacing.xs,
-        paddingHorizontal: Spacing.md,
-        borderRadius: BorderRadius.md,
-        // A small negative margin to perfectly center on the edge
-        marginBottom: -15,
-    },
-    brandingText: {
-        ...Typography.captionText.large,
-        fontWeight: "bold",
-    },
-    summaryText: {
-        ...Typography.bodyText.medium,
-        lineHeight: 22,
-    },
-    actionBarWrapper: {
-        borderTopWidth: 0.5,
-    },
-    sourceContainer: {
-        flexDirection: "row",
-        marginBottom: Spacing.xs,
-    },
-    sourceChip: {
-        backgroundColor: Colors.background.opaque,
-        paddingHorizontal: Spacing.sm,
-        paddingVertical: 4,
-        borderRadius: BorderRadius.sm,
-        ...Shadows.sm,
-    },
-    sourceText: {
-        ...Typography.captionText.small,
-        color: Colors.white,
-        fontWeight: "600",
-        fontSize: 11,
-    },
-});
 
 export default NewsCard;

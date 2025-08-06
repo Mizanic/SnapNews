@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { useSettingsStore } from "../state/settingsStore";
 import { View, Switch, StyleSheet, Pressable, Text, ScrollView, Modal, FlatList, TouchableOpacity, Alert } from "react-native";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { Spacing, BorderRadius } from "@/constants/Theme";
+import { Spacing, BorderRadius } from "@/styles/theme";
 import { Theme, COUNTRIES, LANGUAGES, Country, Language } from "../types";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";

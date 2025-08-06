@@ -4,8 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { addBookmark, removeBookmark } from "@/features/bookmarks/state/bookmarksStore";
 import { useDispatch } from "react-redux";
 import { NewsItem } from "@/features/news/types";
-import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
-import { Typography } from "@/constants/Fonts";
+import { Spacing, BorderRadius, Shadows, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useHaptics } from "@/hooks/useHaptics";
 import * as Haptics from "expo-haptics";
@@ -29,6 +28,26 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
             triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
         }
     };
+
+    const styles = StyleSheet.create({
+        button: {
+            borderRadius: BorderRadius.lg,
+            paddingVertical: Spacing.sm,
+            paddingHorizontal: Spacing.md,
+            borderWidth: 1,
+            minWidth: 80,
+            ...Shadows.sm,
+        },
+        buttonContent: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        buttonText: {
+            ...Typography.button.small,
+            fontWeight: "600",
+        },
+    });
 
     return (
         <TouchableOpacity
@@ -62,25 +81,5 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
         </TouchableOpacity>
     );
 };
-
-const styles = StyleSheet.create({
-    button: {
-        borderRadius: BorderRadius.lg,
-        paddingVertical: Spacing.sm,
-        paddingHorizontal: Spacing.md,
-        borderWidth: 1,
-        minWidth: 80,
-        ...Shadows.sm,
-    },
-    buttonContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    buttonText: {
-        ...Typography.button.small,
-        fontWeight: "600",
-    },
-});
 
 export default BookmarkButton;

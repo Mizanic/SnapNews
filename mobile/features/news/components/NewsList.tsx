@@ -1,8 +1,7 @@
 import React from "react";
 import { FlatList, View, StyleSheet, RefreshControl, ActivityIndicator, Text } from "react-native";
 import NewsCard from "./NewsCard";
-import { Spacing } from "@/constants/Theme";
-import { Typography } from "@/constants/Fonts";
+import { Spacing, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { NewsItem } from "@/features/news/types";
 
@@ -28,6 +27,31 @@ const NewsList: React.FC<NewsListProps> = ({
     loadingMore = false,
 }) => {
     const colors = useThemeColors();
+
+    const styles = StyleSheet.create({
+        loadingContainer: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: Spacing.lg,
+        },
+        loadingText: {
+            ...Typography.bodyText.medium,
+            marginTop: Spacing.md,
+            textAlign: "center",
+        },
+        listContainer: {
+            paddingTop: Spacing.md,
+            paddingBottom: Spacing.xl,
+        },
+        separator: {
+            height: Spacing.xs,
+        },
+        footerLoader: {
+            paddingVertical: Spacing.md,
+            alignItems: "center",
+        },
+    });
 
     const renderFooter = () => {
         if (!loadingMore) return null;
@@ -80,30 +104,5 @@ const NewsList: React.FC<NewsListProps> = ({
         />
     );
 };
-
-const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: Spacing.lg,
-    },
-    loadingText: {
-        ...Typography.bodyText.medium,
-        marginTop: Spacing.md,
-        textAlign: "center",
-    },
-    listContainer: {
-        paddingTop: Spacing.md,
-        paddingBottom: Spacing.xl,
-    },
-    separator: {
-        height: Spacing.xs,
-    },
-    footerLoader: {
-        paddingVertical: Spacing.md,
-        alignItems: "center",
-    },
-});
 
 export default NewsList;

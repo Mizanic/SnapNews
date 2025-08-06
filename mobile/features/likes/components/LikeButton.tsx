@@ -3,8 +3,7 @@ import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { addLike, removeLike } from "@/features/likes/state/likesStore";
 import { useDispatch } from "react-redux";
-import { Spacing, BorderRadius, Shadows } from "@/constants/Theme";
-import { Typography } from "@/constants/Fonts";
+import { Spacing, BorderRadius, Shadows, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useHaptics } from "@/hooks/useHaptics";
 import * as Haptics from "expo-haptics";
@@ -28,6 +27,26 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
             triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
         }
     };
+
+    const styles = StyleSheet.create({
+        button: {
+            borderRadius: BorderRadius.lg,
+            paddingVertical: Spacing.sm,
+            paddingHorizontal: Spacing.md,
+            borderWidth: 1,
+            minWidth: 80,
+            ...Shadows.sm,
+        },
+        buttonContent: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        buttonText: {
+            ...Typography.button.small,
+            fontWeight: "600",
+        },
+    });
 
     return (
         <TouchableOpacity
@@ -61,25 +80,5 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
         </TouchableOpacity>
     );
 };
-
-const styles = StyleSheet.create({
-    button: {
-        borderRadius: BorderRadius.lg,
-        paddingVertical: Spacing.sm,
-        paddingHorizontal: Spacing.md,
-        borderWidth: 1,
-        minWidth: 80,
-        ...Shadows.sm,
-    },
-    buttonContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    buttonText: {
-        ...Typography.button.small,
-        fontWeight: "600",
-    },
-});
 
 export default LikeButton;

@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Platform, StatusBar, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Typography } from "@/constants/Fonts";
-import { Spacing, Shadows } from "@/constants/Theme";
+import { Typography, Spacing, Shadows } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,6 +29,65 @@ const AppHeader: React.FC = () => {
         // TODO: Implement notification functionality
         console.log("Notification pressed");
     };
+
+    const styles = StyleSheet.create({
+        headerContainer: {
+            paddingBottom: Spacing.sm,
+            ...Shadows.md,
+            elevation: 4,
+            borderBottomWidth: 1,
+        },
+        headerContent: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: Spacing.xs,
+            paddingTop: Spacing.sm,
+        },
+        iconButton: {
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        rightIconsContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        logoContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            flex: 1,
+            justifyContent: "flex-start",
+        },
+        logoText: {
+            ...Typography.heading.h2,
+            letterSpacing: -0.5,
+        },
+        logoBold: {
+            ...Typography.heading.h2,
+            fontFamily: Typography.heading.h1.fontFamily,
+            fontWeight: "800",
+            letterSpacing: -0.5,
+        },
+        logoLight: {
+            ...Typography.heading.h2,
+            fontFamily: Typography.bodyText.medium.fontFamily,
+            fontWeight: "300",
+            opacity: 0.95,
+            letterSpacing: 0.5,
+        },
+        bottomBorder: {
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 1,
+            opacity: 0.5,
+        },
+    });
 
     return (
         <>
@@ -76,64 +134,5 @@ const AppHeader: React.FC = () => {
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    headerContainer: {
-        paddingBottom: Spacing.sm,
-        ...Shadows.md,
-        elevation: 4,
-        borderBottomWidth: 1,
-    },
-    headerContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: Spacing.xs,
-        paddingTop: Spacing.sm,
-    },
-    iconButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    rightIconsContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    logoContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        flex: 1,
-        justifyContent: "flex-start",
-    },
-    logoText: {
-        ...Typography.heading.h2,
-        letterSpacing: -0.5,
-    },
-    logoBold: {
-        ...Typography.heading.h2,
-        fontFamily: Typography.heading.h1.fontFamily,
-        fontWeight: "800",
-        letterSpacing: -0.5,
-    },
-    logoLight: {
-        ...Typography.heading.h2,
-        fontFamily: Typography.bodyText.medium.fontFamily,
-        fontWeight: "300",
-        opacity: 0.95,
-        letterSpacing: 0.5,
-    },
-    bottomBorder: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 1,
-        opacity: 0.5,
-    },
-});
 
 export default AppHeader;

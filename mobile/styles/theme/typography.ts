@@ -173,42 +173,4 @@ export const Typography = {
             letterSpacing: 0.5,
         },
     },
-
-    // Legacy support (keeping for backward compatibility)
-    h1: {
-        fontFamily: Fonts.Primary.bold,
-        fontSize: 24,
-        lineHeight: 32,
-        letterSpacing: -0.25,
-    },
-    h2: {
-        fontFamily: Fonts.Primary.semiBold,
-        fontSize: 20,
-        lineHeight: 28,
-        letterSpacing: 0,
-    },
-    h3: {
-        fontFamily: Fonts.Primary.semiBold,
-        fontSize: 18,
-        lineHeight: 26,
-        letterSpacing: 0,
-    },
-    body: {
-        fontFamily: Fonts.Secondary.regular,
-        fontSize: 16,
-        lineHeight: 24,
-        letterSpacing: 0,
-    },
-    bodyBold: {
-        fontFamily: Fonts.Secondary.semiBold,
-        fontSize: 16,
-        lineHeight: 24,
-        letterSpacing: 0,
-    },
-    caption: {
-        fontFamily: Fonts.Secondary.regular,
-        fontSize: 12,
-        lineHeight: 18,
-        letterSpacing: 0.5,
-    },
 };
