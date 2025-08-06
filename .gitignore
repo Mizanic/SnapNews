@@ -7,7 +7,7 @@ __pycache__/
 .env*.local
 .env
 .env/
-
+.pytest_cache/
 
 # layers
 .layers/

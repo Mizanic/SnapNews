@@ -26,6 +26,11 @@ const AppHeader: React.FC = () => {
         router.push("/settings");
     };
 
+    const handleNotificationPress = () => {
+        // TODO: Implement notification functionality
+        console.log("Notification pressed");
+    };
+
     return (
         <>
             <StatusBar barStyle={statusBarStyle} backgroundColor={statusBarBg} />
@@ -54,10 +59,15 @@ const AppHeader: React.FC = () => {
                         </Text>
                     </View>
 
-                    {/* Right side - Settings */}
-                    <TouchableOpacity style={styles.iconButton} onPress={handleSettingsPress} activeOpacity={0.7}>
-                        <Ionicons name="settings-outline" size={24} color={colors.textColors.primary} />
-                    </TouchableOpacity>
+                    {/* Right side - Icons */}
+                    <View style={styles.rightIconsContainer}>
+                        <TouchableOpacity style={styles.iconButton} onPress={handleNotificationPress} activeOpacity={0.7}>
+                            <Ionicons name="notifications-outline" size={24} color={colors.textColors.primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconButton} onPress={handleSettingsPress} activeOpacity={0.7}>
+                            <Ionicons name="settings-outline" size={24} color={colors.textColors.primary} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Bottom border for separation */}
@@ -85,6 +95,11 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         borderRadius: 22,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    rightIconsContainer: {
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
     },
