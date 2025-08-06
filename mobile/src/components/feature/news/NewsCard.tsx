@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, StyleSheet, Text, TouchableOpacity, Alert, useColorScheme } from "react-native";
 import ImageSection from "./ImageSection";
-import ActionBar from "./ActionBar";
+import ActionBar from "@/components/layout/ActionBar";
 import { NewsItem } from "@/lib/types/newsTypes";
 import { LinearGradient } from "expo-linear-gradient";
 import { Typography, Spacing, Shadows, BorderRadius } from "@/styles";

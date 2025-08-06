@@ -9,7 +9,7 @@ import BookmarkScreen from "./bookmarks";
 import { Spacing, Shadows, BorderRadius } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import useColorScheme from "@/hooks/useColorScheme.web";
-import AppHeader from "@/components/feature/news/AppHeader";
+import AppHeader from "@/components/layout/AppHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type TabParamList = {
