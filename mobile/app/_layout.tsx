@@ -24,13 +24,13 @@ function AppContent() {
     return (
         <SafeAreaProvider>
             <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen
                     name="settings"
                     options={{
+                        headerShown: true,
                         presentation: "modal",
-                        headerShown: false,
                     }}
                 />
             </Stack>
