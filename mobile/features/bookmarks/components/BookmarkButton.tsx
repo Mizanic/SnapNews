@@ -1,13 +1,10 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { addBookmark, removeBookmark } from "@/features/bookmarks/state/bookmarksStore";
-import { useDispatch } from "react-redux";
 import { NewsItem } from "@/features/news/types";
 import { Spacing, BorderRadius, Shadows, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { useHaptics } from "@/hooks/useHaptics";
-import * as Haptics from "expo-haptics";
+import { useBookmarkAction } from "@/features/news/hooks/useBookmarkAction";
 
 interface BookmarkButtonProps {
     news: NewsItem;
@@ -15,19 +12,8 @@ interface BookmarkButtonProps {
 }
 
 const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) => {
-    const dispatch = useDispatch();
     const colors = useThemeColors();
-    const { triggerHaptic } = useHaptics();
-
-    const toggleBookmark = () => {
-        if (!isBookmarked) {
-            dispatch(addBookmark(news));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-        } else {
-            dispatch(removeBookmark(news.item_hash));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
-        }
-    };
+    const { handleBookmarkPress } = useBookmarkAction(news, isBookmarked);
 
     const styles = StyleSheet.create({
         button: {
@@ -51,7 +37,7 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({ news, isBookmarked }) =
 
     return (
         <TouchableOpacity
-            onPress={toggleBookmark}
+            onPress={handleBookmarkPress}
             style={[
                 styles.button,
                 {

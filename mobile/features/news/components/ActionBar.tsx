@@ -1,15 +1,12 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useDispatch } from "react-redux";
-import { addLike, removeLike } from "@/features/likes/state/likesStore";
-import { addBookmark, removeBookmark } from "@/features/bookmarks/state/bookmarksStore";
 import { NewsItem } from "@/features/news/types";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { useHaptics } from "@/hooks/useHaptics";
 import { formatCount } from "@/utils/numberFormatter";
-import * as Haptics from "expo-haptics";
-import { share } from "@/features/share/state/shareStore";
+import { useLikeAction } from "../hooks/useLikeAction";
+import { useBookmarkAction } from "../hooks/useBookmarkAction";
+import { useShareAction } from "../hooks/useShareAction";
 
 interface ActionBarProps {
     news: NewsItem;
@@ -20,39 +17,42 @@ interface ActionBarProps {
 
 const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onShare }) => {
     const colors = useThemeColors();
-    const dispatch = useDispatch();
-    const { triggerHaptic } = useHaptics();
+    const { handleLikePress } = useLikeAction(news, isLiked);
+    const { handleBookmarkPress } = useBookmarkAction(news, isBookmarked);
+    const { handleSharePress } = useShareAction(news, onShare);
 
-    const handleLikePress = () => {
-        const payload = {
-            url_hash: news.item_hash,
-            pk: news.pk,
-            sk: news.sk,
-        };
-        if (!isLiked) {
-            dispatch(addLike(payload));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-        } else {
-            dispatch(removeLike(payload));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
-        }
-    };
-
-    const handleBookmarkPress = () => {
-        if (!isBookmarked) {
-            dispatch(addBookmark(news));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-        } else {
-            dispatch(removeBookmark(news.item_hash));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
-        }
-    };
-
-    const handleSharePress = () => {
-        triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-        dispatch(share(news.pk, news.sk));
-        onShare();
-    };
+    const styles = StyleSheet.create({
+        actionBar: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+        },
+        actionsContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        actionButton: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginRight: 24,
+            paddingVertical: 4,
+            paddingHorizontal: 4,
+        },
+        actionText: {
+            fontSize: 14,
+            fontWeight: "400",
+            marginLeft: 6,
+        },
+        sourceText: {
+            fontSize: 14,
+            fontWeight: "400",
+        },
+        lastActionButton: {
+            marginRight: 0,
+        },
+    });
 
     return (
         <View
@@ -101,38 +101,5 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    actionBar: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-    },
-    actionsContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    actionButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginRight: 24,
-        paddingVertical: 4,
-        paddingHorizontal: 4,
-    },
-    actionText: {
-        fontSize: 14,
-        fontWeight: "400",
-        marginLeft: 6,
-    },
-    sourceText: {
-        fontSize: 14,
-        fontWeight: "400",
-    },
-    lastActionButton: {
-        marginRight: 0,
-    },
-});
 
 export default ActionBar;

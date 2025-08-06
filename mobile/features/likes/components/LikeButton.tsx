@@ -1,32 +1,19 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { addLike, removeLike } from "@/features/likes/state/likesStore";
-import { useDispatch } from "react-redux";
 import { Spacing, BorderRadius, Shadows, Typography } from "@/styles/theme";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { useHaptics } from "@/hooks/useHaptics";
-import * as Haptics from "expo-haptics";
+import { useLikeAction } from "@/features/news/hooks/useLikeAction";
+import { NewsItem } from "@/features/news/types";
 
 interface LikeButtonProps {
-    item_hash: string;
+    news: NewsItem;
     isLiked: boolean;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
-    const dispatch = useDispatch();
+const LikeButton: React.FC<LikeButtonProps> = ({ news, isLiked }) => {
     const colors = useThemeColors();
-    const { triggerHaptic } = useHaptics();
-
-    const toggleLike = () => {
-        if (!isLiked) {
-            dispatch(addLike(item_hash));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
-        } else {
-            dispatch(removeLike(item_hash));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
-        }
-    };
+    const { handleLikePress } = useLikeAction(news, isLiked);
 
     const styles = StyleSheet.create({
         button: {
@@ -50,7 +37,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ item_hash, isLiked }) => {
 
     return (
         <TouchableOpacity
-            onPress={toggleLike}
+            onPress={handleLikePress}
             style={[
                 styles.button,
                 {
