@@ -15,8 +15,8 @@ table = dynamodb.Table("SnapNews-Table")
 item = table.get_item(Key={"pk": "APP#DATA", "sk": "SECRETS"})
 
 GEMINI_API_KEY = item["Item"]["GEMINI_API_KEY"]
-MODEL_NAME = "gemma-3-27b-it"
-# MODEL_NAME = "gemini-embedding-001"
+# MODEL_NAME = "gemma-3-27b-it"
+MODEL_NAME = "gemma-3-1b-it"
 
 # To run this code you need to install the following dependencies:
 # pip install google-genai
@@ -27,7 +27,7 @@ def generate(article: str) -> None:
         api_key=GEMINI_API_KEY,
     )
 
-    prompt = "Summarize the following article in 80 words: \n" + article
+    prompt = """Summarize the following article in 80 words\n""" + article
 
     model = MODEL_NAME
     contents = [
@@ -87,7 +87,7 @@ def santise_content(content: str) -> str:
 
 if __name__ == "__main__":
     # url = "https://www.ndtv.com/india-news/pm-narendra-modi-greets-defence-minister-rajnath-singh-on-his-birthday-today-8852566"
-    url = "https://timesofindia.indiatimes.com/india/-manifests-savarn-and-shudras-mp-hc-flags-caste-system-in-judiciary-calls-out-feudal-mindset/articleshow/122918371.cms"
+    url = "https://sports.ndtv.com/england-vs-india-2025/india-used-vaseline-in-5th-test-ex-pakistan-stars-ball-tampering-claims-gets-brutal-rebuttal-9032269"
     article = get_article(url)
     # print(article)
     # summary = generate(article)

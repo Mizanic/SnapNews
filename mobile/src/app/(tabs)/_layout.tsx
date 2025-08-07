@@ -69,9 +69,9 @@ const MainTabs: React.FC = () => {
 
 const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorScheme }: any) => {
     const icons: Record<string, { name: string; lib: any }> = {
-        "Top News": { name: "trending-up", lib: MaterialCommunityIcons },
+        "Top News": { name: "trending-up", lib: Ionicons },
         "Latest News": { name: "flash", lib: Ionicons },
-        Bookmark: { name: "bookmark", lib: MaterialIcons },
+        Bookmark: { name: "bookmark", lib: Ionicons },
     };
 
     const styles = StyleSheet.create({
@@ -114,7 +114,7 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
             width: 24,
             height: 3,
             borderRadius: BorderRadius.sm,
-            marginTop: 2,
+            marginTop: Spacing.sm,
         },
     });
 
@@ -151,17 +151,12 @@ const CustomTabBar = ({ state, descriptors, navigation, colors, insets, colorSch
                     };
 
                     return (
-                        <TouchableOpacity
-                            key={route.key}
-                            onPress={onPress}
-                            style={[styles.iconWrapper, isFocused && { backgroundColor: colors.primary[50] }]}
-                            activeOpacity={0.7}
-                        >
-                            <View style={[isFocused && { backgroundColor: colors.white, ...Shadows.sm }]}>
+                        <TouchableOpacity key={route.key} onPress={onPress} activeOpacity={0.7}>
+                            <View style={[isFocused && { ...Shadows.sm }]}>
                                 <IconComponent
                                     name={name}
                                     size={isFocused ? 24 : 22}
-                                    color={isFocused ? colors.primary[600] : colors.gray[500]}
+                                    color={isFocused ? colors.primary[500] : colors.gray[500]}
                                 />
                             </View>
                             {isFocused && <View style={[styles.focusedIndicator, { backgroundColor: colors.primary[600] }]} />}
