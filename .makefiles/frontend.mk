@@ -57,6 +57,9 @@ mobile-preview:
 # CROSS-PLATFORM TASKS
 # ===============================
 
+make-release:
+	@echo "🔨 Opening release build..."
+	explorer.exe \home\rehan\SnapNews\mobile\android\app\build\outputs\apk\release
 
 # ===============================
 # DEVELOPMENT UTILITIES
