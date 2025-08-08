@@ -25,8 +25,6 @@ const MainTabs: React.FC = () => {
     const colorScheme = useColorScheme();
     const params = useLocalSearchParams();
 
-    console.log("🗂️ TAB LAYOUT: Received params:", params);
-
     return (
         <View style={{ flex: 1 }}>
             <AppHeader />
