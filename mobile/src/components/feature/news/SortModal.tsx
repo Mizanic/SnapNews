@@ -183,7 +183,7 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
 
                         {/* Header */}
                         <View style={styles.header}>
-                            <Text style={styles.headerTitle}>Sort by Time</Text>
+                            <Text style={styles.headerTitle}>Filter by Time</Text>
                             <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
                                 <Ionicons name="close" size={20} color={colors.textColors.secondary} />
                             </TouchableOpacity>
