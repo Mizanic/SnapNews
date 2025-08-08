@@ -2,7 +2,7 @@ import React from "react";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { NewsItem } from "@/lib/types/newsTypes";
 
-export type TimeFilter = "today" | "48h" | "96h" | "7d";
+export type TimeFilter = "today" | "48h" | "96h" | "7d" | "14d" | "all";
 
 export interface UseNewsFiltersReturn {
     // Filtered data
@@ -35,21 +35,34 @@ export interface UseNewsFiltersReturn {
     closeSortModal: () => void;
 }
 
-export const useNewsFilters = (newsData: NewsItem[]): UseNewsFiltersReturn => {
+// Create a stable default categories set to prevent re-renders
+const DEFAULT_CATEGORIES = new Set(SUPPORTED_CATEGORIES);
+
+// Create a factory for new full categories set
+const createFullCategoriesSet = () => new Set(SUPPORTED_CATEGORIES);
+
+export const useNewsFilters = (
+    newsData: NewsItem[],
+    initialTimeFilter: TimeFilter = "today",
+    initialCategories?: Set<string>
+): UseNewsFiltersReturn => {
     // Local state
-    const [selectedCategories, setSelectedCategories] = React.useState<Set<string>>(new Set(SUPPORTED_CATEGORIES));
-    const [selectedTimeFilter, setSelectedTimeFilter] = React.useState<TimeFilter>("today");
+    const [selectedCategories, setSelectedCategories] = React.useState<Set<string>>(initialCategories || DEFAULT_CATEGORIES);
+    const [selectedTimeFilter, setSelectedTimeFilter] = React.useState<TimeFilter>(initialTimeFilter);
     const [filterModalVisible, setFilterModalVisible] = React.useState(false);
     const [sortModalVisible, setSortModalVisible] = React.useState(false);
 
     // Memoized cutoff time to prevent infinite re-renders
     const cutoffTime = React.useMemo(() => {
-        if (selectedTimeFilter === "today") return null;
+        if (selectedTimeFilter === "all") return null;
 
         const now = new Date();
         const cutoff = new Date();
 
         switch (selectedTimeFilter) {
+            case "today":
+                cutoff.setTime(now.getTime() - 24 * 60 * 60 * 1000);
+                break;
             case "48h":
                 cutoff.setTime(now.getTime() - 48 * 60 * 60 * 1000);
                 break;
@@ -58,6 +71,9 @@ export const useNewsFilters = (newsData: NewsItem[]): UseNewsFiltersReturn => {
                 break;
             case "7d":
                 cutoff.setTime(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case "14d":
+                cutoff.setTime(now.getTime() - 14 * 24 * 60 * 60 * 1000);
                 break;
             default:
                 return null;
@@ -110,7 +126,7 @@ export const useNewsFilters = (newsData: NewsItem[]): UseNewsFiltersReturn => {
     }, []);
 
     const selectAllCategories = React.useCallback(() => {
-        setSelectedCategories(new Set(SUPPORTED_CATEGORIES));
+        setSelectedCategories(createFullCategoriesSet());
     }, []);
 
     // Modal actions
@@ -119,9 +135,12 @@ export const useNewsFilters = (newsData: NewsItem[]): UseNewsFiltersReturn => {
     const openSortModal = React.useCallback(() => setSortModalVisible(true), []);
     const closeSortModal = React.useCallback(() => setSortModalVisible(false), []);
 
-    // Computed states
-    const hasActiveFilters = selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length;
-    const hasActiveSort = selectedTimeFilter !== "today";
+    // Computed states (memoized to prevent unnecessary re-renders)
+    const hasActiveFilters = React.useMemo(
+        () => selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length,
+        [selectedCategories.size]
+    );
+    const hasActiveSort = React.useMemo(() => selectedTimeFilter !== "all", [selectedTimeFilter]);
 
     return {
         // Filtered data

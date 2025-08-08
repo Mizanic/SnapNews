@@ -7,7 +7,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTopNews } from "@/hooks/useNewsQueries";
 import NewsList from "@/components/feature/news/NewsList";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
-import { NewsScreenHeader, FilterModal, SortModal } from "@/components/shared/filters";
+import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
+import FilterModal from "@/components/feature/news/FilterModal";
+import SortModal from "@/components/feature/news/SortModal";
 
 const TopNewsScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
@@ -23,7 +25,7 @@ const TopNewsScreen: React.FC = () => {
         return data.pages.flatMap((page) => page.news);
     }, [data?.pages]);
 
-    // Use the simple filter hook
+    // Use the simple filter hook with default of "today" for trending news
     const {
         filteredNewsData,
         selectedCategories,
@@ -40,7 +42,7 @@ const TopNewsScreen: React.FC = () => {
         closeFilterModal,
         openSortModal,
         closeSortModal,
-    } = useNewsFilters(allNewsData);
+    } = useNewsFilters(allNewsData, "today");
 
     // Handle load more
     const handleLoadMore = () => {
@@ -61,7 +63,7 @@ const TopNewsScreen: React.FC = () => {
     return (
         <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
             <NewsScreenHeader
-                title="Top News"
+                title="Trending"
                 selectedCategoriesCount={selectedCategories.size}
                 selectedTimeFilter={selectedTimeFilter}
                 hasActiveFilters={hasActiveFilters}

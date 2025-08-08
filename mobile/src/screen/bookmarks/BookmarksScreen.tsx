@@ -6,8 +6,10 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NewsCard from "@/components/feature/news/NewsCard";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
-import { NewsScreenHeader, FilterModal, SortModal } from "@/components/shared/filters";
 import { NewsItem } from "@/lib/types/newsTypes";
+import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
+import FilterModal from "@/components/feature/news/FilterModal";
+import SortModal from "@/components/feature/news/SortModal";
 
 const BookmarkScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
@@ -17,7 +19,7 @@ const BookmarkScreen: React.FC = () => {
 
     const bookmarkedNews: NewsItem[] = Object.values(bookmarks);
 
-    // Use the simple filter hook
+    // Use the simple filter hook with default of "forever" for bookmarks
     const {
         filteredNewsData,
         selectedCategories,
@@ -34,7 +36,7 @@ const BookmarkScreen: React.FC = () => {
         closeFilterModal,
         openSortModal,
         closeSortModal,
-    } = useNewsFilters(bookmarkedNews);
+    } = useNewsFilters(bookmarkedNews, "all");
 
     const renderEmptyState = () => (
         <View style={[styles.emptyContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
