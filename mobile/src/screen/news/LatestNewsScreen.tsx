@@ -25,14 +25,27 @@ const LatestNewsScreen: React.FC = () => {
     const router = useRouter();
     const params = useLocalSearchParams<{ category?: string; time?: TimeFilter }>();
 
+    console.log("📰 LATEST SCREEN: Params received:", params);
+
     const initialCategories = React.useMemo(() => {
+        console.log("📰 LATEST SCREEN: Processing category param:", params?.category);
         if (params?.category && typeof params.category === "string") {
             const upper = params.category.toUpperCase();
+            console.log("📰 LATEST SCREEN: Uppercased category:", upper);
             if (SUPPORTED_CATEGORIES.includes(upper)) {
-                if (upper === "ALL") return new Set(SUPPORTED_CATEGORIES);
+                if (upper === "ALL") {
+                    console.log("📰 LATEST SCREEN: ALL category - returning all categories");
+                    return new Set(SUPPORTED_CATEGORIES);
+                }
+                console.log("📰 LATEST SCREEN: Single category - returning:", upper);
                 return new Set([upper]);
+            } else {
+                console.log("📰 LATEST SCREEN: Category not in supported list:", upper, "Supported:", SUPPORTED_CATEGORIES);
             }
+        } else {
+            console.log("📰 LATEST SCREEN: No category param or not string");
         }
+        console.log("📰 LATEST SCREEN: Returning undefined for initialCategories");
         return undefined;
     }, [params?.category]);
 
@@ -68,22 +81,27 @@ const LatestNewsScreen: React.FC = () => {
         closeSortModal,
     } = useNewsFilters(allNewsData, initialTime || "all", initialCategories);
 
+    console.log("📰 LATEST SCREEN: useNewsFilters results - selectedCategories:", Array.from(selectedCategories));
+    console.log("📰 LATEST SCREEN: useNewsFilters results - filteredNewsData length:", filteredNewsData.length);
+    console.log("📰 LATEST SCREEN: useNewsFilters results - allNewsData length:", allNewsData.length);
+
     // Push category and time changes into the URL for sharable state
-    React.useEffect(() => {
-        // Derive category: if all selected, use ALL; if single selected, use that; otherwise omit
-        let categoryParam: string | undefined = undefined;
-        if (selectedCategories.size === SUPPORTED_CATEGORIES.length) {
-            categoryParam = "ALL";
-        } else if (selectedCategories.size === 1) {
-            categoryParam = Array.from(selectedCategories)[0];
-        }
+    // DISABLED: This creates infinite loops when params change from sidebar
+    // React.useEffect(() => {
+    //     // Derive category: if all selected, use ALL; if single selected, use that; otherwise omit
+    //     let categoryParam: string | undefined = undefined;
+    //     if (selectedCategories.size === SUPPORTED_CATEGORIES.length) {
+    //         categoryParam = "ALL";
+    //     } else if (selectedCategories.size === 1) {
+    //         categoryParam = Array.from(selectedCategories)[0];
+    //     }
 
-        const next = new URLSearchParams();
-        if (categoryParam) next.set("category", categoryParam);
-        if (selectedTimeFilter) next.set("time", selectedTimeFilter);
+    //     const next = new URLSearchParams();
+    //     if (categoryParam) next.set("category", categoryParam);
+    //     if (selectedTimeFilter) next.set("time", selectedTimeFilter);
 
-        router.setParams(Object.fromEntries(next.entries()) as any);
-    }, [router, selectedCategories, selectedTimeFilter]);
+    //     router.setParams(Object.fromEntries(next.entries()) as any);
+    // }, [router, selectedCategories, selectedTimeFilter]);
 
     // Use scroll direction hook for header animation
     const { isHeaderVisible, onScroll } = useScrollDirection();

@@ -69,21 +69,22 @@ const HotNewsScreen: React.FC = () => {
     } = useNewsFilters(allNewsData, initialTime || "today", initialCategories);
 
     // Push category and time changes into the URL for sharable state
-    React.useEffect(() => {
-        // Derive category: if all selected, use ALL; if single selected, use that; otherwise omit
-        let categoryParam: string | undefined = undefined;
-        if (selectedCategories.size === SUPPORTED_CATEGORIES.length) {
-            categoryParam = "ALL";
-        } else if (selectedCategories.size === 1) {
-            categoryParam = Array.from(selectedCategories)[0];
-        }
+    // DISABLED: This creates infinite loops when params change from sidebar
+    // React.useEffect(() => {
+    //     // Derive category: if all selected, use ALL; if single selected, use that; otherwise omit
+    //     let categoryParam: string | undefined = undefined;
+    //     if (selectedCategories.size === SUPPORTED_CATEGORIES.length) {
+    //         categoryParam = "ALL";
+    //     } else if (selectedCategories.size === 1) {
+    //         categoryParam = Array.from(selectedCategories)[0];
+    //     }
 
-        const next = new URLSearchParams();
-        if (categoryParam) next.set("category", categoryParam);
-        if (selectedTimeFilter) next.set("time", selectedTimeFilter);
+    //     const next = new URLSearchParams();
+    //     if (categoryParam) next.set("category", categoryParam);
+    //     if (selectedTimeFilter) next.set("time", selectedTimeFilter);
 
-        router.setParams(Object.fromEntries(next.entries()) as any);
-    }, [router, selectedCategories, selectedTimeFilter]);
+    //     router.setParams(Object.fromEntries(next.entries()) as any);
+    // }, [router, selectedCategories, selectedTimeFilter]);
 
     // Use scroll direction hook for header animation
     const { isHeaderVisible, onScroll } = useScrollDirection();

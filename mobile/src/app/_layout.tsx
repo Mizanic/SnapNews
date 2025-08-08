@@ -6,6 +6,9 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
+import { DrawerProvider } from "@/contexts/DrawerContext";
+import { FilterProvider } from "@/contexts/FilterContext";
+import SideDrawer from "@/components/layout/SideDrawer";
 
 import { Provider } from "react-redux";
 import store, { persistor } from "@/lib/state/store";
@@ -21,16 +24,21 @@ function AppContent() {
     return (
         <SafeAreaProvider>
             <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                    name="settings"
-                    options={{
-                        headerShown: true,
-                        presentation: "modal",
-                    }}
-                />
-            </Stack>
+            <DrawerProvider>
+                <FilterProvider>
+                    <SideDrawer />
+                    <Stack>
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        <Stack.Screen
+                            name="settings"
+                            options={{
+                                headerShown: true,
+                                presentation: "modal",
+                            }}
+                        />
+                    </Stack>
+                </FilterProvider>
+            </DrawerProvider>
         </SafeAreaProvider>
     );
 }

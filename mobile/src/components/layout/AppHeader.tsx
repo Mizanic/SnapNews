@@ -6,6 +6,7 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useDrawer } from "@/contexts/DrawerContext";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
@@ -15,10 +16,10 @@ const AppHeader: React.FC = () => {
 
     const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
     const statusBarBg = colors.backgroundColors.primary;
+    const { openDrawer } = useDrawer();
 
     const handleMenuPress = () => {
-        // TODO: Implement menu functionality
-        console.log("Menu pressed");
+        openDrawer();
     };
 
     const handleSettingsPress = () => {
