@@ -1,9 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius } from "@/styles";
 import { TimeFilter } from "@/lib/types/timeFilter";
+import { BlurView } from "expo-blur";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface NewsScreenHeaderProps {
     title: string;
@@ -27,6 +29,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
     isVisible = true,
 }) => {
     const colors = useThemeColors();
+    const { colorScheme } = useTheme();
     const translateYAnim = React.useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
@@ -161,6 +164,9 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                 },
             ]}
         >
+            {Platform.OS === "ios" && (
+                <BlurView intensity={95} tint={colorScheme === "dark" ? "dark" : "light"} style={StyleSheet.absoluteFill} />
+            )}
             <View style={styles.header}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{title}</Text>

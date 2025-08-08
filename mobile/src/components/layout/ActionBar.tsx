@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { NewsItem } from "@/lib/types/newsTypes";
 import { useThemeColors } from "@/hooks/useThemeColor";
@@ -19,6 +19,15 @@ const HIT_SLOP = { top: 8, right: 8, bottom: 8, left: 8 } as const;
 
 const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onShare }) => {
     const colors = useThemeColors();
+    const likeScale = React.useRef(new Animated.Value(1)).current;
+    const bookmarkScale = React.useRef(new Animated.Value(1)).current;
+    const shareScale = React.useRef(new Animated.Value(1)).current;
+    const bounce = (anim: Animated.Value) => {
+        Animated.sequence([
+            Animated.timing(anim, { toValue: 0.9, duration: 80, useNativeDriver: true }),
+            Animated.spring(anim, { toValue: 1, useNativeDriver: true }),
+        ]).start();
+    };
     const { handleLikePress } = useLikeAction(news, isLiked);
     const { handleBookmarkPress } = useBookmarkAction(news, isBookmarked);
     const { handleSharePress } = useShareAction(news, onShare);
@@ -70,13 +79,18 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 {/* Like Button with Count */}
                 <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={handleLikePress}
+                    onPress={() => {
+                        bounce(likeScale);
+                        handleLikePress();
+                    }}
                     activeOpacity={0.7}
                     hitSlop={HIT_SLOP}
                     accessibilityRole="button"
                     accessibilityLabel={isLiked ? "Unlike article" : "Like article"}
                 >
-                    <Ionicons name={isLiked ? "heart" : "heart-outline"} size={18} color={isLiked ? colors.accent.red : colors.gray[500]} />
+                    <Animated.View style={{ transform: [{ scale: likeScale }] }}>
+                        <Ionicons name={isLiked ? "heart" : "heart-outline"} size={18} color={isLiked ? colors.accent.red : colors.gray[500]} />
+                    </Animated.View>
                     <Text style={[styles.actionText, { color: isLiked ? colors.accent.red : colors.gray[500] }]}>
                         {formatCount(news.metrics.likes)}
                     </Text>
@@ -85,17 +99,22 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 {/* Save Button */}
                 <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={handleBookmarkPress}
+                    onPress={() => {
+                        bounce(bookmarkScale);
+                        handleBookmarkPress();
+                    }}
                     activeOpacity={0.7}
                     hitSlop={HIT_SLOP}
                     accessibilityRole="button"
                     accessibilityLabel={isBookmarked ? "Remove bookmark" : "Save article"}
                 >
-                    <Ionicons
-                        name={isBookmarked ? "bookmark" : "bookmark-outline"}
-                        size={18}
-                        color={isBookmarked ? colors.accent.orange : colors.gray[500]}
-                    />
+                    <Animated.View style={{ transform: [{ scale: bookmarkScale }] }}>
+                        <Ionicons
+                            name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                            size={18}
+                            color={isBookmarked ? colors.accent.orange : colors.gray[500]}
+                        />
+                    </Animated.View>
                     <Text style={[styles.actionText, { color: isBookmarked ? colors.accent.orange : colors.gray[500] }]}>Save</Text>
                 </TouchableOpacity>
             </View>
@@ -111,13 +130,18 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 {/* Share Button */}
                 <TouchableOpacity
                     style={[styles.actionButton, styles.lastActionButton]}
-                    onPress={handleSharePress}
+                    onPress={() => {
+                        bounce(shareScale);
+                        handleSharePress();
+                    }}
                     activeOpacity={0.7}
                     hitSlop={HIT_SLOP}
                     accessibilityRole="button"
                     accessibilityLabel="Share article"
                 >
-                    <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
+                    <Animated.View style={{ transform: [{ scale: shareScale }] }}>
+                        <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
+                    </Animated.View>
                     <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
                 </TouchableOpacity>
             </View>

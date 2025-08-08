@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Animated } from "react-native";
 import { Spacing, BorderRadius, Shadows, Typography } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
 
@@ -12,6 +12,14 @@ interface ImageSectionProps {
 
 const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabel, categories }) => {
     const colors = useThemeColors();
+    const foregroundOpacity = React.useRef(new Animated.Value(0)).current;
+    const handleImageLoaded = React.useCallback(() => {
+        Animated.timing(foregroundOpacity, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+        }).start();
+    }, [foregroundOpacity]);
 
     const styles = StyleSheet.create({
         imageContainer: {
@@ -93,8 +101,13 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
             <Image source={{ uri: image }} style={styles.backgroundImage} resizeMode="cover" blurRadius={25} />
             <View style={styles.backgroundOverlay} />
 
-            {/* Foreground image */}
-            <Image source={{ uri: image }} style={styles.foregroundImage} resizeMode="contain" />
+            {/* Foreground image with subtle fade-in */}
+            <Animated.Image
+                source={{ uri: image }}
+                style={[styles.foregroundImage, { opacity: foregroundOpacity }]}
+                resizeMode="contain"
+                onLoadEnd={handleImageLoaded}
+            />
 
             {/* Top overlay with categories on left and time on right */}
             <View style={styles.overlayContainer}>
