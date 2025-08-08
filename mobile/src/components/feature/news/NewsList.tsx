@@ -1,7 +1,7 @@
 import React from "react";
 import { FlatList, View, StyleSheet, RefreshControl, ActivityIndicator, Text } from "react-native";
 import NewsCard from "./NewsCard";
-import { Spacing, Typography } from "@/styles";
+import { Spacing, Typography, BorderRadius } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { NewsItem } from "@/lib/types/newsTypes";
 
@@ -68,9 +68,65 @@ const NewsList: React.FC<NewsListProps> = ({
 
     if (loading && !refreshing) {
         return (
+            <View style={{ flex: 1, backgroundColor: colors.backgroundColors.secondary }}>
+                <View style={[styles.listContainer]}>
+                    {[0, 1, 2, 3, 4].map((i) => (
+                        <View
+                            key={i}
+                            style={{
+                                marginBottom: Spacing.sm,
+                                marginHorizontal: Spacing.xs,
+                                borderRadius: BorderRadius.sm,
+                                overflow: "hidden",
+                                backgroundColor: colors.backgroundColors.primary,
+                                borderWidth: 1,
+                                borderColor: colors.borderColors.light,
+                            }}
+                        >
+                            <View style={{ width: "100%", aspectRatio: 16 / 9, backgroundColor: colors.gray[100] }} />
+                            <View style={{ padding: Spacing.md }}>
+                                <View
+                                    style={{
+                                        width: "80%",
+                                        height: 16,
+                                        borderRadius: 8,
+                                        backgroundColor: colors.gray[100],
+                                        marginBottom: Spacing.xs,
+                                    }}
+                                />
+                                <View
+                                    style={{
+                                        width: "60%",
+                                        height: 16,
+                                        borderRadius: 8,
+                                        backgroundColor: colors.gray[100],
+                                        marginBottom: Spacing.md,
+                                    }}
+                                />
+                                <View
+                                    style={{ width: "100%", height: 12, borderRadius: 6, backgroundColor: colors.gray[100], marginBottom: 6 }}
+                                />
+                                <View
+                                    style={{ width: "90%", height: 12, borderRadius: 6, backgroundColor: colors.gray[100], marginBottom: 6 }}
+                                />
+                                <View style={{ width: "75%", height: 12, borderRadius: 6, backgroundColor: colors.gray[100] }} />
+                            </View>
+                        </View>
+                    ))}
+                </View>
+                <View style={{ alignItems: "center", paddingBottom: Spacing.md }}>
+                    <ActivityIndicator style={{ marginTop: 8 }} size="small" color={colors.primary[600]} />
+                    <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>Loading latest news...</Text>
+                </View>
+            </View>
+        );
+    }
+
+    if (!loading && data.length === 0) {
+        return (
             <View style={[styles.loadingContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
-                <ActivityIndicator size="large" color={colors.primary[600]} />
-                <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>Loading latest news...</Text>
+                <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>No news to show yet.</Text>
+                {onRefresh && <Text style={[styles.loadingText, { color: colors.textColors.tertiary }]}>Pull to refresh.</Text>}
             </View>
         );
     }

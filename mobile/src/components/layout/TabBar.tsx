@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity, View, Platform } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Platform, Animated } from "react-native";
 import { BorderRadius, Spacing, Shadows } from "@/styles";
 import { BlurView } from "expo-blur";
+import React from "react";
+import { useHaptics } from "@/hooks/useHaptics";
 
 const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
     const icons: Record<string, { name: string; lib: any }> = {
@@ -73,6 +75,8 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                 {state.routes.map((route: any, index: number) => {
                     const isFocused = state.index === index;
                     const { name, lib: IconComponent } = icons[route.name];
+                    const scaleAnimRef = React.useRef(new Animated.Value(isFocused ? 1.1 : 1)).current;
+                    const { triggerHaptic } = useHaptics();
 
                     const onPress = () => {
                         const event = navigation.emit({
@@ -84,17 +88,29 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                         if (!isFocused && !event.defaultPrevented) {
                             navigation.navigate(route.name);
                         }
+                        // Subtle haptic feedback on tab press (if enabled in settings)
+                        try {
+                            triggerHaptic && triggerHaptic((require("expo-haptics") as any).ImpactFeedbackStyle.Light);
+                        } catch {}
                     };
+
+                    React.useEffect(() => {
+                        Animated.timing(scaleAnimRef, {
+                            toValue: isFocused ? 1.1 : 1,
+                            duration: 200,
+                            useNativeDriver: true,
+                        }).start();
+                    }, [isFocused, scaleAnimRef]);
 
                     return (
                         <TouchableOpacity key={route.key} onPress={onPress} activeOpacity={0.7}>
-                            <View style={[isFocused && { ...Shadows.sm }]}>
+                            <Animated.View style={[{ transform: [{ scale: scaleAnimRef }] }, isFocused && { ...Shadows.sm }]}>
                                 <IconComponent
                                     name={name}
                                     size={isFocused ? 24 : 22}
                                     color={isFocused ? colors.accent.redditRed : colors.gray[500]}
                                 />
-                            </View>
+                            </Animated.View>
                             {isFocused && <View style={[styles.focusedIndicator, { backgroundColor: colors.accent.redditRed }]} />}
                         </TouchableOpacity>
                     );
