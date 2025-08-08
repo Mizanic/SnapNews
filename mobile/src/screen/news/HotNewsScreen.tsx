@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Spacing, Typography } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTopNews } from "@/hooks/useNewsQueries";
+import { useHotNews } from "@/hooks/useNewsQueries";
 import NewsList from "@/components/feature/news/NewsList";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
@@ -12,13 +12,13 @@ import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
 import FilterModal from "@/components/feature/news/FilterModal";
 import SortModal from "@/components/feature/news/SortModal";
 
-const TopNewsScreen: React.FC = () => {
+const HotNewsScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
 
-    const { data, isLoading, isError, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useTopNews();
+    const { data, isLoading, isError, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useHotNews();
 
     // Flatten data pages into a single array of news items
     const allNewsData = React.useMemo(() => {
@@ -67,7 +67,7 @@ const TopNewsScreen: React.FC = () => {
     return (
         <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
             <NewsScreenHeader
-                title="Trending"
+                title="Hot"
                 selectedCategoriesCount={selectedCategories.size}
                 selectedTimeFilter={selectedTimeFilter}
                 hasActiveFilters={hasActiveFilters}
@@ -125,4 +125,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TopNewsScreen;
+export default HotNewsScreen;

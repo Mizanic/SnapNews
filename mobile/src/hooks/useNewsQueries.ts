@@ -1,5 +1,5 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { fetchLatestNews, fetchTopNews, NewsResponse } from "@/lib/api/newsAPI";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchHotNews, fetchLatestNews, NewsResponse } from "@/lib/api/newsAPI";
 
 export const useLatestNews = () => {
     return useInfiniteQuery<NewsResponse>({
@@ -10,10 +10,10 @@ export const useLatestNews = () => {
     });
 };
 
-export const useTopNews = () => {
+export const useHotNews = () => {
     return useInfiniteQuery<NewsResponse>({
-        queryKey: ["topNews"],
-        queryFn: ({ pageParam }) => fetchTopNews(pageParam as string | undefined),
+        queryKey: ["hotNews"],
+        queryFn: ({ pageParam }) => fetchHotNews(pageParam as string | undefined),
         initialPageParam: undefined as string | undefined,
         getNextPageParam: (lastPage) => lastPage.page_key,
     });

@@ -5,8 +5,8 @@ import { BlurView } from "expo-blur";
 
 const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
     const icons: Record<string, { name: string; lib: any }> = {
-        "Top News": { name: "trending-up", lib: Ionicons },
-        "Latest News": { name: "flash", lib: Ionicons },
+        Hot: { name: "flame", lib: Ionicons },
+        Latest: { name: "flash", lib: Ionicons },
         Bookmark: { name: "bookmark", lib: Ionicons },
     };
 

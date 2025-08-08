@@ -30,7 +30,7 @@ export const fetchLatestNews = async (pageKey?: string): Promise<NewsResponse> =
     };
 };
 
-export const fetchTopNews = async (pageKey?: string): Promise<NewsResponse> => {
+export const fetchHotNews = async (pageKey?: string): Promise<NewsResponse> => {
     let url = `${API_ENDPOINT}/feed/top?country=IN&language=EN`;
 
     if (pageKey) {
