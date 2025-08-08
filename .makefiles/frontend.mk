@@ -13,8 +13,6 @@ BUILD_ENV ?= development
 # MOBILE APPLICATION
 # ===============================
 
-
-
 mobile-dev:
 	@echo "📱 Starting mobile dev server..."
 	$(BUILD_SCRIPTS_DIR)/mobile-dev.sh
@@ -57,6 +55,13 @@ mobile-preview:
 # CROSS-PLATFORM TASKS
 # ===============================
 
+open-release:
+	@echo "🔨 Opening release build..."
+	@if [ -d /home/rehan/SnapNews/mobile/android/app/build/outputs/apk/release ]; then \
+		explorer.exe "$$(wslpath -w /home/rehan/SnapNews/mobile/android/app/build/outputs/apk/release)"; \
+	else \
+		echo "❌ Directory not found."; \
+	fi
 
 # ===============================
 # DEVELOPMENT UTILITIES

@@ -30,7 +30,6 @@ export class ApiService {
                     ...(auth ? { Authorization: $tokens.get().IdToken as string } : {}),
                 },
             });
-            console.log("GET RESPONSE", response.data);
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
