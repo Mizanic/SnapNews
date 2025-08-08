@@ -43,7 +43,7 @@ const LatestNewsScreen: React.FC = () => {
         closeFilterModal,
         openSortModal,
         closeSortModal,
-    } = useNewsFilters(allNewsData, "14d");
+    } = useNewsFilters(allNewsData, "all");
 
     // Use scroll direction hook for header animation
     const { isHeaderVisible, onScroll } = useScrollDirection();
