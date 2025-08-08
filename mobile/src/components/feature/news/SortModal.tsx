@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions }
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius, Shadows } from "@/styles";
-import { TimeFilter } from "@/hooks/useNewsFilters";
+import { TimeFilter } from "@/lib/types/timeFilter";
 
 interface SortModalProps {
     visible: boolean;

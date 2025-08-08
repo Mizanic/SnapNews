@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius } from "@/styles";
-import { TimeFilter } from "@/hooks/useNewsFilters";
+import { TimeFilter } from "@/lib/types/timeFilter";
 
 interface NewsScreenHeaderProps {
     title: string;
@@ -39,7 +39,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 
     const getTimeFilterDisplayText = (filter: TimeFilter) => {
         switch (filter) {
-            case "forever":
+            case "all":
                 return "All";
             case "today":
                 return "Today";

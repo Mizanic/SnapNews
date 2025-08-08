@@ -37,7 +37,7 @@ const BookmarkScreen: React.FC = () => {
         closeFilterModal,
         openSortModal,
         closeSortModal,
-    } = useNewsFilters(bookmarkedNews, "forever");
+    } = useNewsFilters(bookmarkedNews, "all");
 
     // Use scroll direction hook for header animation
     const { isHeaderVisible, onScroll } = useScrollDirection();
