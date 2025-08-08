@@ -43,7 +43,7 @@ const NewsList: React.FC<NewsListProps> = ({
             textAlign: "center",
         },
         listContainer: {
-            paddingTop: 80 + Spacing.md, // Header height + spacing
+            paddingTop: 32 + Spacing.xl, // Header height + spacing
             paddingBottom: Spacing.xl,
         },
         separator: {

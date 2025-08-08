@@ -61,7 +61,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
 
     const styles = StyleSheet.create({
         touchableCard: {
-            marginBottom: Spacing.md,
+            marginBottom: Spacing.sm,
             marginHorizontal: Spacing.xs,
         },
         shareViewContainer: {
