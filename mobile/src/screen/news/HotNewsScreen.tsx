@@ -11,6 +11,9 @@ import { useScrollDirection } from "@/hooks/useScrollDirection";
 import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
 import FilterModal from "@/components/feature/news/FilterModal";
 import SortModal from "@/components/feature/news/SortModal";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
+import { TimeFilter } from "@/lib/types/timeFilter";
 
 const HotNewsScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
@@ -19,6 +22,26 @@ const HotNewsScreen: React.FC = () => {
     const colors = useThemeColors();
 
     const { data, isLoading, isError, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useHotNews();
+    const router = useRouter();
+    const params = useLocalSearchParams<{ category?: string; time?: TimeFilter }>();
+
+    const initialCategories = React.useMemo(() => {
+        if (params?.category && typeof params.category === "string") {
+            const upper = params.category.toUpperCase();
+            if (SUPPORTED_CATEGORIES.includes(upper)) {
+                if (upper === "ALL") return new Set(SUPPORTED_CATEGORIES);
+                return new Set([upper]);
+            }
+        }
+        return undefined;
+    }, [params?.category]);
+
+    const initialTime = React.useMemo<TimeFilter | undefined>(() => {
+        const t = params?.time;
+        if (!t) return undefined;
+        const allowed: TimeFilter[] = ["all", "today", "48h", "96h", "7d", "14d"];
+        return allowed.includes(t as TimeFilter) ? (t as TimeFilter) : undefined;
+    }, [params?.time]);
 
     // Flatten data pages into a single array of news items
     const allNewsData = React.useMemo(() => {
@@ -43,7 +66,24 @@ const HotNewsScreen: React.FC = () => {
         closeFilterModal,
         openSortModal,
         closeSortModal,
-    } = useNewsFilters(allNewsData, "today");
+    } = useNewsFilters(allNewsData, initialTime || "today", initialCategories);
+
+    // Push category and time changes into the URL for sharable state
+    React.useEffect(() => {
+        // Derive category: if all selected, use ALL; if single selected, use that; otherwise omit
+        let categoryParam: string | undefined = undefined;
+        if (selectedCategories.size === SUPPORTED_CATEGORIES.length) {
+            categoryParam = "ALL";
+        } else if (selectedCategories.size === 1) {
+            categoryParam = Array.from(selectedCategories)[0];
+        }
+
+        const next = new URLSearchParams();
+        if (categoryParam) next.set("category", categoryParam);
+        if (selectedTimeFilter) next.set("time", selectedTimeFilter);
+
+        router.setParams(Object.fromEntries(next.entries()) as any);
+    }, [router, selectedCategories, selectedTimeFilter]);
 
     // Use scroll direction hook for header animation
     const { isHeaderVisible, onScroll } = useScrollDirection();

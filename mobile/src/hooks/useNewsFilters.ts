@@ -51,6 +51,20 @@ export const useNewsFilters = (
     const [filterModalVisible, setFilterModalVisible] = React.useState(false);
     const [sortModalVisible, setSortModalVisible] = React.useState(false);
 
+    // Keep selected categories in sync when initialCategories changes (e.g., from navigation params)
+    React.useEffect(() => {
+        if (initialCategories) {
+            setSelectedCategories(new Set(initialCategories));
+        }
+    }, [initialCategories]);
+
+    // Keep time filter in sync if initialTimeFilter changes (from navigation params)
+    React.useEffect(() => {
+        if (initialTimeFilter) {
+            setSelectedTimeFilter(initialTimeFilter);
+        }
+    }, [initialTimeFilter]);
+
     // Memoized cutoff time to prevent infinite re-renders
     const cutoffTime = React.useMemo(() => {
         if (selectedTimeFilter === "all") return null;
