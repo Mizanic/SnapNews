@@ -5,14 +5,15 @@ import { Spacing, Typography } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NewsCard from "@/components/feature/news/NewsCard";
+import { NewsFiltersProvider, useNewsFiltersContext } from "@/components/shared/filters";
+import { NewsItem } from "@/lib/types/newsTypes";
 
-const BookmarkScreen: React.FC = () => {
+// Content component that uses the filters context
+const BookmarksContent: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
-    const insets = useSafeAreaInsets();
     const colors = useThemeColors();
-
-    const bookmarkedNews = Object.values(bookmarks);
+    const { filteredNewsData } = useNewsFiltersContext();
 
     const renderEmptyState = () => (
         <View style={[styles.emptyContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
@@ -23,22 +24,35 @@ const BookmarkScreen: React.FC = () => {
         </View>
     );
 
+    if (filteredNewsData.length === 0) {
+        return renderEmptyState();
+    }
+
+    return (
+        <FlatList
+            data={filteredNewsData}
+            renderItem={({ item }) => <NewsCard news={item} isBookmarked={true} isLiked={likes.hasOwnProperty(item.item_hash)} />}
+            contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
+            keyExtractor={(item) => item.item_hash}
+            showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+        />
+    );
+};
+
+// Main component that provides the filters
+const BookmarkScreen: React.FC = () => {
+    const bookmarks = useSelector((state: any) => state.bookmarks);
+    const insets = useSafeAreaInsets();
+    const colors = useThemeColors();
+
+    const bookmarkedNews: NewsItem[] = Object.values(bookmarks);
+
     return (
         <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
-            {bookmarkedNews.length === 0 ? (
-                renderEmptyState()
-            ) : (
-                <FlatList
-                    data={bookmarkedNews}
-                    renderItem={({ item }) => (
-                        <NewsCard news={item as any} isBookmarked={true} isLiked={likes.hasOwnProperty((item as any).item_hash)} />
-                    )}
-                    contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
-                    keyExtractor={(item) => (item as any).item_hash}
-                    showsVerticalScrollIndicator={false}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                />
-            )}
+            <NewsFiltersProvider title="Bookmarks" newsData={bookmarkedNews}>
+                <BookmarksContent />
+            </NewsFiltersProvider>
         </View>
     );
 };
