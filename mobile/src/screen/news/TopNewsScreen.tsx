@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTopNews } from "@/hooks/useNewsQueries";
 import NewsList from "@/components/feature/news/NewsList";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
 import FilterModal from "@/components/feature/news/FilterModal";
 import SortModal from "@/components/feature/news/SortModal";
@@ -44,6 +45,9 @@ const TopNewsScreen: React.FC = () => {
         closeSortModal,
     } = useNewsFilters(allNewsData, "today");
 
+    // Use scroll direction hook for header animation
+    const { isHeaderVisible, onScroll } = useScrollDirection();
+
     // Handle load more
     const handleLoadMore = () => {
         if (hasNextPage && !isFetchingNextPage) {
@@ -70,6 +74,7 @@ const TopNewsScreen: React.FC = () => {
                 hasActiveSort={hasActiveSort}
                 onFilterPress={openFilterModal}
                 onSortPress={openSortModal}
+                isVisible={isHeaderVisible}
             />
 
             <NewsList
@@ -81,6 +86,7 @@ const TopNewsScreen: React.FC = () => {
                 refreshing={isRefetching}
                 onEndReached={handleLoadMore}
                 loadingMore={isFetchingNextPage}
+                onScroll={onScroll}
             />
 
             <FilterModal

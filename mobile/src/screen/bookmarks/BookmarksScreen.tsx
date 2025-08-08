@@ -6,6 +6,7 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NewsCard from "@/components/feature/news/NewsCard";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { NewsItem } from "@/lib/types/newsTypes";
 import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
 import FilterModal from "@/components/feature/news/FilterModal";
@@ -36,7 +37,10 @@ const BookmarkScreen: React.FC = () => {
         closeFilterModal,
         openSortModal,
         closeSortModal,
-    } = useNewsFilters(bookmarkedNews, "all");
+    } = useNewsFilters(bookmarkedNews, "forever");
+
+    // Use scroll direction hook for header animation
+    const { isHeaderVisible, onScroll } = useScrollDirection();
 
     const renderEmptyState = () => (
         <View style={[styles.emptyContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
@@ -65,6 +69,7 @@ const BookmarkScreen: React.FC = () => {
                 hasActiveSort={hasActiveSort}
                 onFilterPress={openFilterModal}
                 onSortPress={openSortModal}
+                isVisible={isHeaderVisible}
             />
 
             {filteredNewsData.length === 0 ? (
@@ -77,6 +82,8 @@ const BookmarkScreen: React.FC = () => {
                     keyExtractor={(item) => item.item_hash}
                     showsVerticalScrollIndicator={false}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    onScroll={onScroll}
+                    scrollEventThrottle={16}
                 />
             )}
 
@@ -108,6 +115,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: Spacing.xl,
+        paddingTop: 80, // Header height
     },
     emptyTitle: {
         ...Typography.heading.h2,
@@ -120,7 +128,7 @@ const styles = StyleSheet.create({
         lineHeight: 24,
     },
     listContainer: {
-        paddingTop: Spacing.md,
+        paddingTop: 80 + Spacing.md, // Header height + spacing
         paddingBottom: Spacing.xl,
     },
     separator: {

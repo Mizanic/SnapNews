@@ -14,6 +14,7 @@ interface NewsListProps {
     refreshing?: boolean;
     onEndReached?: () => void;
     loadingMore?: boolean;
+    onScroll?: (event: { nativeEvent: { contentOffset: { y: number } } }) => void;
 }
 
 const NewsList: React.FC<NewsListProps> = ({
@@ -25,6 +26,7 @@ const NewsList: React.FC<NewsListProps> = ({
     refreshing = false,
     onEndReached,
     loadingMore = false,
+    onScroll,
 }) => {
     const colors = useThemeColors();
 
@@ -41,7 +43,7 @@ const NewsList: React.FC<NewsListProps> = ({
             textAlign: "center",
         },
         listContainer: {
-            paddingTop: Spacing.md,
+            paddingTop: 80 + Spacing.md, // Header height + spacing
             paddingBottom: Spacing.xl,
         },
         separator: {
@@ -101,6 +103,8 @@ const NewsList: React.FC<NewsListProps> = ({
             onEndReached={onEndReached}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
         />
     );
 };

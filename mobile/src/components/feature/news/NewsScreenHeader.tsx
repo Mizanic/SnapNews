@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius } from "@/styles";
@@ -13,6 +13,7 @@ interface NewsScreenHeaderProps {
     hasActiveSort: boolean;
     onFilterPress: () => void;
     onSortPress: () => void;
+    isVisible?: boolean;
 }
 
 const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
@@ -23,12 +24,22 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
     hasActiveSort,
     onFilterPress,
     onSortPress,
+    isVisible = true,
 }) => {
     const colors = useThemeColors();
+    const translateYAnim = React.useRef(new Animated.Value(0)).current;
+
+    React.useEffect(() => {
+        Animated.timing(translateYAnim, {
+            toValue: isVisible ? 0 : -60, // Slide up by most of header height
+            duration: 250,
+            useNativeDriver: true,
+        }).start();
+    }, [isVisible, translateYAnim]);
 
     const getTimeFilterDisplayText = (filter: TimeFilter) => {
         switch (filter) {
-            case "all":
+            case "forever":
                 return "All";
             case "today":
                 return "Today";
@@ -133,7 +144,23 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
     });
 
     return (
-        <View style={styles.container}>
+        <Animated.View
+            style={[
+                styles.container,
+                {
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1000,
+                    transform: [
+                        {
+                            translateY: translateYAnim,
+                        },
+                    ],
+                },
+            ]}
+        >
             <View style={styles.header}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{title}</Text>
@@ -174,7 +201,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 

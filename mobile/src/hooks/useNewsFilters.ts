@@ -2,7 +2,7 @@ import React from "react";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { NewsItem } from "@/lib/types/newsTypes";
 
-export type TimeFilter = "today" | "48h" | "96h" | "7d" | "14d" | "all";
+export type TimeFilter = "today" | "48h" | "96h" | "7d" | "14d" | "forever";
 
 export interface UseNewsFiltersReturn {
     // Filtered data
@@ -54,7 +54,7 @@ export const useNewsFilters = (
 
     // Memoized cutoff time to prevent infinite re-renders
     const cutoffTime = React.useMemo(() => {
-        if (selectedTimeFilter === "all") return null;
+        if (selectedTimeFilter === "forever") return null;
 
         const now = new Date();
         const cutoff = new Date();
@@ -140,7 +140,7 @@ export const useNewsFilters = (
         () => selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length,
         [selectedCategories.size]
     );
-    const hasActiveSort = React.useMemo(() => selectedTimeFilter !== "all", [selectedTimeFilter]);
+    const hasActiveSort = React.useMemo(() => selectedTimeFilter !== "forever", [selectedTimeFilter]);
 
     return {
         // Filtered data
