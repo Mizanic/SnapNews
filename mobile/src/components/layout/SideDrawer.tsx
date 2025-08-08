@@ -6,7 +6,7 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useDrawer } from "@/contexts/DrawerContext";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { Spacing, Typography, BorderRadius } from "@/styles";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useFilterContext } from "@/contexts/FilterContext";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -32,7 +32,6 @@ const SideDrawer: React.FC = () => {
     const colors = useThemeColors();
     const insets = useSafeAreaInsets();
     const router = useRouter();
-    const params = useLocalSearchParams();
     const { setSelectedCategories } = useFilterContext();
 
     const translateX = React.useRef(new Animated.Value(-DRAWER_WIDTH)).current;
@@ -56,11 +55,7 @@ const SideDrawer: React.FC = () => {
     }, [isOpen, translateX, backdropOpacity]);
 
     const handleCategoryPress = (category: string) => {
-        console.log("🔥 SIDEBAR: Category pressed:", category);
-        console.log("🔥 SIDEBAR: Current params before:", params);
-
         const categoryParam = category.toUpperCase();
-        console.log("🔥 SIDEBAR: Setting category param:", categoryParam);
 
         // Update global filter immediately
         setSelectedCategories(new Set([categoryParam]));

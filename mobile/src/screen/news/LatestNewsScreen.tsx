@@ -25,27 +25,18 @@ const LatestNewsScreen: React.FC = () => {
     const router = useRouter();
     const params = useLocalSearchParams<{ category?: string; time?: TimeFilter }>();
 
-    console.log("📰 LATEST SCREEN: Params received:", params);
-
     const initialCategories = React.useMemo(() => {
-        console.log("📰 LATEST SCREEN: Processing category param:", params?.category);
         if (params?.category && typeof params.category === "string") {
             const upper = params.category.toUpperCase();
-            console.log("📰 LATEST SCREEN: Uppercased category:", upper);
             if (SUPPORTED_CATEGORIES.includes(upper)) {
                 if (upper === "ALL") {
-                    console.log("📰 LATEST SCREEN: ALL category - returning all categories");
                     return new Set(SUPPORTED_CATEGORIES);
                 }
-                console.log("📰 LATEST SCREEN: Single category - returning:", upper);
                 return new Set([upper]);
             } else {
-                console.log("📰 LATEST SCREEN: Category not in supported list:", upper, "Supported:", SUPPORTED_CATEGORIES);
             }
         } else {
-            console.log("📰 LATEST SCREEN: No category param or not string");
         }
-        console.log("📰 LATEST SCREEN: Returning undefined for initialCategories");
         return undefined;
     }, [params?.category]);
 
@@ -80,10 +71,6 @@ const LatestNewsScreen: React.FC = () => {
         openSortModal,
         closeSortModal,
     } = useNewsFilters(allNewsData, initialTime || "all", initialCategories);
-
-    console.log("📰 LATEST SCREEN: useNewsFilters results - selectedCategories:", Array.from(selectedCategories));
-    console.log("📰 LATEST SCREEN: useNewsFilters results - filteredNewsData length:", filteredNewsData.length);
-    console.log("📰 LATEST SCREEN: useNewsFilters results - allNewsData length:", allNewsData.length);
 
     // Push category and time changes into the URL for sharable state
     // DISABLED: This creates infinite loops when params change from sidebar

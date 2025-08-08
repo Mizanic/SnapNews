@@ -46,10 +46,6 @@ export const useNewsFilters = (
     initialTimeFilter: TimeFilter = "today",
     initialCategories?: Set<string>
 ): UseNewsFiltersReturn => {
-    console.log("🔧 FILTER HOOK: Called with newsData length:", newsData.length);
-    console.log("🔧 FILTER HOOK: initialTimeFilter:", initialTimeFilter);
-    console.log("🔧 FILTER HOOK: initialCategories:", initialCategories ? Array.from(initialCategories) : "undefined");
-
     // Prefer global context if available; fallback to local init
     const filterCtx = (() => {
         try {
@@ -70,23 +66,15 @@ export const useNewsFilters = (
     const [filterModalVisible, setFilterModalVisible] = React.useState(false);
     const [sortModalVisible, setSortModalVisible] = React.useState(false);
 
-    console.log("🔧 FILTER HOOK: Current selectedCategories:", Array.from(selectedCategories));
-
     // Keep selected categories in sync when initialCategories changes (e.g., from navigation params)
     React.useEffect(() => {
-        console.log(
-            "🔧 FILTER HOOK: initialCategories effect triggered with:",
-            initialCategories ? Array.from(initialCategories) : "undefined"
-        );
         if (initialCategories) {
-            console.log("🔧 FILTER HOOK: Setting categories to:", Array.from(initialCategories));
             setSelectedCategories(new Set(initialCategories));
         }
     }, [initialCategories]);
 
     // Keep time filter in sync if initialTimeFilter changes (from navigation params)
     React.useEffect(() => {
-        console.log("🔧 FILTER HOOK: initialTimeFilter effect triggered with:", initialTimeFilter);
         if (initialTimeFilter) {
             setSelectedTimeFilter(initialTimeFilter);
         }
@@ -123,17 +111,7 @@ export const useNewsFilters = (
 
     // Filter the news data
     const filteredNewsData = React.useMemo(() => {
-        console.log("🔧 FILTER HOOK: Filtering newsData, length:", newsData.length);
-        console.log("🔧 FILTER HOOK: selectedCategories for filtering:", Array.from(selectedCategories));
-        console.log(
-            "🔧 FILTER HOOK: selectedCategories.size:",
-            selectedCategories.size,
-            "SUPPORTED_CATEGORIES.length:",
-            SUPPORTED_CATEGORIES.length
-        );
-
         if (!newsData.length) {
-            console.log("🔧 FILTER HOOK: No news data, returning empty");
             return [];
         }
 
@@ -141,20 +119,16 @@ export const useNewsFilters = (
 
         // Filter by categories (if not all categories are selected)
         if (selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length) {
-            console.log("🔧 FILTER HOOK: Applying category filter");
             const beforeLength = filtered.length;
             filtered = filtered.filter((news) => {
                 const hasMatchingCategory = news.categories.some((category) => selectedCategories.has(category.toUpperCase()));
                 return hasMatchingCategory;
             });
-            console.log("🔧 FILTER HOOK: Category filter applied - before:", beforeLength, "after:", filtered.length);
         } else {
-            console.log("🔧 FILTER HOOK: Skipping category filter (all categories selected or none)");
         }
 
         // Filter by time if cutoff time exists
         if (cutoffTime) {
-            console.log("🔧 FILTER HOOK: Applying time filter with cutoff:", cutoffTime);
             const beforeLength = filtered.length;
             filtered = filtered.filter((news) => {
                 try {
@@ -165,12 +139,9 @@ export const useNewsFilters = (
                     return true;
                 }
             });
-            console.log("🔧 FILTER HOOK: Time filter applied - before:", beforeLength, "after:", filtered.length);
         } else {
-            console.log("🔧 FILTER HOOK: No time filter applied");
         }
 
-        console.log("🔧 FILTER HOOK: Final filtered result length:", filtered.length);
         return filtered;
     }, [newsData, selectedCategories, cutoffTime]);
 

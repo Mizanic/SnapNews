@@ -45,17 +45,17 @@ export const detectDeviceLocale = () => {
         const detectedLanguage = languageCode ? findLanguageByCode(languageCode) : null;
 
         // Enhanced logging for debugging
-        console.log("🌍 Locale Detection Debug:", {
-            "Localization.region": region,
-            "primaryLocale.regionCode": primaryLocale.regionCode,
-            "primaryLocale.languageCode": primaryLocale.languageCode,
-            "primaryLocale.languageTag": primaryLocale.languageTag,
-            "primaryLocale.currencyCode": primaryLocale.currencyCode,
-            finalDetectedCountryCode: detectedCountryCode,
-            detectedCountry: detectedCountry?.name,
-            detectedLanguage: detectedLanguage?.name,
-            allLocales: locales.map((l) => l.languageTag),
-        });
+        // console.log("🌍 Locale Detection Debug:", {
+        //     "Localization.region": region,
+        //     "primaryLocale.regionCode": primaryLocale.regionCode,
+        //     "primaryLocale.languageCode": primaryLocale.languageCode,
+        //     "primaryLocale.languageTag": primaryLocale.languageTag,
+        //     "primaryLocale.currencyCode": primaryLocale.currencyCode,
+        //     finalDetectedCountryCode: detectedCountryCode,
+        //     detectedCountry: detectedCountry?.name,
+        //     detectedLanguage: detectedLanguage?.name,
+        //     allLocales: locales.map((l) => l.languageTag),
+        // });
 
         return {
             country: detectedCountry || getDefaultCountry(),
