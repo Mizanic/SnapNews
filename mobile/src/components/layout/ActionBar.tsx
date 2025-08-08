@@ -15,6 +15,8 @@ interface ActionBarProps {
     onShare: () => void;
 }
 
+const HIT_SLOP = { top: 8, right: 8, bottom: 8, left: 8 } as const;
+
 const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onShare }) => {
     const colors = useThemeColors();
     const { handleLikePress } = useLikeAction(news, isLiked);
@@ -66,7 +68,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
             {/* Left side - Action buttons */}
             <View style={styles.actionsContainer}>
                 {/* Like Button with Count */}
-                <TouchableOpacity style={styles.actionButton} onPress={handleLikePress} activeOpacity={0.7}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={handleLikePress}
+                    activeOpacity={0.7}
+                    hitSlop={HIT_SLOP}
+                    accessibilityRole="button"
+                    accessibilityLabel={isLiked ? "Unlike article" : "Like article"}
+                >
                     <Ionicons name={isLiked ? "heart" : "heart-outline"} size={18} color={isLiked ? colors.accent.red : colors.gray[500]} />
                     <Text style={[styles.actionText, { color: isLiked ? colors.accent.red : colors.gray[500] }]}>
                         {formatCount(news.metrics.likes)}
@@ -74,7 +83,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 </TouchableOpacity>
 
                 {/* Save Button */}
-                <TouchableOpacity style={styles.actionButton} onPress={handleBookmarkPress} activeOpacity={0.7}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={handleBookmarkPress}
+                    activeOpacity={0.7}
+                    hitSlop={HIT_SLOP}
+                    accessibilityRole="button"
+                    accessibilityLabel={isBookmarked ? "Remove bookmark" : "Save article"}
+                >
                     <Ionicons
                         name={isBookmarked ? "bookmark" : "bookmark-outline"}
                         size={18}
@@ -93,7 +109,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                 </View>
 
                 {/* Share Button */}
-                <TouchableOpacity style={[styles.actionButton, styles.lastActionButton]} onPress={handleSharePress} activeOpacity={0.7}>
+                <TouchableOpacity
+                    style={[styles.actionButton, styles.lastActionButton]}
+                    onPress={handleSharePress}
+                    activeOpacity={0.7}
+                    hitSlop={HIT_SLOP}
+                    accessibilityRole="button"
+                    accessibilityLabel="Share article"
+                >
                     <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
                     <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
                 </TouchableOpacity>

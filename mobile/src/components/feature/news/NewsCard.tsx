@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Alert, useColorScheme } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
 import ImageSection from "./ImageSection";
 import ActionBar from "@/components/layout/ActionBar";
 import { NewsItem } from "@/lib/types/newsTypes";
@@ -18,7 +18,6 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     const colors = useThemeColors();
-    const colorScheme = useColorScheme();
     const shareViewShotRef = useRef<ViewShot>(null);
     const [isCapturing, setIsCapturing] = useState(false);
 
@@ -52,6 +51,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     };
 
     const handleCardPress = async () => {
+        if (!news.news_url) return;
         try {
             await WebBrowser.openBrowserAsync(news.news_url);
         } catch (error) {
@@ -229,7 +229,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
     );
 
     return (
-        <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} style={styles.touchableCard}>
+        <View style={styles.touchableCard}>
             {/* Hidden ViewShot for sharing - positioned absolutely and invisible */}
             <View style={styles.shareViewContainer}>
                 <ViewShot ref={shareViewShotRef} options={{ format: "jpg", quality: 0.9, result: "data-uri" }}>
@@ -238,6 +238,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             </View>
 
             {/* Visible card content */}
+
             <View
                 style={[
                     styles.card,
@@ -248,45 +249,46 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                     },
                 ]}
             >
-                <View style={styles.imageWrapper}>
-                    <ImageSection
-                        image={news.media.image_url}
-                        timeLabel={formatRelativeTime(news.published)}
-                        sourceName={news.source_name}
-                        categories={news.categories}
-                    />
-                    <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
-                        {/* Source name above headline */}
-                        {news.source_name && (
-                            <View style={styles.sourceContainer}>
-                                <View style={styles.sourceChip}>
-                                    <Text style={styles.sourceText}>{news.source_name.toUpperCase()}</Text>
+                <TouchableOpacity onPress={handleCardPress} activeOpacity={0.95} accessibilityRole="button" accessibilityLabel="Open article">
+                    <View style={styles.imageWrapper}>
+                        <ImageSection
+                            image={news.media.image_url}
+                            timeLabel={formatRelativeTime(news.published)}
+                            sourceName={news.source_name}
+                            categories={news.categories}
+                        />
+                        <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
+                            {/* Source name above headline */}
+                            {news.source_name && (
+                                <View style={styles.sourceContainer}>
+                                    <View style={styles.sourceChip}>
+                                        <Text style={styles.sourceText}>{news.source_name.toUpperCase()}</Text>
+                                    </View>
                                 </View>
+                            )}
+                            <View style={styles.titleContainer}>
+                                <Text
+                                    style={[
+                                        styles.headlineText,
+                                        {
+                                            color: colors.white,
+                                            textShadowColor: colors.shadowColors.dark,
+                                        },
+                                    ]}
+                                    numberOfLines={3}
+                                >
+                                    {news.headline}
+                                </Text>
                             </View>
-                        )}
-                        <View style={styles.titleContainer}>
-                            <Text
-                                style={[
-                                    styles.headlineText,
-                                    {
-                                        color: colors.white,
-                                        textShadowColor: colors.shadowColors.dark,
-                                    },
-                                ]}
-                                numberOfLines={3}
-                            >
-                                {news.headline}
-                            </Text>
-                        </View>
-                    </LinearGradient>
-                </View>
+                        </LinearGradient>
+                    </View>
 
-                <View style={styles.contentContainer}>
-                    <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
-                        {news.summary}
-                    </Text>
-                </View>
-
+                    <View style={styles.contentContainer}>
+                        <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                            {news.summary}
+                        </Text>
+                    </View>
+                </TouchableOpacity>
                 <View
                     style={[
                         styles.actionBarWrapper,
@@ -299,7 +301,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                     <ActionBar news={news} isBookmarked={isBookmarked} isLiked={isLiked} onShare={handleSharePress} />
                 </View>
             </View>
-        </TouchableOpacity>
+        </View>
     );
 };
 
