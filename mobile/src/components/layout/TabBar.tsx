@@ -92,10 +92,10 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                                 <IconComponent
                                     name={name}
                                     size={isFocused ? 24 : 22}
-                                    color={isFocused ? colors.primary[500] : colors.gray[500]}
+                                    color={isFocused ? colors.accent.redditRed : colors.gray[500]}
                                 />
                             </View>
-                            {isFocused && <View style={[styles.focusedIndicator, { backgroundColor: colors.primary[600] }]} />}
+                            {isFocused && <View style={[styles.focusedIndicator, { backgroundColor: colors.accent.redditRed }]} />}
                         </TouchableOpacity>
                     );
                 })}
