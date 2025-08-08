@@ -64,8 +64,9 @@ export const useNewsFilters = (
 
     const selectedCategories = filterCtx?.selectedCategories ?? localSelectedCategories;
     const setSelectedCategories = filterCtx?.setSelectedCategories ?? setLocalSelectedCategories;
-    const selectedTimeFilter = filterCtx?.selectedTimeFilter ?? localSelectedTimeFilter;
-    const setSelectedTimeFilter = filterCtx?.setSelectedTimeFilter ?? setLocalSelectedTimeFilter;
+    // Keep time filter LOCAL to the screen to avoid cross-tab conflicts (e.g., Hot should default to "today")
+    const selectedTimeFilter = localSelectedTimeFilter;
+    const setSelectedTimeFilter = setLocalSelectedTimeFilter;
     const [filterModalVisible, setFilterModalVisible] = React.useState(false);
     const [sortModalVisible, setSortModalVisible] = React.useState(false);
 
