@@ -5,35 +5,46 @@ import { NewsItem } from "@/lib/types/newsTypes";
 export type TimeFilter = "today" | "48h" | "96h" | "7d";
 
 export interface UseNewsFiltersReturn {
-    // Category filtering
+    // Filtered data
+    filteredNewsData: NewsItem[];
+
+    // Category state
     selectedCategories: Set<string>;
-    setSelectedCategories: React.Dispatch<React.SetStateAction<Set<string>>>;
-    handleCategoryToggle: (category: string) => void;
-    handleClearAllCategories: () => void;
-    handleSelectAllCategories: () => void;
+    toggleCategory: (category: string) => void;
+    clearAllCategories: () => void;
+    selectAllCategories: () => void;
 
-    // Time filtering
+    // Time filter state
     selectedTimeFilter: TimeFilter;
-    setSelectedTimeFilter: React.Dispatch<React.SetStateAction<TimeFilter>>;
-    handleTimeFilterSelect: (filter: TimeFilter) => void;
+    setSelectedTimeFilter: (filter: TimeFilter) => void;
 
-    // Filter function
-    filterNews: (newsData: NewsItem[]) => NewsItem[];
+    // Modal state
+    filterModalVisible: boolean;
+    setFilterModalVisible: (visible: boolean) => void;
+    sortModalVisible: boolean;
+    setSortModalVisible: (visible: boolean) => void;
 
-    // Filter states
+    // Computed states
     hasActiveFilters: boolean;
-    hasActiveTimeFilter: boolean;
+    hasActiveSort: boolean;
+
+    // Helper actions
+    openFilterModal: () => void;
+    closeFilterModal: () => void;
+    openSortModal: () => void;
+    closeSortModal: () => void;
 }
 
-export const useNewsFilters = (initialCategories?: Set<string>, initialTimeFilter?: TimeFilter): UseNewsFiltersReturn => {
-    const [selectedCategories, setSelectedCategories] = React.useState<Set<string>>(initialCategories || new Set(SUPPORTED_CATEGORIES));
-    const [selectedTimeFilter, setSelectedTimeFilter] = React.useState<TimeFilter>(initialTimeFilter || "today");
+export const useNewsFilters = (newsData: NewsItem[]): UseNewsFiltersReturn => {
+    // Local state
+    const [selectedCategories, setSelectedCategories] = React.useState<Set<string>>(new Set(SUPPORTED_CATEGORIES));
+    const [selectedTimeFilter, setSelectedTimeFilter] = React.useState<TimeFilter>("today");
+    const [filterModalVisible, setFilterModalVisible] = React.useState(false);
+    const [sortModalVisible, setSortModalVisible] = React.useState(false);
 
-    // Get cutoff time for filtering (memoized to prevent infinite loops)
+    // Memoized cutoff time to prevent infinite re-renders
     const cutoffTime = React.useMemo(() => {
-        if (selectedTimeFilter === "today") {
-            return null; // Don't filter for "today" - show all news
-        }
+        if (selectedTimeFilter === "today") return null;
 
         const now = new Date();
         const cutoff = new Date();
@@ -51,91 +62,95 @@ export const useNewsFilters = (initialCategories?: Set<string>, initialTimeFilte
             default:
                 return null;
         }
-
         return cutoff;
     }, [selectedTimeFilter]);
 
-    // Category handlers
-    const handleCategoryToggle = React.useCallback((category: string) => {
+    // Filter the news data
+    const filteredNewsData = React.useMemo(() => {
+        if (!newsData.length) return [];
+
+        let filtered = [...newsData]; // Create copy to avoid mutations
+
+        // Filter by categories (if not all categories are selected)
+        if (selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length) {
+            filtered = filtered.filter((news) => news.categories.some((category) => selectedCategories.has(category.toUpperCase())));
+        }
+
+        // Filter by time if cutoff time exists
+        if (cutoffTime) {
+            filtered = filtered.filter((news) => {
+                try {
+                    const publishedTime = new Date(news.published);
+                    return !isNaN(publishedTime.getTime()) && publishedTime >= cutoffTime;
+                } catch {
+                    // If date parsing fails, include the news item
+                    return true;
+                }
+            });
+        }
+
+        return filtered;
+    }, [newsData, selectedCategories, cutoffTime]);
+
+    // Category actions
+    const toggleCategory = React.useCallback((category: string) => {
         setSelectedCategories((prev) => {
-            const newCategories = new Set(prev);
-            if (newCategories.has(category)) {
-                newCategories.delete(category);
+            const newSet = new Set(prev);
+            if (newSet.has(category)) {
+                newSet.delete(category);
             } else {
-                newCategories.add(category);
+                newSet.add(category);
             }
-            return newCategories;
+            return newSet;
         });
     }, []);
 
-    const handleClearAllCategories = React.useCallback(() => {
+    const clearAllCategories = React.useCallback(() => {
         setSelectedCategories(new Set());
     }, []);
 
-    const handleSelectAllCategories = React.useCallback(() => {
+    const selectAllCategories = React.useCallback(() => {
         setSelectedCategories(new Set(SUPPORTED_CATEGORIES));
     }, []);
 
-    // Time filter handlers
-    const handleTimeFilterSelect = React.useCallback((filter: TimeFilter) => {
-        setSelectedTimeFilter(filter);
-    }, []);
-
-    // Filter function
-    const filterNews = React.useCallback(
-        (newsData: NewsItem[]): NewsItem[] => {
-            if (!newsData.length) return [];
-
-            let filtered = [...newsData]; // Create a copy to avoid mutations
-
-            // Filter by categories (if not all categories are selected)
-            if (selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length) {
-                filtered = filtered.filter((news: NewsItem) => {
-                    // Check if any of the news categories match selected categories
-                    return news.categories.some((category) => selectedCategories.has(category.toUpperCase()));
-                });
-            }
-
-            // Filter by time only if we have a valid cutoffTime
-            if (cutoffTime) {
-                filtered = filtered.filter((news: NewsItem) => {
-                    try {
-                        const publishedTime = new Date(news.published);
-                        return !isNaN(publishedTime.getTime()) && publishedTime >= cutoffTime;
-                    } catch (error) {
-                        // If date parsing fails, include the news item
-                        return true;
-                    }
-                });
-            }
-
-            return filtered;
-        },
-        [selectedCategories, cutoffTime]
-    );
+    // Modal actions
+    const openFilterModal = React.useCallback(() => setFilterModalVisible(true), []);
+    const closeFilterModal = React.useCallback(() => setFilterModalVisible(false), []);
+    const openSortModal = React.useCallback(() => setSortModalVisible(true), []);
+    const closeSortModal = React.useCallback(() => setSortModalVisible(false), []);
 
     // Computed states
     const hasActiveFilters = selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length;
-    const hasActiveTimeFilter = selectedTimeFilter !== "today";
+    const hasActiveSort = selectedTimeFilter !== "today";
 
     return {
-        // Category filtering
-        selectedCategories,
-        setSelectedCategories,
-        handleCategoryToggle,
-        handleClearAllCategories,
-        handleSelectAllCategories,
+        // Filtered data
+        filteredNewsData,
 
-        // Time filtering
+        // Category state
+        selectedCategories,
+        toggleCategory,
+        clearAllCategories,
+        selectAllCategories,
+
+        // Time filter state
         selectedTimeFilter,
         setSelectedTimeFilter,
-        handleTimeFilterSelect,
 
-        // Filter function
-        filterNews,
+        // Modal state
+        filterModalVisible,
+        setFilterModalVisible,
+        sortModalVisible,
+        setSortModalVisible,
 
-        // Filter states
+        // Computed states
         hasActiveFilters,
-        hasActiveTimeFilter,
+        hasActiveSort,
+
+        // Helper actions
+        openFilterModal,
+        closeFilterModal,
+        openSortModal,
+        closeSortModal,
     };
 };

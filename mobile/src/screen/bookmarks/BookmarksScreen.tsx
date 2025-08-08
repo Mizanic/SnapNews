@@ -5,15 +5,36 @@ import { Spacing, Typography } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NewsCard from "@/components/feature/news/NewsCard";
-import { NewsFiltersProvider, useNewsFiltersContext } from "@/components/shared/filters";
+import { useNewsFilters } from "@/hooks/useNewsFilters";
+import { NewsScreenHeader, FilterModal, SortModal } from "@/components/shared/filters";
 import { NewsItem } from "@/lib/types/newsTypes";
 
-// Content component that uses the filters context
-const BookmarksContent: React.FC = () => {
+const BookmarkScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
+    const insets = useSafeAreaInsets();
     const colors = useThemeColors();
-    const { filteredNewsData } = useNewsFiltersContext();
+
+    const bookmarkedNews: NewsItem[] = Object.values(bookmarks);
+
+    // Use the simple filter hook
+    const {
+        filteredNewsData,
+        selectedCategories,
+        selectedTimeFilter,
+        hasActiveFilters,
+        hasActiveSort,
+        toggleCategory,
+        clearAllCategories,
+        selectAllCategories,
+        setSelectedTimeFilter,
+        filterModalVisible,
+        sortModalVisible,
+        openFilterModal,
+        closeFilterModal,
+        openSortModal,
+        closeSortModal,
+    } = useNewsFilters(bookmarkedNews);
 
     const renderEmptyState = () => (
         <View style={[styles.emptyContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
@@ -24,35 +45,54 @@ const BookmarksContent: React.FC = () => {
         </View>
     );
 
-    if (filteredNewsData.length === 0) {
-        return renderEmptyState();
+    if (bookmarkedNews.length === 0) {
+        return (
+            <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
+                {renderEmptyState()}
+            </View>
+        );
     }
 
     return (
-        <FlatList
-            data={filteredNewsData}
-            renderItem={({ item }) => <NewsCard news={item} isBookmarked={true} isLiked={likes.hasOwnProperty(item.item_hash)} />}
-            contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
-            keyExtractor={(item) => item.item_hash}
-            showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-    );
-};
-
-// Main component that provides the filters
-const BookmarkScreen: React.FC = () => {
-    const bookmarks = useSelector((state: any) => state.bookmarks);
-    const insets = useSafeAreaInsets();
-    const colors = useThemeColors();
-
-    const bookmarkedNews: NewsItem[] = Object.values(bookmarks);
-
-    return (
         <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
-            <NewsFiltersProvider title="Bookmarks" newsData={bookmarkedNews}>
-                <BookmarksContent />
-            </NewsFiltersProvider>
+            <NewsScreenHeader
+                title="Bookmarks"
+                selectedCategoriesCount={selectedCategories.size}
+                selectedTimeFilter={selectedTimeFilter}
+                hasActiveFilters={hasActiveFilters}
+                hasActiveSort={hasActiveSort}
+                onFilterPress={openFilterModal}
+                onSortPress={openSortModal}
+            />
+
+            {filteredNewsData.length === 0 ? (
+                renderEmptyState()
+            ) : (
+                <FlatList
+                    data={filteredNewsData}
+                    renderItem={({ item }) => <NewsCard news={item} isBookmarked={true} isLiked={likes.hasOwnProperty(item.item_hash)} />}
+                    contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
+                    keyExtractor={(item) => item.item_hash}
+                    showsVerticalScrollIndicator={false}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                />
+            )}
+
+            <FilterModal
+                visible={filterModalVisible}
+                onClose={closeFilterModal}
+                selectedCategories={selectedCategories}
+                onCategoryToggle={toggleCategory}
+                onClearAll={clearAllCategories}
+                onSelectAll={selectAllCategories}
+            />
+
+            <SortModal
+                visible={sortModalVisible}
+                onClose={closeSortModal}
+                selectedTimeFilter={selectedTimeFilter}
+                onTimeFilterSelect={setSelectedTimeFilter}
+            />
         </View>
     );
 };

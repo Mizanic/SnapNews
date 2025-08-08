@@ -6,16 +6,41 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLatestNews } from "@/hooks/useNewsQueries";
 import NewsList from "@/components/feature/news/NewsList";
-import { NewsFiltersProvider, useNewsFiltersContext } from "@/components/shared/filters";
+import { useNewsFilters } from "@/hooks/useNewsFilters";
+import { NewsScreenHeader, FilterModal, SortModal } from "@/components/shared/filters";
 
-// Content component that uses the filters context
-const LatestNewsContent: React.FC = () => {
+const LatestNewsScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
     const likes = useSelector((state: any) => state.likes);
+    const insets = useSafeAreaInsets();
     const colors = useThemeColors();
-    const { filteredNewsData } = useNewsFiltersContext();
 
     const { data, isLoading, isError, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useLatestNews();
+
+    // Flatten data pages into a single array of news items
+    const allNewsData = React.useMemo(() => {
+        if (!data?.pages) return [];
+        return data.pages.flatMap((page) => page.news);
+    }, [data?.pages]);
+
+    // Use the simple filter hook
+    const {
+        filteredNewsData,
+        selectedCategories,
+        selectedTimeFilter,
+        hasActiveFilters,
+        hasActiveSort,
+        toggleCategory,
+        clearAllCategories,
+        selectAllCategories,
+        setSelectedTimeFilter,
+        filterModalVisible,
+        sortModalVisible,
+        openFilterModal,
+        closeFilterModal,
+        openSortModal,
+        closeSortModal,
+    } = useNewsFilters(allNewsData);
 
     // Handle load more
     const handleLoadMore = () => {
@@ -34,36 +59,43 @@ const LatestNewsContent: React.FC = () => {
     }
 
     return (
-        <NewsList
-            data={filteredNewsData}
-            loading={isLoading}
-            bookmarks={new Set(Object.keys(bookmarks))}
-            likes={new Set(Object.keys(likes))}
-            onRefresh={() => refetch()}
-            refreshing={isRefetching}
-            onEndReached={handleLoadMore}
-            loadingMore={isFetchingNextPage}
-        />
-    );
-};
-
-// Main component that provides the filters
-const LatestNewsScreen: React.FC = () => {
-    const insets = useSafeAreaInsets();
-    const colors = useThemeColors();
-    const { data } = useLatestNews();
-
-    // Flatten data pages into a single array of news items
-    const allNewsData = React.useMemo(() => {
-        if (!data?.pages) return [];
-        return data.pages.flatMap((page) => page.news);
-    }, [data?.pages]);
-
-    return (
         <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
-            <NewsFiltersProvider title="Latest News" newsData={allNewsData}>
-                <LatestNewsContent />
-            </NewsFiltersProvider>
+            <NewsScreenHeader
+                title="Latest News"
+                selectedCategoriesCount={selectedCategories.size}
+                selectedTimeFilter={selectedTimeFilter}
+                hasActiveFilters={hasActiveFilters}
+                hasActiveSort={hasActiveSort}
+                onFilterPress={openFilterModal}
+                onSortPress={openSortModal}
+            />
+
+            <NewsList
+                data={filteredNewsData}
+                loading={isLoading}
+                bookmarks={new Set(Object.keys(bookmarks))}
+                likes={new Set(Object.keys(likes))}
+                onRefresh={() => refetch()}
+                refreshing={isRefetching}
+                onEndReached={handleLoadMore}
+                loadingMore={isFetchingNextPage}
+            />
+
+            <FilterModal
+                visible={filterModalVisible}
+                onClose={closeFilterModal}
+                selectedCategories={selectedCategories}
+                onCategoryToggle={toggleCategory}
+                onClearAll={clearAllCategories}
+                onSelectAll={selectAllCategories}
+            />
+
+            <SortModal
+                visible={sortModalVisible}
+                onClose={closeSortModal}
+                selectedTimeFilter={selectedTimeFilter}
+                onTimeFilterSelect={setSelectedTimeFilter}
+            />
         </View>
     );
 };

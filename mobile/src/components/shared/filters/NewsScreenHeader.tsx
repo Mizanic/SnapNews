@@ -9,6 +9,8 @@ interface NewsScreenHeaderProps {
     title: string;
     selectedCategoriesCount: number;
     selectedTimeFilter: TimeFilter;
+    hasActiveFilters: boolean;
+    hasActiveSort: boolean;
     onFilterPress: () => void;
     onSortPress: () => void;
 }
@@ -17,6 +19,8 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
     title,
     selectedCategoriesCount,
     selectedTimeFilter,
+    hasActiveFilters,
+    hasActiveSort,
     onFilterPress,
     onSortPress,
 }) => {
@@ -123,9 +127,6 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             fontWeight: "600",
         },
     });
-
-    const hasActiveFilters = selectedCategoriesCount > 0 && selectedCategoriesCount < 9; // Total categories - 1 for ALL
-    const hasActiveSort = selectedTimeFilter !== "today";
 
     return (
         <View style={styles.container}>
