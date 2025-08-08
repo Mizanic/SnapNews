@@ -28,7 +28,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 
     const getTimeFilterDisplayText = (filter: TimeFilter) => {
         switch (filter) {
-            case "forever":
+            case "all":
                 return "All";
             case "today":
                 return "Today";
