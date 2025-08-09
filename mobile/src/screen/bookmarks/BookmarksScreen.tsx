@@ -8,9 +8,9 @@ import NewsCard from "@/components/feature/news/NewsCard";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { NewsItem } from "@/lib/types/newsTypes";
-import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
-import FilterModal from "@/components/feature/news/FilterModal";
-import SortModal from "@/components/feature/news/SortModal";
+import NewsScreenHeader from "@/components/feature/filter/NewsScreenHeader";
+import FilterModal from "@/components/feature/filter/FilterModal";
+import SortModal from "@/components/feature/filter/SortModal";
 
 const BookmarkScreen: React.FC = () => {
     const bookmarks = useSelector((state: any) => state.bookmarks);
