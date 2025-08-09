@@ -6,14 +6,15 @@ set -euo pipefail
 
 # Absolute project root for WSL-friendly paths
 PROJECT_ROOT="/home/rehan/SnapNews"
+MOBILE_DIR="$PROJECT_ROOT/mobile"
 ANDROID_DIR="$PROJECT_ROOT/mobile/android"
-GRADLE_PROPS_FILE="$ANDROID_DIR/gradle.properties"
+APP_JSON_FILE="$MOBILE_DIR/app.json"
 
 today=$(date +%Y%m%d)
 
-# Read current value or default to base "0"
-if grep -q '^android.versionName=' "$GRADLE_PROPS_FILE"; then
-  current_version=$(grep '^android.versionName=' "$GRADLE_PROPS_FILE" | cut -d'=' -f2)
+# Read current version from app.json
+if [ -f "$APP_JSON_FILE" ]; then
+  current_version=$(grep '"version":' "$APP_JSON_FILE" | sed 's/.*"version": *"\([^"]*\)".*/\1/')
 else
   current_version="0"
 fi
@@ -44,13 +45,10 @@ fi
 
 new_version="${base}.${today}.${new_patch}"
 
-# Write back to gradle.properties
-if grep -q '^android.versionName=' "$GRADLE_PROPS_FILE"; then
-  sed -i "s/^android.versionName=.*/android.versionName=${new_version}/" "$GRADLE_PROPS_FILE"
-else
-  echo "android.versionName=${new_version}" >> "$GRADLE_PROPS_FILE"
-fi
+# Write back to app.json
+sed -i "s/\"version\": *\"[^\"]*\"/\"version\": \"${new_version}\"/" "$APP_JSON_FILE"
 
-echo "Computed android.versionName: $current_version -> $new_version"
+echo "Updated app.json version: $current_version -> $new_version"
 
-cd "$ANDROID_DIR" && ./gradlew assembleRelease
+cd "$MOBILE_DIR" && npx expo prebuild --no-install
+cd "$ANDROID_DIR" &&  ./gradlew assembleRelease
