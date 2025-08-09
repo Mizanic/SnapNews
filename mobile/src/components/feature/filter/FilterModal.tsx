@@ -147,9 +147,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
         categoryItem: {
             flexDirection: "row",
             alignItems: "center",
-            paddingVertical: Spacing.md,
+            paddingVertical: Spacing.sm,
             paddingHorizontal: Spacing.md,
-            marginVertical: 2,
+            marginVertical: Spacing.xxs,
             borderRadius: BorderRadius.md,
             borderWidth: 1,
         },

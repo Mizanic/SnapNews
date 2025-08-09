@@ -137,9 +137,9 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
         optionItem: {
             flexDirection: "row",
             alignItems: "center",
-            paddingVertical: Spacing.md,
+            paddingVertical: Spacing.sm,
             paddingHorizontal: Spacing.md,
-            marginVertical: 4,
+            marginVertical: Spacing.xxs,
             borderRadius: BorderRadius.md,
             borderWidth: 1,
         },
