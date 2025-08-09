@@ -2,7 +2,7 @@
     "expo": {
         "name": "SnapNews",
         "slug": "SnapNews",
-        "version": "0.20250809.12",
+        "version": "0.20250809.13",
         "orientation": "portrait",
         "icon": "./assets/AppIcon.png",
         "scheme": "myapp",
@@ -15,7 +15,7 @@
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/AppIcon.png",
-                "backgroundColor": "#ffffff"
+                "backgroundColor": "#071932"
             },
             "package": "com.mizanic.SnapNews"
         },
@@ -32,7 +32,7 @@
                     "image": "./assets/AppIcon.png",
                     "imageWidth": 200,
                     "resizeMode": "contain",
-                    "backgroundColor": "#ffffff"
+                    "backgroundColor": "#071932"
                 }
             ],
             "expo-localization",
