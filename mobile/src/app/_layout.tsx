@@ -17,6 +17,7 @@ import store, { persistor } from "@/lib/state/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { sharedQueryClient } from "@/lib/sharedQueryClient";
+import { Spacing } from "@/styles";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,6 +34,7 @@ function AppContent() {
                             drawerType: "front",
                             swipeEdgeWidth: 32,
                             swipeEnabled: true,
+                            drawerStyle: { width: "61.8%" },
                         }}
                         drawerContent={(props: DrawerContentComponentProps) => <AppDrawerContent {...props} />}
                     >

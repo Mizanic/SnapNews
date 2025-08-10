@@ -6,6 +6,8 @@ import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { Spacing, Typography, BorderRadius } from "@/styles";
 import { useFilterContext } from "@/contexts/FilterContext";
 import type { DrawerContentComponentProps } from "@react-navigation/drawer";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const getCategoryIcon = (category: string): any => {
     const icons: Record<string, string> = {
@@ -22,12 +24,15 @@ const getCategoryIcon = (category: string): any => {
     return (icons[category] || "newspaper-outline") as any;
 };
 
-const AppDrawerContent: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
+const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
+    const { navigation } = props;
     const colors = useThemeColors();
     const { setSelectedCategories } = useFilterContext();
+    const insets = useSafeAreaInsets();
 
     const styles = StyleSheet.create({
-        container: { flex: 1, backgroundColor: colors.backgroundColors.primary, paddingTop: Spacing.lg },
+        scroll: { flex: 1, backgroundColor: colors.backgroundColors.primary },
+        container: { backgroundColor: colors.backgroundColors.primary, paddingTop: insets.top + Spacing.md },
         header: {
             paddingHorizontal: Spacing.lg,
             paddingBottom: Spacing.md,
@@ -40,7 +45,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = ({ navigation })
             color: colors.textColors.secondary,
             marginTop: Spacing.md,
             marginBottom: Spacing.xs,
-            paddingHorizontal: Spacing.lg,
+            paddingHorizontal: Spacing.md,
         },
         categoryItem: {
             flexDirection: "row",
@@ -59,7 +64,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = ({ navigation })
     };
 
     return (
-        <View style={styles.container}>
+        <DrawerContentScrollView {...props} style={styles.scroll} contentContainerStyle={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Menu</Text>
             </View>
@@ -72,7 +77,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = ({ navigation })
                     </Text>
                 </TouchableOpacity>
             ))}
-        </View>
+        </DrawerContentScrollView>
     );
 };
 
