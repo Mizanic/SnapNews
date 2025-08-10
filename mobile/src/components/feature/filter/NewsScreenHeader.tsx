@@ -61,11 +61,11 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: colors.backgroundColors.primary,
+            backgroundColor: colors.surface.base,
             paddingHorizontal: Spacing.md,
             paddingVertical: Spacing.sm,
             borderBottomWidth: 1,
-            borderBottomColor: colors.borderColors.light,
+            borderBottomColor: colors.border.subtle,
         },
         header: {
             flexDirection: "row",
@@ -77,7 +77,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
         },
         title: {
             ...Typography.heading.h2,
-            color: colors.textColors.primary,
+            color: colors.content.primary,
             fontWeight: "600",
         },
         actionsContainer: {
@@ -91,23 +91,19 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             paddingVertical: Spacing.sm,
             paddingHorizontal: Spacing.md,
             borderRadius: BorderRadius.md,
-            backgroundColor: colors.backgroundColors.secondary,
+            backgroundColor: colors.surface.muted,
             borderWidth: 1,
-            borderColor: colors.borderColors.light,
-        },
-        filterButton: {
-            minWidth: 60,
-        },
-        sortButton: {
-            minWidth: 55,
+            borderColor: colors.border.subtle,
+            minWidth: 100,
         },
         activeFilterButton: {
-            backgroundColor: colors.primary[50],
-            borderColor: colors.primary[200],
+            // Use theme selection tokens
+            backgroundColor: colors.selection.accent.background,
+            borderColor: colors.selection.accent.border,
         },
         activeSortButton: {
-            backgroundColor: colors.accent.orange + "20",
-            borderColor: colors.accent.orange + "40",
+            backgroundColor: colors.selection.accent.background,
+            borderColor: colors.selection.accent.border,
         },
         actionButtonText: {
             ...Typography.bodyText.small,
@@ -115,22 +111,22 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             marginLeft: 4,
         },
         filterButtonText: {
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
         },
         activeFilterButtonText: {
-            color: colors.primary[600],
+            color: colors.selection.accent.icon,
         },
         sortButtonText: {
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
         },
         activeSortButtonText: {
-            color: colors.accent.orange,
+            color: colors.selection.accent.icon,
         },
         badge: {
             position: "absolute",
             top: -4,
             right: -4,
-            backgroundColor: colors.accent.red,
+            backgroundColor: colors.status.error,
             borderRadius: BorderRadius.full,
             minWidth: 16,
             height: 16,
@@ -175,14 +171,14 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                 <View style={styles.actionsContainer}>
                     {/* Filter Button */}
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.filterButton, hasActiveFilters && styles.activeFilterButton]}
+                        style={[styles.actionButton, hasActiveFilters && styles.activeFilterButton]}
                         onPress={onFilterPress}
                         activeOpacity={0.7}
                     >
                         <Ionicons
                             name="filter-outline"
                             size={18}
-                            color={hasActiveFilters ? colors.primary[600] : colors.textColors.secondary}
+                            color={hasActiveFilters ? colors.selection.accent.icon : colors.content.secondary}
                         />
                         <Text style={[styles.actionButtonText, styles.filterButtonText, hasActiveFilters && styles.activeFilterButtonText]}>
                             Filter
@@ -196,11 +192,11 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 
                     {/* Sort Button */}
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.sortButton, hasActiveSort && styles.activeSortButton]}
+                        style={[styles.actionButton, hasActiveSort && styles.activeSortButton]}
                         onPress={onSortPress}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="time-outline" size={18} color={hasActiveSort ? colors.accent.orange : colors.textColors.secondary} />
+                        <Ionicons name="time-outline" size={18} color={hasActiveSort ? colors.accent.orange : colors.content.secondary} />
                         <Text style={[styles.actionButtonText, styles.sortButtonText, hasActiveSort && styles.activeSortButtonText]}>
                             {getTimeFilterDisplayText(selectedTimeFilter)}
                         </Text>

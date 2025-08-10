@@ -1,46 +1,46 @@
 {
-  "expo": {
-    "name": "SnapNews",
-    "slug": "SnapNews",
-    "version": "0.20250710.1",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.mizanic.SnapNews"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.mizanic.SnapNews"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+    "expo": {
+        "name": "SnapNews",
+        "slug": "SnapNews",
+        "version": "0.20250810.5",
+        "orientation": "portrait",
+        "icon": "./assets/AppIcon.png",
+        "scheme": "myapp",
+        "userInterfaceStyle": "automatic",
+        "newArchEnabled": true,
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.mizanic.SnapNews"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/AppIcon.png",
+                "backgroundColor": "#071932"
+            },
+            "package": "com.mizanic.SnapNews"
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static",
+            "favicon": "./assets/AppIcon.png"
+        },
+        "plugins": [
+            "expo-router",
+            [
+                "expo-splash-screen",
+                {
+                    "image": "./assets/AppIcon.png",
+                    "imageWidth": 200,
+                    "resizeMode": "contain",
+                    "backgroundColor": "#071932"
+                }
+            ],
+            "expo-localization",
+            "expo-font",
+            "expo-web-browser"
+        ],
+        "experiments": {
+            "typedRoutes": true
         }
-      ],
-      "expo-localization",
-      "expo-font",
-      "expo-web-browser"
-    ],
-    "experiments": {
-      "typedRoutes": true
     }
-  }
 }

@@ -1,29 +1,30 @@
 /**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
+ * Theme Color Hooks
+ *
+ * Provides access to the complete semantic color system.
+ * Use useThemeColors() to access all color tokens.
  */
 
-import { Theme } from "@/styles";
 import { useTheme } from "@/contexts/ThemeContext";
 
-const useThemeColor = (
-    props: { light?: string; dark?: string },
-    colorName: keyof typeof Theme.Colors.light & keyof typeof Theme.Colors.dark
-) => {
-    const { colorScheme } = useTheme();
-    const colorFromProps = props[colorScheme];
-
-    if (colorFromProps) {
-        return colorFromProps;
-    } else {
-        return Theme.Colors[colorScheme][colorName];
-    }
-};
-
-// Hook to get theme-aware colors
+/**
+ * Get the complete color system for the current theme.
+ *
+ * @returns ColorSystem with semantic tokens and legacy compatibility
+ *
+ * @example
+ * const colors = useThemeColors();
+ * // Modern usage (recommended)
+ * backgroundColor: colors.surface.base
+ * color: colors.content.primary
+ * borderColor: colors.border.subtle
+ *
+ * // Legacy usage (deprecated but supported)
+ * backgroundColor: colors.backgroundColors.primary
+ */
 export const useThemeColors = () => {
     const { colors } = useTheme();
     return colors;
 };
 
-export default useThemeColor;
+export default useThemeColors;

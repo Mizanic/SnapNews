@@ -8,9 +8,9 @@ import { useLatestNews } from "@/hooks/useNewsQueries";
 import NewsList from "@/components/feature/news/NewsList";
 import { useNewsFilters } from "@/hooks/useNewsFilters";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
-import NewsScreenHeader from "@/components/feature/news/NewsScreenHeader";
-import FilterModal from "@/components/feature/news/FilterModal";
-import SortModal from "@/components/feature/news/SortModal";
+import NewsScreenHeader from "@/components/feature/filter/NewsScreenHeader";
+import FilterModal from "@/components/feature/filter/FilterModal";
+import SortModal from "@/components/feature/filter/SortModal";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { TimeFilter } from "@/lib/types/timeFilter";
@@ -29,13 +29,9 @@ const LatestNewsScreen: React.FC = () => {
         if (params?.category && typeof params.category === "string") {
             const upper = params.category.toUpperCase();
             if (SUPPORTED_CATEGORIES.includes(upper)) {
-                if (upper === "ALL") {
-                    return new Set(SUPPORTED_CATEGORIES);
-                }
+                if (upper === "ALL") return new Set(SUPPORTED_CATEGORIES);
                 return new Set([upper]);
-            } else {
             }
-        } else {
         }
         return undefined;
     }, [params?.category]);
@@ -102,15 +98,15 @@ const LatestNewsScreen: React.FC = () => {
 
     if (isError) {
         return (
-            <View style={[styles.errorContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
-                <Text style={[styles.errorText, { color: colors.textColors.primary }]}>{(error as Error).message}</Text>
-                <Button title="Retry" onPress={() => refetch()} color={colors.primary[600]} />
+            <View style={[styles.errorContainer, { backgroundColor: colors.surface.muted }]}>
+                <Text style={[styles.errorText, { color: colors.content.primary }]}>{(error as Error).message}</Text>
+                <Button title="Retry" onPress={() => refetch()} color={colors.interactive.primary.idle} />
             </View>
         );
     }
 
     return (
-        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
+        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.surface.muted }]}>
             <NewsScreenHeader
                 title="Latest"
                 selectedCategoriesCount={selectedCategories.size}

@@ -70,7 +70,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
             style={[
                 styles.actionBar,
                 {
-                    backgroundColor: colors.backgroundColors.primary,
+                    backgroundColor: colors.surface.base,
                 },
             ]}
         >
@@ -89,9 +89,13 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                     accessibilityLabel={isLiked ? "Unlike article" : "Like article"}
                 >
                     <Animated.View style={{ transform: [{ scale: likeScale }] }}>
-                        <Ionicons name={isLiked ? "heart" : "heart-outline"} size={18} color={isLiked ? colors.accent.red : colors.gray[500]} />
+                        <Ionicons
+                            name={isLiked ? "heart" : "heart-outline"}
+                            size={18}
+                            color={isLiked ? colors.status.error : colors.content.tertiary}
+                        />
                     </Animated.View>
-                    <Text style={[styles.actionText, { color: isLiked ? colors.accent.red : colors.gray[500] }]}>
+                    <Text style={[styles.actionText, { color: isLiked ? colors.status.error : colors.content.tertiary }]}>
                         {formatCount(news.metrics.likes)}
                     </Text>
                 </TouchableOpacity>
@@ -112,10 +116,10 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                         <Ionicons
                             name={isBookmarked ? "bookmark" : "bookmark-outline"}
                             size={18}
-                            color={isBookmarked ? colors.accent.orange : colors.gray[500]}
+                            color={isBookmarked ? colors.accent.orange : colors.content.tertiary}
                         />
                     </Animated.View>
-                    <Text style={[styles.actionText, { color: isBookmarked ? colors.accent.orange : colors.gray[500] }]}>Save</Text>
+                    <Text style={[styles.actionText, { color: isBookmarked ? colors.accent.orange : colors.content.tertiary }]}>Save</Text>
                 </TouchableOpacity>
             </View>
 
@@ -123,8 +127,8 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
             <View style={styles.actionsContainer}>
                 {/* Views Display */}
                 <View style={styles.actionButton}>
-                    <Ionicons name="eye-outline" size={18} color={colors.gray[500]} />
-                    <Text style={[styles.actionText, { color: colors.gray[500] }]}>{formatCount(news.metrics.views)}</Text>
+                    <Ionicons name="eye-outline" size={18} color={colors.content.tertiary} />
+                    <Text style={[styles.actionText, { color: colors.content.tertiary }]}>{formatCount(news.metrics.views)}</Text>
                 </View>
 
                 {/* Share Button */}
@@ -140,9 +144,9 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
                     accessibilityLabel="Share article"
                 >
                     <Animated.View style={{ transform: [{ scale: shareScale }] }}>
-                        <Ionicons name="share-social-outline" size={18} color={colors.gray[500]} />
+                        <Ionicons name="share-social-outline" size={18} color={colors.content.tertiary} />
                     </Animated.View>
-                    <Text style={[styles.actionText, { color: colors.gray[500] }]}>Share</Text>
+                    <Text style={[styles.actionText, { color: colors.content.tertiary }]}>Share</Text>
                 </TouchableOpacity>
             </View>
         </View>

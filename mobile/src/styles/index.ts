@@ -4,6 +4,7 @@ import { Fonts, Typography } from "@/styles/typography";
 export { Typography, Fonts, Colors };
 
 export const Spacing = {
+    xxs: 3,
     xs: 4,
     sm: 8,
     md: 16,
@@ -79,6 +80,8 @@ export const Animation = {
     },
 };
 
+// Legacy Theme export (deprecated - import individual modules instead)
+/** @deprecated Import specific modules like Colors, Typography, etc. directly */
 export const Theme = {
     Colors,
     Fonts,

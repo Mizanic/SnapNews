@@ -45,16 +45,16 @@ const ShareButton: React.FC<ShareButtonProps> = ({ onPress }) => {
             style={[
                 styles.button,
                 {
-                    backgroundColor: colors.backgroundColors.primary,
-                    borderColor: colors.borderColors.medium,
+                    backgroundColor: colors.surface.base,
+                    borderColor: colors.border.default,
                     shadowColor: colors.black,
                 },
             ]}
             activeOpacity={0.7}
         >
             <View style={styles.buttonContent}>
-                <Ionicons name="share-social-outline" size={18} color={colors.gray[600]} style={{ marginRight: Spacing.xs }} />
-                <Text style={[styles.buttonText, { color: colors.textColors.secondary }]}>Share</Text>
+                <Ionicons name="share-social-outline" size={18} color={colors.content.secondary} style={{ marginRight: Spacing.xs }} />
+                <Text style={[styles.buttonText, { color: colors.content.secondary }]}>Share</Text>
             </View>
         </TouchableOpacity>
     );

@@ -6,20 +6,21 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useDrawer } from "@/contexts/DrawerContext";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
     const { colorScheme } = useTheme();
     const router = useRouter();
+    const navigation = useNavigation<DrawerNavigationProp<any>>();
 
     const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
-    const statusBarBg = colors.backgroundColors.primary;
-    const { openDrawer } = useDrawer();
+    const statusBarBg = colors.surface.base;
 
     const handleMenuPress = () => {
-        openDrawer();
+        navigation.openDrawer();
     };
 
     const handleSettingsPress = () => {
@@ -98,8 +99,8 @@ const AppHeader: React.FC = () => {
                     styles.headerContainer,
                     {
                         paddingTop: insets.top,
-                        backgroundColor: colors.backgroundColors.primary,
-                        borderBottomColor: colors.borderColors.light,
+                        backgroundColor: colors.surface.base,
+                        borderBottomColor: colors.border.subtle,
                         shadowColor: colors.black,
                     },
                 ]}
@@ -107,7 +108,7 @@ const AppHeader: React.FC = () => {
                 <View style={styles.headerContent}>
                     {/* Left side - Hamburger Menu */}
                     <TouchableOpacity style={styles.iconButton} onPress={handleMenuPress} activeOpacity={0.7}>
-                        <Ionicons name="menu" size={24} color={colors.textColors.primary} />
+                        <Ionicons name="menu" size={24} color={colors.content.primary} />
                     </TouchableOpacity>
 
                     {/* Center - Logo */}
@@ -121,16 +122,16 @@ const AppHeader: React.FC = () => {
                     {/* Right side - Icons */}
                     <View style={styles.rightIconsContainer}>
                         <TouchableOpacity style={styles.iconButton} onPress={handleNotificationPress} activeOpacity={0.7}>
-                            <Ionicons name="notifications-outline" size={24} color={colors.textColors.primary} />
+                            <Ionicons name="notifications-outline" size={24} color={colors.content.primary} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconButton} onPress={handleSettingsPress} activeOpacity={0.7}>
-                            <Ionicons name="settings-outline" size={24} color={colors.textColors.primary} />
+                            <Ionicons name="settings-outline" size={24} color={colors.content.primary} />
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* Bottom border for separation */}
-                <View style={[styles.bottomBorder, { backgroundColor: colors.borderColors.light }]} />
+                <View style={[styles.bottomBorder, { backgroundColor: colors.border.subtle }]} />
             </View>
         </>
     );
