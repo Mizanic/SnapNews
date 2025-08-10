@@ -6,20 +6,21 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useDrawer } from "@/contexts/DrawerContext";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 const AppHeader: React.FC = () => {
     const insets = useSafeAreaInsets();
     const colors = useThemeColors();
     const { colorScheme } = useTheme();
     const router = useRouter();
+    const navigation = useNavigation<DrawerNavigationProp<any>>();
 
     const statusBarStyle = colorScheme === "dark" ? "light-content" : "dark-content";
     const statusBarBg = colors.backgroundColors.primary;
-    const { openDrawer } = useDrawer();
 
     const handleMenuPress = () => {
-        openDrawer();
+        navigation.openDrawer();
     };
 
     const handleSettingsPress = () => {

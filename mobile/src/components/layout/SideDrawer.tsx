@@ -1,6 +1,8 @@
 import React from "react";
-import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming, runOnJS } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { useDrawer } from "@/contexts/DrawerContext";
@@ -34,25 +36,69 @@ const SideDrawer: React.FC = () => {
     const router = useRouter();
     const { setSelectedCategories } = useFilterContext();
 
-    const translateX = React.useRef(new Animated.Value(-DRAWER_WIDTH)).current;
-    const backdropOpacity = React.useRef(new Animated.Value(0)).current;
+    const translateX = useSharedValue(-DRAWER_WIDTH);
+    const backdropOpacity = useSharedValue(0);
+    const panStartX = useSharedValue(-DRAWER_WIDTH);
 
     React.useEffect(() => {
-        Animated.parallel([
-            Animated.timing(translateX, {
-                toValue: isOpen ? 0 : -DRAWER_WIDTH,
-                duration: 220,
-                easing: Easing.out(Easing.cubic),
-                useNativeDriver: true,
-            }),
-            Animated.timing(backdropOpacity, {
-                toValue: isOpen ? 0.35 : 0,
-                duration: 220,
-                easing: Easing.out(Easing.cubic),
-                useNativeDriver: true,
-            }),
-        ]).start();
+        const targetX = isOpen ? 0 : -DRAWER_WIDTH;
+        translateX.value = withTiming(targetX, { duration: 240, easing: Easing.out(Easing.cubic) });
+        backdropOpacity.value = withTiming(isOpen ? 0.35 : 0, { duration: 240, easing: Easing.out(Easing.cubic) });
     }, [isOpen, translateX, backdropOpacity]);
+
+    // Pan gesture for dragging the drawer when open
+    const drawerPan = React.useMemo(
+        () =>
+            Gesture.Pan()
+                .enabled(isOpen)
+                .minDistance(5)
+                .onBegin(() => {
+                    panStartX.value = translateX.value;
+                })
+                .onUpdate((e) => {
+                    const proposed = Math.max(-DRAWER_WIDTH, Math.min(0, panStartX.value + e.translationX));
+                    translateX.value = proposed;
+                })
+                .onEnd((e) => {
+                    const current = translateX.value;
+                    const shouldClose = current < -DRAWER_WIDTH / 2 || e.velocityX < -300;
+                    if (shouldClose) {
+                        runOnJS(closeDrawer)();
+                    } else {
+                        translateX.value = withTiming(0, { duration: 180, easing: Easing.out(Easing.cubic) });
+                    }
+                }),
+        [isOpen, translateX, closeDrawer]
+    );
+
+    // Edge pan gesture to pull drawer in when closed
+    const edgePan = React.useMemo(
+        () =>
+            Gesture.Pan()
+                .enabled(!isOpen)
+                .minDistance(3)
+                .onBegin(() => {
+                    panStartX.value = -DRAWER_WIDTH;
+                    translateX.value = -DRAWER_WIDTH;
+                })
+                .onUpdate((e) => {
+                    const proposed = Math.max(-DRAWER_WIDTH, Math.min(0, -DRAWER_WIDTH + e.translationX));
+                    translateX.value = proposed;
+                })
+                .onEnd((e) => {
+                    const current = translateX.value;
+                    const openedEnough = current > -DRAWER_WIDTH * 0.7 || e.velocityX > 300;
+                    if (openedEnough) {
+                        translateX.value = withTiming(0, { duration: 180, easing: Easing.out(Easing.cubic) });
+                    } else {
+                        runOnJS(closeDrawer)();
+                    }
+                }),
+        [isOpen, translateX, closeDrawer]
+    );
+
+    const backdropAnimatedStyle = useAnimatedStyle(() => ({ opacity: backdropOpacity.value }));
+    const drawerAnimatedStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
 
     const handleCategoryPress = (category: string) => {
         const categoryParam = category.toUpperCase();
@@ -122,31 +168,41 @@ const SideDrawer: React.FC = () => {
 
     return (
         <>
+            {/* Narrow edge area to start opening when closed */}
+            {!isOpen && (
+                <GestureDetector gesture={edgePan}>
+                    <View style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 24, zIndex: 9997 }} pointerEvents="box-only" />
+                </GestureDetector>
+            )}
+
             {/* Backdrop */}
-            <Animated.View pointerEvents={isOpen ? "auto" : "none"} style={[styles.backdrop, { opacity: backdropOpacity }]}>
+            <Animated.View pointerEvents={isOpen ? "auto" : "none"} style={[styles.backdrop, backdropAnimatedStyle]}>
                 <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={closeDrawer} />
             </Animated.View>
-            {/* Drawer */}
-            <Animated.View style={[styles.container, { transform: [{ translateX }] }]}>
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Menu</Text>
-                    <TouchableOpacity onPress={closeDrawer}>
-                        <Ionicons name="close" size={22} color={colors.textColors.secondary} />
-                    </TouchableOpacity>
-                </View>
 
-                <Text style={styles.sectionTitle}>Categories</Text>
-                {SUPPORTED_CATEGORIES.map((category) => (
-                    <TouchableOpacity key={category} style={styles.categoryItem} onPress={() => handleCategoryPress(category)}>
-                        <Ionicons name={getCategoryIcon(category)} size={18} color={colors.textColors.secondary} />
-                        <Text style={styles.categoryText}>
-                            {category === "ALL" ? "All News" : category.charAt(0) + category.slice(1).toLowerCase()}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
+            {/* Drawer with interactive gesture */}
+            <GestureDetector gesture={drawerPan}>
+                <Animated.View style={[styles.container, drawerAnimatedStyle]}>
+                    <View style={styles.header}>
+                        <Text style={styles.headerTitle}>Menu</Text>
+                        <TouchableOpacity onPress={closeDrawer}>
+                            <Ionicons name="close" size={22} color={colors.textColors.secondary} />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={styles.footerSpace} />
-            </Animated.View>
+                    <Text style={styles.sectionTitle}>Categories</Text>
+                    {SUPPORTED_CATEGORIES.map((category) => (
+                        <TouchableOpacity key={category} style={styles.categoryItem} onPress={() => handleCategoryPress(category)}>
+                            <Ionicons name={getCategoryIcon(category)} size={18} color={colors.textColors.secondary} />
+                            <Text style={styles.categoryText}>
+                                {category === "ALL" ? "All News" : category.charAt(0) + category.slice(1).toLowerCase()}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+
+                    <View style={styles.footerSpace} />
+                </Animated.View>
+            </GestureDetector>
         </>
     );
 };

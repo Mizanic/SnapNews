@@ -6,9 +6,11 @@ import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-c
 import { StatusBar } from "expo-status-bar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import { DrawerProvider } from "@/contexts/DrawerContext";
+import { Drawer } from "expo-router/drawer";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FilterProvider } from "@/contexts/FilterContext";
-import SideDrawer from "@/components/layout/SideDrawer";
+import AppDrawerContent from "../components/layout/AppDrawerContent";
+import type { DrawerContentComponentProps } from "@react-navigation/drawer";
 
 import { Provider } from "react-redux";
 import store, { persistor } from "@/lib/state/store";
@@ -22,24 +24,24 @@ function AppContent() {
     const { colorScheme } = useTheme();
 
     return (
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-            <DrawerProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+                <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
                 <FilterProvider>
-                    <SideDrawer />
-                    <Stack>
-                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                        <Stack.Screen
-                            name="settings"
-                            options={{
-                                headerShown: true,
-                                presentation: "modal",
-                            }}
-                        />
-                    </Stack>
+                    <Drawer
+                        screenOptions={{
+                            drawerType: "front",
+                            swipeEdgeWidth: 32,
+                            swipeEnabled: true,
+                        }}
+                        drawerContent={(props: DrawerContentComponentProps) => <AppDrawerContent {...props} />}
+                    >
+                        <Drawer.Screen name="(tabs)" options={{ headerShown: false, title: "Home" }} />
+                        <Drawer.Screen name="settings" options={{ drawerItemStyle: { display: "none" } }} />
+                    </Drawer>
                 </FilterProvider>
-            </DrawerProvider>
-        </SafeAreaProvider>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
     );
 }
 

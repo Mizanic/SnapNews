@@ -29,13 +29,9 @@ const LatestNewsScreen: React.FC = () => {
         if (params?.category && typeof params.category === "string") {
             const upper = params.category.toUpperCase();
             if (SUPPORTED_CATEGORIES.includes(upper)) {
-                if (upper === "ALL") {
-                    return new Set(SUPPORTED_CATEGORIES);
-                }
+                if (upper === "ALL") return new Set(SUPPORTED_CATEGORIES);
                 return new Set([upper]);
-            } else {
             }
-        } else {
         }
         return undefined;
     }, [params?.category]);
