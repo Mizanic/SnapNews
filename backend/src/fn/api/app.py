@@ -22,7 +22,7 @@ from shared.news_model import BatchActionModel
 
 # ==================================================================================================
 # Global declarations
-PAGE_SIZE = 50
+PAGE_SIZE = 100
 
 cors_config = CORSConfig(
     allow_origin="*",
