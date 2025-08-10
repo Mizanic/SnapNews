@@ -94,12 +94,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             backgroundColor: colors.surface.muted,
             borderWidth: 1,
             borderColor: colors.border.subtle,
-        },
-        filterButton: {
-            minWidth: 60,
-        },
-        sortButton: {
-            minWidth: 55,
+            minWidth: 100,
         },
         activeFilterButton: {
             // Use theme selection tokens
@@ -176,7 +171,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                 <View style={styles.actionsContainer}>
                     {/* Filter Button */}
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.filterButton, hasActiveFilters && styles.activeFilterButton]}
+                        style={[styles.actionButton, hasActiveFilters && styles.activeFilterButton]}
                         onPress={onFilterPress}
                         activeOpacity={0.7}
                     >
@@ -197,7 +192,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 
                     {/* Sort Button */}
                     <TouchableOpacity
-                        style={[styles.actionButton, styles.sortButton, hasActiveSort && styles.activeSortButton]}
+                        style={[styles.actionButton, hasActiveSort && styles.activeSortButton]}
                         onPress={onSortPress}
                         activeOpacity={0.7}
                     >
