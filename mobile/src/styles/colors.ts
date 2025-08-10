@@ -91,7 +91,7 @@ type ElevationTokens = {
     xl: string; // Maximum elevation
 };
 
-// Legacy compatibility types (preserved API)
+// Legacy compatibility types (minimal, deprecated - use semantic tokens instead)
 type AccentColors = {
     orange: string;
     green: string;
@@ -101,54 +101,9 @@ type AccentColors = {
     redditRed: string;
 };
 
-type BackgroundColors = {
-    primary: string;
-    secondary: string;
-    tertiary: string;
-    opaque: string;
-};
-
-type TextColors = {
-    primary: string;
-    secondary: string;
-    tertiary: string;
-    inverse: string;
-    accent: string;
-};
-
-type BorderColors = {
-    light: string;
-    medium: string;
-    dark: string;
-};
-
-type ShadowColors = {
-    light: string;
-    medium: string;
-    dark: string;
-};
-
-// Complete semantic token set
-type SemanticTokens = {
-    // Legacy compatibility (preserved API surface)
-    text: string;
-    background: string;
-    tint: string;
-    icon: string;
-    tabIconDefault: string;
-    tabIconSelected: string;
-    primary: ColorScale;
-    secondary: ColorScale;
-    gray: ColorScale;
-    white: string;
-    black: string;
-    accent: AccentColors;
-    backgroundColors: BackgroundColors;
-    textColors: TextColors;
-    borderColors: BorderColors;
-    shadowColors: ShadowColors;
-
-    // Modern semantic tokens (recommended for new usage)
+// Modern Color System (primary interface)
+type ColorSystem = {
+    // Core semantic tokens (recommended)
     surface: SurfaceTokens;
     content: ContentTokens;
     border: BorderTokens;
@@ -161,6 +116,67 @@ type SemanticTokens = {
         secondary: InteractiveTokens;
         neutral: InteractiveTokens;
     };
+
+    // Raw palette access (when semantic tokens aren't sufficient)
+    palette: {
+        brand: ColorScale;
+        neutral: ColorScale;
+        slate: ColorScale;
+    };
+
+    // Legacy compatibility (deprecated - use semantic tokens above)
+    /** @deprecated Use colors.surface.* instead */
+    backgroundColors: {
+        primary: string;
+        secondary: string;
+        tertiary: string;
+        opaque: string;
+    };
+    /** @deprecated Use colors.content.* instead */
+    textColors: {
+        primary: string;
+        secondary: string;
+        tertiary: string;
+        inverse: string;
+        accent: string;
+    };
+    /** @deprecated Use colors.border.* instead */
+    borderColors: {
+        light: string;
+        medium: string;
+        dark: string;
+    };
+    /** @deprecated Use colors.elevation.* instead */
+    shadowColors: {
+        light: string;
+        medium: string;
+        dark: string;
+    };
+
+    // Simple values (commonly used)
+    white: string;
+    black: string;
+    accent: AccentColors;
+
+    // Legacy individual tokens (deprecated)
+    /** @deprecated Use colors.content.primary instead */
+    text: string;
+    /** @deprecated Use colors.surface.base instead */
+    background: string;
+    /** @deprecated Use colors.interactive.primary.idle instead */
+    tint: string;
+    /** @deprecated Use colors.content.tertiary instead */
+    icon: string;
+    /** @deprecated Use colors.content.tertiary instead */
+    tabIconDefault: string;
+    /** @deprecated Use colors.interactive.primary.idle instead */
+    tabIconSelected: string;
+    /** @deprecated Use colors.palette.brand instead */
+    primary: ColorScale;
+    /** @deprecated Use colors.palette.slate instead */
+    secondary: ColorScale;
+    /** @deprecated Use colors.palette.neutral instead */
+    gray: ColorScale;
 };
 
 /**
@@ -307,12 +323,12 @@ export const Palette = {
 };
 
 /**
- * Semantic Token Builder
+ * Color System Builder
  *
- * Transforms the raw palette into role-based tokens that components consume.
+ * Transforms the raw palette into semantic tokens and legacy compatibility layer.
  * Each mode (light/dark) gets its own optimized token mapping.
  */
-const createSemanticTokens = (mode: "light" | "dark"): SemanticTokens => {
+const createColorSystem = (mode: "light" | "dark"): ColorSystem => {
     const isDark = mode === "dark";
 
     // For dark mode, we invert the neutral scale for appropriate contrast
@@ -387,54 +403,15 @@ const createSemanticTokens = (mode: "light" | "dark"): SemanticTokens => {
     // Interactive state helpers
     const createInteractiveStates = (baseColor: string): InteractiveTokens => ({
         idle: baseColor,
-        hover: isDark ? lighten(baseColor, 0.1) : darken(baseColor, 0.05),
-        pressed: isDark ? lighten(baseColor, 0.15) : darken(baseColor, 0.1),
+        hover: baseColor, // TODO: Implement color manipulation or use predefined variants
+        pressed: baseColor, // TODO: Implement color manipulation or use predefined variants
         disabled: isDark ? neutral[300] : neutral[300],
         selected: isDark ? Palette.brand[700] : Palette.brand[100],
         focus: border.focus,
     });
 
-    // Legacy compatibility tokens (preserved API)
-    const legacyTokens = {
-        text: isDark ? "#ECEDEE" : "#11181C",
-        background: surface.base,
-        tint: isDark ? Palette.white : Palette.brand[600],
-        icon: isDark ? neutral[400] : neutral[500],
-        tabIconDefault: isDark ? neutral[400] : neutral[500],
-        tabIconSelected: isDark ? Palette.white : Palette.brand[600],
-        primary: Palette.brand,
-        secondary: Palette.slate, // Updated to use slate instead of old secondary
-        gray: neutral, // Alias for neutral scale
-        white: Palette.white,
-        black: Palette.black,
-        accent: Palette.accent,
-        backgroundColors: {
-            primary: surface.base,
-            secondary: surface.muted,
-            tertiary: surface.raised,
-            opaque: surface.overlay,
-        } as BackgroundColors,
-        textColors: {
-            primary: content.primary,
-            secondary: content.secondary,
-            tertiary: content.tertiary,
-            inverse: content.inverse,
-            accent: content.accent,
-        } as TextColors,
-        borderColors: {
-            light: border.subtle,
-            medium: border.default,
-            dark: border.strong,
-        } as BorderColors,
-        shadowColors: {
-            light: elevation.sm,
-            medium: elevation.md,
-            dark: elevation.lg,
-        } as ShadowColors,
-    };
-
     return {
-        ...legacyTokens,
+        // Modern semantic tokens (primary interface)
         surface,
         content,
         border,
@@ -445,27 +422,70 @@ const createSemanticTokens = (mode: "light" | "dark"): SemanticTokens => {
             secondary: createInteractiveStates(isDark ? Palette.slate[600] : Palette.slate[400]),
             neutral: createInteractiveStates(isDark ? neutral[700] : neutral[200]),
         },
+
+        // Raw palette access
+        palette: {
+            brand: Palette.brand,
+            neutral: isDark ? neutral : Palette.neutral,
+            slate: Palette.slate,
+        },
+
+        // Simple common values
+        white: Palette.white,
+        black: Palette.black,
+        accent: Palette.accent,
+
+        // Legacy compatibility (deprecated)
+        backgroundColors: {
+            primary: surface.base,
+            secondary: surface.muted,
+            tertiary: surface.raised,
+            opaque: surface.overlay,
+        },
+        textColors: {
+            primary: content.primary,
+            secondary: content.secondary,
+            tertiary: content.tertiary,
+            inverse: content.inverse,
+            accent: content.accent,
+        },
+        borderColors: {
+            light: border.subtle,
+            medium: border.default,
+            dark: border.strong,
+        },
+        shadowColors: {
+            light: elevation.sm,
+            medium: elevation.md,
+            dark: elevation.lg,
+        },
+        text: isDark ? "#ECEDEE" : "#11181C",
+        background: surface.base,
+        tint: isDark ? Palette.white : Palette.brand[600],
+        icon: isDark ? neutral[400] : neutral[500],
+        tabIconDefault: isDark ? neutral[400] : neutral[500],
+        tabIconSelected: isDark ? Palette.white : Palette.brand[600],
+        primary: Palette.brand,
+        secondary: Palette.slate,
+        gray: neutral,
     };
 };
 
-// Simple color manipulation helpers
-const lighten = (color: string, amount: number): string => {
-    // Simple implementation - in production, use a proper color library
-    return color; // Placeholder
-};
-
-const darken = (color: string, amount: number): string => {
-    // Simple implementation - in production, use a proper color library
-    return color; // Placeholder
-};
-
 /**
- * Final Color Export
+ * Color System Export
  *
- * The main export that components will consume. Provides both light and dark
- * mode tokens with full backwards compatibility for existing usage.
+ * Modern semantic color system with legacy compatibility.
+ *
+ * Recommended usage:
+ * - colors.surface.* for backgrounds
+ * - colors.content.* for text/foreground
+ * - colors.border.* for borders
+ * - colors.status.* for feedback states
+ * - colors.interactive.* for component states
+ *
+ * Legacy tokens are deprecated but maintained for compatibility.
  */
-export const Colors: { light: SemanticTokens; dark: SemanticTokens } = {
-    light: createSemanticTokens("light"),
-    dark: createSemanticTokens("dark"),
+export const Colors: { light: ColorSystem; dark: ColorSystem } = {
+    light: createColorSystem("light"),
+    dark: createColorSystem("dark"),
 };

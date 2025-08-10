@@ -80,6 +80,8 @@ export const Animation = {
     },
 };
 
+// Legacy Theme export (deprecated - import individual modules instead)
+/** @deprecated Import specific modules like Colors, Typography, etc. directly */
 export const Theme = {
     Colors,
     Fonts,

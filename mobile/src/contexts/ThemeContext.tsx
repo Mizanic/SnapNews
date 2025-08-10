@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
-import { Theme } from "@/styles";
+import { Colors } from "@/styles/colors";
 import { useSettingsStore } from "@/lib/state/settingStore";
 
 type ColorScheme = "light" | "dark";
 
 interface ThemeContextType {
     colorScheme: ColorScheme;
-    colors: typeof Theme.Colors.light;
+    colors: typeof Colors.light;
     isDark: boolean;
 }
 
@@ -30,7 +30,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setColorScheme(resolvedScheme);
     }, [theme, systemColorScheme]);
 
-    const colors = Theme.Colors[colorScheme];
+    const colors = Colors[colorScheme];
     const isDark = colorScheme === "dark";
 
     const value: ThemeContextType = {

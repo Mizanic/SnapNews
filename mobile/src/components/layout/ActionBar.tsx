@@ -70,7 +70,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onSh
             style={[
                 styles.actionBar,
                 {
-                    backgroundColor: colors.backgroundColors.primary,
+                    backgroundColor: colors.surface.base,
                 },
             ]}
         >

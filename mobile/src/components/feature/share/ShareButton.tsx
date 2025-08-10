@@ -45,8 +45,8 @@ const ShareButton: React.FC<ShareButtonProps> = ({ onPress }) => {
             style={[
                 styles.button,
                 {
-                    backgroundColor: colors.backgroundColors.primary,
-                    borderColor: colors.borderColors.medium,
+                    backgroundColor: colors.surface.base,
+                    borderColor: colors.border.default,
                     shadowColor: colors.black,
                 },
             ]}
