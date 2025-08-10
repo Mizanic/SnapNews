@@ -102,13 +102,13 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             minWidth: 55,
         },
         activeFilterButton: {
-            // Match time filter highlight (orange subtle background + border)
-            backgroundColor: colors.accent.orange + "20",
-            borderColor: colors.accent.orange + "40",
+            // Use theme selection tokens
+            backgroundColor: colors.selection.accent.background,
+            borderColor: colors.selection.accent.border,
         },
         activeSortButton: {
-            backgroundColor: colors.accent.orange + "20",
-            borderColor: colors.accent.orange + "40",
+            backgroundColor: colors.selection.accent.background,
+            borderColor: colors.selection.accent.border,
         },
         actionButtonText: {
             ...Typography.bodyText.small,
@@ -119,13 +119,13 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             color: colors.content.secondary,
         },
         activeFilterButtonText: {
-            color: colors.accent.orange,
+            color: colors.selection.accent.icon,
         },
         sortButtonText: {
             color: colors.content.secondary,
         },
         activeSortButtonText: {
-            color: colors.accent.orange,
+            color: colors.selection.accent.icon,
         },
         badge: {
             position: "absolute",
@@ -180,7 +180,11 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                         onPress={onFilterPress}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="filter-outline" size={18} color={hasActiveFilters ? colors.accent.orange : colors.content.secondary} />
+                        <Ionicons
+                            name="filter-outline"
+                            size={18}
+                            color={hasActiveFilters ? colors.selection.accent.icon : colors.content.secondary}
+                        />
                         <Text style={[styles.actionButtonText, styles.filterButtonText, hasActiveFilters && styles.activeFilterButtonText]}>
                             Filter
                         </Text>

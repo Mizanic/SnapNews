@@ -116,6 +116,14 @@ type ColorSystem = {
         secondary: InteractiveTokens;
         neutral: InteractiveTokens;
     };
+    // Selection/chip tokens to avoid inline alpha concatenation in components
+    selection: {
+        accent: {
+            background: string; // subtle orange bg
+            border: string; // subtle orange border
+            icon: string; // foreground/icon color
+        };
+    };
 
     // Raw palette access (when semantic tokens aren't sufficient)
     palette: {
@@ -410,6 +418,14 @@ const createColorSystem = (mode: "light" | "dark"): ColorSystem => {
         focus: border.focus,
     });
 
+    // Helper to apply alpha to hex (e.g., #rrggbb + alpha)
+    const withAlphaHex = (hex: string, alpha: number): string => {
+        const a = Math.round(Math.min(1, Math.max(0, alpha)) * 255)
+            .toString(16)
+            .padStart(2, "0");
+        return hex + a;
+    };
+
     return {
         // Modern semantic tokens (primary interface)
         surface,
@@ -421,6 +437,15 @@ const createColorSystem = (mode: "light" | "dark"): ColorSystem => {
             primary: createInteractiveStates(isDark ? Palette.brand[600] : Palette.brand[500]),
             secondary: createInteractiveStates(isDark ? Palette.slate[600] : Palette.slate[400]),
             neutral: createInteractiveStates(isDark ? neutral[700] : neutral[200]),
+        },
+
+        // Selection/chip tokens — standardized alpha variants
+        selection: {
+            accent: {
+                background: withAlphaHex(Palette.accent.orange, 0.125), // ~20 hex
+                border: withAlphaHex(Palette.accent.orange, 0.25), // ~40 hex
+                icon: Palette.accent.orange,
+            },
         },
 
         // Raw palette access

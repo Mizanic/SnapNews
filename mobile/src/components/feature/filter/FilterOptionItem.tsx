@@ -36,8 +36,8 @@ const FilterOptionItem: React.FC<FilterOptionItemProps> = ({
             marginVertical: Spacing.xxs,
             borderRadius: BorderRadius.md,
             borderWidth: 1,
-            backgroundColor: selected ? colors.accent.orange + "20" : colors.surface.muted,
-            borderColor: selected ? colors.accent.orange + "40" : colors.border.subtle,
+            backgroundColor: selected ? colors.selection.accent.background : colors.surface.muted,
+            borderColor: selected ? colors.selection.accent.border : colors.border.subtle,
         },
         icon: {
             marginRight: Spacing.md,
@@ -62,13 +62,18 @@ const FilterOptionItem: React.FC<FilterOptionItemProps> = ({
 
     return (
         <TouchableOpacity testID={testID} style={[styles.container, style]} onPress={onPress} activeOpacity={0.7}>
-            <Ionicons name={iconName as any} size={22} color={selected ? colors.accent.orange : colors.content.secondary} style={styles.icon} />
+            <Ionicons
+                name={iconName as any}
+                size={22}
+                color={selected ? colors.selection.accent.icon : colors.content.secondary}
+                style={styles.icon}
+            />
             <View style={styles.content}>
                 <Text style={styles.title}>{title}</Text>
                 {description ? <Text style={styles.description}>{description}</Text> : null}
             </View>
             {showCheck && selected ? (
-                <Ionicons name="checkmark-circle" size={20} color={colors.accent.orange} style={styles.checkIcon} />
+                <Ionicons name="checkmark-circle" size={20} color={colors.selection.accent.icon} style={styles.checkIcon} />
             ) : null}
         </TouchableOpacity>
     );
