@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius, Shadows } from "@/styles";
 import { SUPPORTED_CATEGORIES, getCategoryIcon, getCategoryDisplayName, getCategoryDescription } from "@/lib/constants/categories";
+import FilterOptionItem from "@/components/feature/filter/FilterOptionItem";
 
 interface FilterModalProps {
     visible: boolean;
@@ -110,8 +111,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             borderColor: colors.border.default,
         },
         selectAllButton: {
-            backgroundColor: colors.interactive.primary.selected,
-            borderColor: colors.border.accent,
+            // Align with chip highlight (orange)
+            backgroundColor: colors.accent.orange + "20",
+            borderColor: colors.accent.orange + "40",
         },
         actionButtonText: {
             ...Typography.bodyText.medium,
@@ -121,7 +123,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             color: colors.content.secondary,
         },
         selectAllButtonText: {
-            color: colors.interactive.primary.idle,
+            color: colors.accent.orange,
         },
         categoriesContainer: {
             paddingHorizontal: Spacing.lg,
@@ -137,8 +139,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             borderWidth: 1,
         },
         categorySelected: {
-            backgroundColor: colors.interactive.primary.selected,
-            borderColor: colors.border.accent,
+            // Match time filter highlight: subtle orange bg + orange border
+            backgroundColor: colors.accent.orange + "20",
+            borderColor: colors.accent.orange + "40",
         },
         categoryUnselected: {
             backgroundColor: colors.surface.muted,
@@ -155,11 +158,14 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             color: colors.content.primary,
             fontWeight: "500",
         },
+        // Selected text colors remain the same as time filter chips
+        // (no special selected variant)
         categoryDescription: {
             ...Typography.bodyText.small,
             color: colors.content.secondary,
             marginTop: 2,
         },
+        // No special selected variant for description either
         checkIcon: {
             marginLeft: Spacing.sm,
         },
@@ -224,36 +230,16 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
                                 showsVerticalScrollIndicator={true}
                                 bounces={true}
                             >
-                                {SUPPORTED_CATEGORIES.map((category) => {
-                                    const isSelected = selectedCategories.has(category);
-                                    return (
-                                        <TouchableOpacity
-                                            key={category}
-                                            style={[styles.categoryItem, isSelected ? styles.categorySelected : styles.categoryUnselected]}
-                                            onPress={() => onCategoryToggle(category)}
-                                            activeOpacity={0.7}
-                                        >
-                                            <Ionicons
-                                                name={getCategoryIcon(category) as any}
-                                                size={22}
-                                                color={isSelected ? colors.interactive.primary.idle : colors.content.secondary}
-                                                style={styles.categoryIcon}
-                                            />
-                                            <View style={styles.categoryContent}>
-                                                <Text style={styles.categoryName}>{getCategoryDisplayName(category)}</Text>
-                                                <Text style={styles.categoryDescription}>{getCategoryDescription(category)}</Text>
-                                            </View>
-                                            {isSelected && (
-                                                <Ionicons
-                                                    name="checkmark-circle"
-                                                    size={20}
-                                                    color={colors.interactive.primary.idle}
-                                                    style={styles.checkIcon}
-                                                />
-                                            )}
-                                        </TouchableOpacity>
-                                    );
-                                })}
+                                {SUPPORTED_CATEGORIES.map((category) => (
+                                    <FilterOptionItem
+                                        key={category}
+                                        iconName={getCategoryIcon(category) as any}
+                                        title={getCategoryDisplayName(category)}
+                                        description={getCategoryDescription(category)}
+                                        selected={selectedCategories.has(category)}
+                                        onPress={() => onCategoryToggle(category)}
+                                    />
+                                ))}
                             </ScrollView>
                         </TouchableOpacity>
                     </Animated.View>

@@ -52,8 +52,9 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             borderRadius: BorderRadius.md,
         },
         categorySelected: {
-            backgroundColor: colors.surface.muted,
-            borderColor: colors.border.subtle,
+            // Match time filter highlight: subtle orange bg + orange border
+            backgroundColor: colors.accent.orange + "20",
+            borderColor: colors.accent.orange + "40",
             borderWidth: 1,
         },
         categoryUnselected: {
@@ -61,8 +62,14 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
         },
         categoryIcon: { marginRight: Spacing.sm },
         categoryText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.content.primary },
+        categoryTextSelected: {
+            ...Typography.bodyText.medium,
+            marginLeft: Spacing.sm,
+            color: colors.accent.orange,
+            fontWeight: "600",
+        },
         metaText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.content.primary },
-        metaTextActive: { color: colors.interactive.primary.idle, fontWeight: "600" },
+        metaTextActive: { color: colors.accent.orange, fontWeight: "600" },
     });
 
     const handleCategoryPress = (category: string) => {
@@ -88,7 +95,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                 <Ionicons
                     name={getCategoryIcon("ALL")}
                     size={18}
-                    color={isAllActive ? colors.interactive.primary.idle : colors.content.secondary}
+                    color={isAllActive ? colors.white : colors.content.secondary}
                     style={styles.categoryIcon}
                 />
                 <Text style={[styles.metaText, isAllActive && styles.metaTextActive]}>{getCategoryDisplayName("ALL")}</Text>
@@ -105,10 +112,10 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                         <Ionicons
                             name={getCategoryIcon(category)}
                             size={18}
-                            color={isSelected ? colors.interactive.primary.idle : colors.content.secondary}
+                            color={isSelected ? colors.white : colors.content.secondary}
                             style={styles.categoryIcon}
                         />
-                        <Text style={styles.categoryText}>{getCategoryDisplayName(category)}</Text>
+                        <Text style={[styles.categoryText, isSelected && styles.categoryTextSelected]}>{getCategoryDisplayName(category)}</Text>
                     </TouchableOpacity>
                 );
             })}

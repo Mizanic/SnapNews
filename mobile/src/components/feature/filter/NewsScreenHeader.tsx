@@ -102,8 +102,9 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             minWidth: 55,
         },
         activeFilterButton: {
-            backgroundColor: colors.interactive.primary.selected,
-            borderColor: colors.border.accent,
+            // Match time filter highlight (orange subtle background + border)
+            backgroundColor: colors.accent.orange + "20",
+            borderColor: colors.accent.orange + "40",
         },
         activeSortButton: {
             backgroundColor: colors.accent.orange + "20",
@@ -118,7 +119,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             color: colors.content.secondary,
         },
         activeFilterButtonText: {
-            color: colors.interactive.primary.idle,
+            color: colors.accent.orange,
         },
         sortButtonText: {
             color: colors.content.secondary,
@@ -179,11 +180,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                         onPress={onFilterPress}
                         activeOpacity={0.7}
                     >
-                        <Ionicons
-                            name="filter-outline"
-                            size={18}
-                            color={hasActiveFilters ? colors.interactive.primary.idle : colors.content.secondary}
-                        />
+                        <Ionicons name="filter-outline" size={18} color={hasActiveFilters ? colors.accent.orange : colors.content.secondary} />
                         <Text style={[styles.actionButtonText, styles.filterButtonText, hasActiveFilters && styles.activeFilterButtonText]}>
                             Filter
                         </Text>

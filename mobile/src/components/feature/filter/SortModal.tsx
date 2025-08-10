@@ -4,6 +4,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius, Shadows } from "@/styles";
+import FilterOptionItem from "@/components/feature/filter/FilterOptionItem";
 import { TimeFilter } from "@/lib/types/timeFilter";
 
 interface SortModalProps {
@@ -134,42 +135,6 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
             maxHeight: availableScrollHeight,
         },
         // Do not force flex on ScrollView container to avoid collapse
-        optionItem: {
-            flexDirection: "row",
-            alignItems: "center",
-            paddingVertical: Spacing.sm,
-            paddingHorizontal: Spacing.md,
-            marginVertical: Spacing.xxs,
-            borderRadius: BorderRadius.md,
-            borderWidth: 1,
-        },
-        optionSelected: {
-            backgroundColor: colors.interactive.primary.selected,
-            borderColor: colors.border.accent,
-        },
-        optionUnselected: {
-            backgroundColor: colors.surface.muted,
-            borderColor: colors.border.subtle,
-        },
-        optionIcon: {
-            marginRight: Spacing.md,
-        },
-        optionContent: {
-            flex: 1,
-        },
-        optionTitle: {
-            ...Typography.bodyText.large,
-            color: colors.content.primary,
-            fontWeight: "500",
-        },
-        optionDescription: {
-            ...Typography.bodyText.small,
-            color: colors.content.secondary,
-            marginTop: 2,
-        },
-        checkIcon: {
-            marginLeft: Spacing.sm,
-        },
         dragHandle: {
             width: 40,
             height: 4,
@@ -215,36 +180,16 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
                                 showsVerticalScrollIndicator={true}
                                 bounces={true}
                             >
-                                {timeFilterOptions.map((option) => {
-                                    const isSelected = selectedTimeFilter === option.id;
-                                    return (
-                                        <TouchableOpacity
-                                            key={option.id}
-                                            style={[styles.optionItem, isSelected ? styles.optionSelected : styles.optionUnselected]}
-                                            onPress={() => handleOptionSelect(option.id)}
-                                            activeOpacity={0.7}
-                                        >
-                                            <Ionicons
-                                                name={option.icon as any}
-                                                size={22}
-                                                color={isSelected ? colors.interactive.primary.idle : colors.content.secondary}
-                                                style={styles.optionIcon}
-                                            />
-                                            <View style={styles.optionContent}>
-                                                <Text style={styles.optionTitle}>{option.title}</Text>
-                                                <Text style={styles.optionDescription}>{option.description}</Text>
-                                            </View>
-                                            {isSelected && (
-                                                <Ionicons
-                                                    name="checkmark-circle"
-                                                    size={20}
-                                                    color={colors.interactive.primary.idle}
-                                                    style={styles.checkIcon}
-                                                />
-                                            )}
-                                        </TouchableOpacity>
-                                    );
-                                })}
+                                {timeFilterOptions.map((option) => (
+                                    <FilterOptionItem
+                                        key={option.id}
+                                        iconName={option.icon}
+                                        title={option.title}
+                                        description={option.description}
+                                        selected={selectedTimeFilter === option.id}
+                                        onPress={() => handleOptionSelect(option.id)}
+                                    />
+                                ))}
                             </ScrollView>
                         </TouchableOpacity>
                     </Animated.View>
