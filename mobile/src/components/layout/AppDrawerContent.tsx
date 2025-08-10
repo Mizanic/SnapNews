@@ -2,33 +2,30 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
-import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
+import { SUPPORTED_CATEGORIES, getCategoryIcon, getCategoryDisplayName } from "@/lib/constants/categories";
 import { Spacing, Typography, BorderRadius } from "@/styles";
 import { useFilterContext } from "@/contexts/FilterContext";
 import type { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const getCategoryIcon = (category: string): any => {
-    const icons: Record<string, string> = {
-        ALL: "globe-outline",
-        INDIA: "location-outline",
-        TECH: "laptop-outline",
-        WORLD: "earth-outline",
-        SPORTS: "football-outline",
-        BUSINESS: "business-outline",
-        CRICKET: "baseball-outline",
-        HEALTH: "medical-outline",
-        TOP: "trending-up-outline",
-    };
-    return (icons[category] || "newspaper-outline") as any;
-};
+// Category icon and display name are now centralized in constants
 
 const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     const { navigation } = props;
     const colors = useThemeColors();
-    const { setSelectedCategories } = useFilterContext();
+    const { selectedCategories, setSelectedCategories, clearAllCategories } = useFilterContext();
     const insets = useSafeAreaInsets();
+
+    // Only highlight a single category if exactly one is selected; otherwise highlight none
+    const activeCategory: string | null = React.useMemo(() => {
+        if (selectedCategories.size === 1) {
+            return Array.from(selectedCategories)[0];
+        }
+        return null;
+    }, [selectedCategories]);
+
+    const isAllActive = selectedCategories.size === 0 || selectedCategories.size === SUPPORTED_CATEGORIES.length;
 
     const styles = StyleSheet.create({
         scroll: { flex: 1, backgroundColor: colors.backgroundColors.primary },
@@ -50,11 +47,22 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
         categoryItem: {
             flexDirection: "row",
             alignItems: "center",
-            paddingVertical: Spacing.md,
-            paddingHorizontal: Spacing.lg,
+            paddingVertical: Spacing.sm,
+            paddingHorizontal: Spacing.xl,
             borderRadius: BorderRadius.md,
         },
+        categorySelected: {
+            backgroundColor: colors.backgroundColors.secondary,
+            borderColor: colors.borderColors.light,
+            borderWidth: 1,
+        },
+        categoryUnselected: {
+            backgroundColor: "transparent",
+        },
+        categoryIcon: { marginRight: Spacing.sm },
         categoryText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.textColors.primary },
+        metaText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.textColors.primary },
+        metaTextActive: { color: colors.primary[600], fontWeight: "600" },
     });
 
     const handleCategoryPress = (category: string) => {
@@ -68,15 +76,42 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Menu</Text>
             </View>
+            <Text style={styles.sectionTitle}>Quick Filters</Text>
+            {/* Meta category: All Categories (drawer-only) */}
+            <TouchableOpacity
+                style={[styles.categoryItem, isAllActive && styles.categorySelected]}
+                onPress={() => {
+                    clearAllCategories();
+                    navigation.closeDrawer();
+                }}
+            >
+                <Ionicons
+                    name={getCategoryIcon("ALL")}
+                    size={18}
+                    color={isAllActive ? colors.primary[600] : colors.textColors.secondary}
+                    style={styles.categoryIcon}
+                />
+                <Text style={[styles.metaText, isAllActive && styles.metaTextActive]}>{getCategoryDisplayName("ALL")}</Text>
+            </TouchableOpacity>
             <Text style={styles.sectionTitle}>Categories</Text>
-            {SUPPORTED_CATEGORIES.map((category) => (
-                <TouchableOpacity key={category} style={styles.categoryItem} onPress={() => handleCategoryPress(category)}>
-                    <Ionicons name={getCategoryIcon(category)} size={18} color={colors.textColors.secondary} />
-                    <Text style={styles.categoryText}>
-                        {category === "ALL" ? "All News" : category.charAt(0) + category.slice(1).toLowerCase()}
-                    </Text>
-                </TouchableOpacity>
-            ))}
+            {SUPPORTED_CATEGORIES.map((category) => {
+                const isSelected = activeCategory === category;
+                return (
+                    <TouchableOpacity
+                        key={category}
+                        style={[styles.categoryItem, isSelected ? styles.categorySelected : styles.categoryUnselected]}
+                        onPress={() => handleCategoryPress(category)}
+                    >
+                        <Ionicons
+                            name={getCategoryIcon(category)}
+                            size={18}
+                            color={isSelected ? colors.primary[600] : colors.textColors.secondary}
+                            style={styles.categoryIcon}
+                        />
+                        <Text style={styles.categoryText}>{getCategoryDisplayName(category)}</Text>
+                    </TouchableOpacity>
+                );
+            })}
         </DrawerContentScrollView>
     );
 };

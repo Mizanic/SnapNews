@@ -4,7 +4,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
 import { Spacing, Typography, BorderRadius, Shadows } from "@/styles";
-import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
+import { SUPPORTED_CATEGORIES, getCategoryIcon, getCategoryDisplayName, getCategoryDescription } from "@/lib/constants/categories";
 
 interface FilterModalProps {
     visible: boolean;
@@ -47,24 +47,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
         }
     }, [visible, slideAnim]);
 
-    const getCategoryDisplayName = (category: string) => {
-        return category === "ALL" ? "All News" : category.charAt(0) + category.slice(1).toLowerCase();
-    };
-
-    const getCategoryIcon = (category: string) => {
-        const icons: { [key: string]: string } = {
-            ALL: "globe-outline",
-            INDIA: "location-outline",
-            TECH: "laptop-outline",
-            WORLD: "earth-outline",
-            SPORTS: "football-outline",
-            BUSINESS: "business-outline",
-            CRICKET: "baseball-outline",
-            HEALTH: "medical-outline",
-            TOP: "trending-up-outline",
-        };
-        return icons[category] || "newspaper-outline";
-    };
+    // Display name, icon, and description are now sourced from shared constants
 
     const styles = StyleSheet.create({
         overlay: {
@@ -190,20 +173,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
         },
     });
 
-    const getCategoryDescription = (category: string) => {
-        const descriptions: { [key: string]: string } = {
-            ALL: "All news from all sources",
-            INDIA: "News from India",
-            TECH: "Technology and innovation",
-            WORLD: "International news",
-            SPORTS: "Sports news and updates",
-            BUSINESS: "Business and finance",
-            CRICKET: "Cricket news and scores",
-            HEALTH: "Health and wellness",
-            TOP: "Top trending stories",
-        };
-        return descriptions[category] || "News category";
-    };
+    // Description centralized via getCategoryDescription
 
     return (
         <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
