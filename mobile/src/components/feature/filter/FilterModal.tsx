@@ -48,6 +48,15 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
         }
     }, [visible, slideAnim]);
 
+    // When modal opens, start with no categories selected
+    React.useEffect(() => {
+        if (visible) {
+            try {
+                onClearAll();
+            } catch {}
+        }
+    }, [visible, onClearAll]);
+
     // Display name, icon, and description are now sourced from shared constants
 
     const styles = StyleSheet.create({
