@@ -2,7 +2,7 @@
     "expo": {
         "name": "SnapNews",
         "slug": "SnapNews",
-        "version": "0.20250810.4",
+        "version": "0.20250810.5",
         "orientation": "portrait",
         "icon": "./assets/AppIcon.png",
         "scheme": "myapp",

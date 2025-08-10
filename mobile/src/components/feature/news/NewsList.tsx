@@ -59,16 +59,16 @@ const NewsList: React.FC<NewsListProps> = ({
         if (!loadingMore) return null;
 
         return (
-            <View style={[styles.footerLoader, { backgroundColor: colors.backgroundColors.secondary }]}>
-                <ActivityIndicator size="small" color={colors.primary[600]} />
-                <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>Loading more...</Text>
+            <View style={[styles.footerLoader, { backgroundColor: colors.surface.muted }]}>
+                <ActivityIndicator size="small" color={colors.interactive.primary.idle} />
+                <Text style={[styles.loadingText, { color: colors.content.secondary }]}>Loading more...</Text>
             </View>
         );
     };
 
     if (loading && !refreshing) {
         return (
-            <View style={{ flex: 1, backgroundColor: colors.backgroundColors.secondary }}>
+            <View style={{ flex: 1, backgroundColor: colors.surface.muted }}>
                 <View style={[styles.listContainer]}>
                     {[0, 1, 2, 3, 4].map((i) => (
                         <View
@@ -78,19 +78,19 @@ const NewsList: React.FC<NewsListProps> = ({
                                 marginHorizontal: Spacing.xs,
                                 borderRadius: BorderRadius.sm,
                                 overflow: "hidden",
-                                backgroundColor: colors.backgroundColors.primary,
+                                backgroundColor: colors.surface.base,
                                 borderWidth: 1,
-                                borderColor: colors.borderColors.light,
+                                borderColor: colors.border.subtle,
                             }}
                         >
-                            <View style={{ width: "100%", aspectRatio: 16 / 9, backgroundColor: colors.gray[100] }} />
+                            <View style={{ width: "100%", aspectRatio: 16 / 9, backgroundColor: colors.surface.muted }} />
                             <View style={{ padding: Spacing.md }}>
                                 <View
                                     style={{
                                         width: "80%",
                                         height: 16,
                                         borderRadius: 8,
-                                        backgroundColor: colors.gray[100],
+                                        backgroundColor: colors.surface.muted,
                                         marginBottom: Spacing.xs,
                                     }}
                                 />
@@ -99,24 +99,36 @@ const NewsList: React.FC<NewsListProps> = ({
                                         width: "60%",
                                         height: 16,
                                         borderRadius: 8,
-                                        backgroundColor: colors.gray[100],
+                                        backgroundColor: colors.surface.muted,
                                         marginBottom: Spacing.md,
                                     }}
                                 />
                                 <View
-                                    style={{ width: "100%", height: 12, borderRadius: 6, backgroundColor: colors.gray[100], marginBottom: 6 }}
+                                    style={{
+                                        width: "100%",
+                                        height: 12,
+                                        borderRadius: 6,
+                                        backgroundColor: colors.surface.muted,
+                                        marginBottom: 6,
+                                    }}
                                 />
                                 <View
-                                    style={{ width: "90%", height: 12, borderRadius: 6, backgroundColor: colors.gray[100], marginBottom: 6 }}
+                                    style={{
+                                        width: "90%",
+                                        height: 12,
+                                        borderRadius: 6,
+                                        backgroundColor: colors.surface.muted,
+                                        marginBottom: 6,
+                                    }}
                                 />
-                                <View style={{ width: "75%", height: 12, borderRadius: 6, backgroundColor: colors.gray[100] }} />
+                                <View style={{ width: "75%", height: 12, borderRadius: 6, backgroundColor: colors.surface.muted }} />
                             </View>
                         </View>
                     ))}
                 </View>
                 <View style={{ alignItems: "center", paddingBottom: Spacing.md }}>
-                    <ActivityIndicator style={{ marginTop: 8 }} size="small" color={colors.primary[600]} />
-                    <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>Loading latest news...</Text>
+                    <ActivityIndicator style={{ marginTop: 8 }} size="small" color={colors.interactive.primary.idle} />
+                    <Text style={[styles.loadingText, { color: colors.content.secondary }]}>Loading latest news...</Text>
                 </View>
             </View>
         );
@@ -124,9 +136,9 @@ const NewsList: React.FC<NewsListProps> = ({
 
     if (!loading && data.length === 0) {
         return (
-            <View style={[styles.loadingContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
-                <Text style={[styles.loadingText, { color: colors.textColors.secondary }]}>No news to show yet.</Text>
-                {onRefresh && <Text style={[styles.loadingText, { color: colors.textColors.tertiary }]}>Pull to refresh.</Text>}
+            <View style={[styles.loadingContainer, { backgroundColor: colors.surface.muted }]}>
+                <Text style={[styles.loadingText, { color: colors.content.secondary }]}>No news to show yet.</Text>
+                {onRefresh && <Text style={[styles.loadingText, { color: colors.content.tertiary }]}>Pull to refresh.</Text>}
             </View>
         );
     }
@@ -141,7 +153,7 @@ const NewsList: React.FC<NewsListProps> = ({
                     isLiked={likes.has(item.item_hash) ? true : false}
                 />
             )}
-            contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
+            contentContainerStyle={[styles.listContainer, { backgroundColor: colors.surface.muted }]}
             keyExtractor={(item) => item.item_hash}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -150,9 +162,9 @@ const NewsList: React.FC<NewsListProps> = ({
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        colors={[colors.primary[600]]}
-                        tintColor={colors.primary[600]}
-                        progressBackgroundColor={colors.backgroundColors.primary}
+                        colors={[colors.interactive.primary.idle]}
+                        tintColor={colors.interactive.primary.idle}
+                        progressBackgroundColor={colors.surface.base}
                     />
                 ) : undefined
             }

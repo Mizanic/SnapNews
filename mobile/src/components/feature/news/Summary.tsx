@@ -9,7 +9,7 @@ const Summary: React.FC<{ newsItem: NewsItem }> = ({ newsItem }) => {
     const styles = StyleSheet.create({
         summary: {
             ...Typography.bodyText.medium,
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
         },
     });
 

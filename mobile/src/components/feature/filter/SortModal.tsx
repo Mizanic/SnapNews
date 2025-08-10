@@ -92,12 +92,12 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
     const styles = StyleSheet.create({
         overlay: {
             flex: 1,
-            backgroundColor: colors.backgroundColors.opaque,
+            backgroundColor: colors.surface.overlay,
             justifyContent: "flex-end",
             paddingBottom: Math.max(20, insets.bottom), // Add bottom padding to overlay
         },
         modalContainer: {
-            backgroundColor: colors.backgroundColors.primary,
+            backgroundColor: colors.surface.base,
             borderTopLeftRadius: BorderRadius.xl,
             borderTopRightRadius: BorderRadius.xl,
             maxHeight: modalMaxHeight,
@@ -113,18 +113,18 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
             paddingHorizontal: Spacing.lg,
             paddingBottom: Spacing.md,
             borderBottomWidth: 1,
-            borderBottomColor: colors.borderColors.light,
+            borderBottomColor: colors.border.subtle,
         },
         headerTitle: {
             ...Typography.heading.h3,
-            color: colors.textColors.primary,
+            color: colors.content.primary,
             fontWeight: "600",
         },
         closeButton: {
             width: 40,
             height: 40,
             borderRadius: BorderRadius.full,
-            backgroundColor: colors.backgroundColors.secondary,
+            backgroundColor: colors.surface.muted,
             alignItems: "center",
             justifyContent: "center",
         },
@@ -144,12 +144,12 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
             borderWidth: 1,
         },
         optionSelected: {
-            backgroundColor: colors.primary[50],
-            borderColor: colors.primary[200],
+            backgroundColor: colors.interactive.primary.selected,
+            borderColor: colors.border.accent,
         },
         optionUnselected: {
-            backgroundColor: colors.backgroundColors.secondary,
-            borderColor: colors.borderColors.light,
+            backgroundColor: colors.surface.muted,
+            borderColor: colors.border.subtle,
         },
         optionIcon: {
             marginRight: Spacing.md,
@@ -159,12 +159,12 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
         },
         optionTitle: {
             ...Typography.bodyText.large,
-            color: colors.textColors.primary,
+            color: colors.content.primary,
             fontWeight: "500",
         },
         optionDescription: {
             ...Typography.bodyText.small,
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
             marginTop: 2,
         },
         checkIcon: {
@@ -173,7 +173,7 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
         dragHandle: {
             width: 40,
             height: 4,
-            backgroundColor: colors.borderColors.medium,
+            backgroundColor: colors.border.default,
             borderRadius: BorderRadius.sm,
             alignSelf: "center",
             marginBottom: Spacing.md,
@@ -200,7 +200,7 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
                             <View style={styles.header}>
                                 <Text style={styles.headerTitle}>Filter by Time</Text>
                                 <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
-                                    <Ionicons name="close" size={20} color={colors.textColors.secondary} />
+                                    <Ionicons name="close" size={20} color={colors.content.secondary} />
                                 </TouchableOpacity>
                             </View>
 
@@ -227,7 +227,7 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
                                             <Ionicons
                                                 name={option.icon as any}
                                                 size={22}
-                                                color={isSelected ? colors.primary[600] : colors.textColors.secondary}
+                                                color={isSelected ? colors.interactive.primary.idle : colors.content.secondary}
                                                 style={styles.optionIcon}
                                             />
                                             <View style={styles.optionContent}>
@@ -238,7 +238,7 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
                                                 <Ionicons
                                                     name="checkmark-circle"
                                                     size={20}
-                                                    color={colors.primary[600]}
+                                                    color={colors.interactive.primary.idle}
                                                     style={styles.checkIcon}
                                                 />
                                             )}

@@ -28,18 +28,18 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     const isAllActive = selectedCategories.size === 0 || selectedCategories.size === SUPPORTED_CATEGORIES.length;
 
     const styles = StyleSheet.create({
-        scroll: { flex: 1, backgroundColor: colors.backgroundColors.primary },
-        container: { backgroundColor: colors.backgroundColors.primary, paddingTop: insets.top + Spacing.md },
+        scroll: { flex: 1, backgroundColor: colors.surface.base },
+        container: { backgroundColor: colors.surface.base, paddingTop: insets.top + Spacing.md },
         header: {
             paddingHorizontal: Spacing.lg,
             paddingBottom: Spacing.md,
             borderBottomWidth: 1,
-            borderBottomColor: colors.borderColors.light,
+            borderBottomColor: colors.border.subtle,
         },
-        headerTitle: { ...Typography.heading.h3, color: colors.textColors.primary },
+        headerTitle: { ...Typography.heading.h3, color: colors.content.primary },
         sectionTitle: {
             ...Typography.bodyText.small,
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
             marginTop: Spacing.md,
             marginBottom: Spacing.xs,
             paddingHorizontal: Spacing.md,
@@ -52,17 +52,17 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             borderRadius: BorderRadius.md,
         },
         categorySelected: {
-            backgroundColor: colors.backgroundColors.secondary,
-            borderColor: colors.borderColors.light,
+            backgroundColor: colors.surface.muted,
+            borderColor: colors.border.subtle,
             borderWidth: 1,
         },
         categoryUnselected: {
             backgroundColor: "transparent",
         },
         categoryIcon: { marginRight: Spacing.sm },
-        categoryText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.textColors.primary },
-        metaText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.textColors.primary },
-        metaTextActive: { color: colors.primary[600], fontWeight: "600" },
+        categoryText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.content.primary },
+        metaText: { ...Typography.bodyText.medium, marginLeft: Spacing.sm, color: colors.content.primary },
+        metaTextActive: { color: colors.interactive.primary.idle, fontWeight: "600" },
     });
 
     const handleCategoryPress = (category: string) => {
@@ -88,7 +88,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                 <Ionicons
                     name={getCategoryIcon("ALL")}
                     size={18}
-                    color={isAllActive ? colors.primary[600] : colors.textColors.secondary}
+                    color={isAllActive ? colors.interactive.primary.idle : colors.content.secondary}
                     style={styles.categoryIcon}
                 />
                 <Text style={[styles.metaText, isAllActive && styles.metaTextActive]}>{getCategoryDisplayName("ALL")}</Text>
@@ -105,7 +105,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
                         <Ionicons
                             name={getCategoryIcon(category)}
                             size={18}
-                            color={isSelected ? colors.primary[600] : colors.textColors.secondary}
+                            color={isSelected ? colors.interactive.primary.idle : colors.content.secondary}
                             style={styles.categoryIcon}
                         />
                         <Text style={styles.categoryText}>{getCategoryDisplayName(category)}</Text>

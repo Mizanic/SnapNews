@@ -98,15 +98,15 @@ const LatestNewsScreen: React.FC = () => {
 
     if (isError) {
         return (
-            <View style={[styles.errorContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
-                <Text style={[styles.errorText, { color: colors.textColors.primary }]}>{(error as Error).message}</Text>
-                <Button title="Retry" onPress={() => refetch()} color={colors.primary[600]} />
+            <View style={[styles.errorContainer, { backgroundColor: colors.surface.muted }]}>
+                <Text style={[styles.errorText, { color: colors.content.primary }]}>{(error as Error).message}</Text>
+                <Button title="Retry" onPress={() => refetch()} color={colors.interactive.primary.idle} />
             </View>
         );
     }
 
     return (
-        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
+        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.surface.muted }]}>
             <NewsScreenHeader
                 title="Latest"
                 selectedCategoriesCount={selectedCategories.size}

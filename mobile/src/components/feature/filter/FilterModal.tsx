@@ -52,12 +52,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
     const styles = StyleSheet.create({
         overlay: {
             flex: 1,
-            backgroundColor: colors.backgroundColors.opaque,
+            backgroundColor: colors.surface.overlay,
             justifyContent: "flex-end",
             paddingBottom: Math.max(20, insets.bottom), // Add bottom padding to overlay
         },
         modalContainer: {
-            backgroundColor: colors.backgroundColors.primary,
+            backgroundColor: colors.surface.base,
             borderTopLeftRadius: BorderRadius.xl,
             borderTopRightRadius: BorderRadius.xl,
             maxHeight: modalMaxHeight,
@@ -73,18 +73,18 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             paddingHorizontal: Spacing.lg,
             paddingBottom: Spacing.md,
             borderBottomWidth: 1,
-            borderBottomColor: colors.borderColors.light,
+            borderBottomColor: colors.border.subtle,
         },
         headerTitle: {
             ...Typography.heading.h3,
-            color: colors.textColors.primary,
+            color: colors.content.primary,
             fontWeight: "600",
         },
         closeButton: {
             width: 40,
             height: 40,
             borderRadius: BorderRadius.full,
-            backgroundColor: colors.backgroundColors.secondary,
+            backgroundColor: colors.surface.muted,
             alignItems: "center",
             justifyContent: "center",
         },
@@ -106,22 +106,22 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             borderWidth: 1,
         },
         clearButton: {
-            backgroundColor: colors.backgroundColors.secondary,
-            borderColor: colors.borderColors.medium,
+            backgroundColor: colors.surface.muted,
+            borderColor: colors.border.default,
         },
         selectAllButton: {
-            backgroundColor: colors.primary[50],
-            borderColor: colors.primary[200],
+            backgroundColor: colors.interactive.primary.selected,
+            borderColor: colors.border.accent,
         },
         actionButtonText: {
             ...Typography.bodyText.medium,
             fontWeight: "500",
         },
         clearButtonText: {
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
         },
         selectAllButtonText: {
-            color: colors.primary[600],
+            color: colors.interactive.primary.idle,
         },
         categoriesContainer: {
             paddingHorizontal: Spacing.lg,
@@ -137,12 +137,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
             borderWidth: 1,
         },
         categorySelected: {
-            backgroundColor: colors.primary[50],
-            borderColor: colors.primary[200],
+            backgroundColor: colors.interactive.primary.selected,
+            borderColor: colors.border.accent,
         },
         categoryUnselected: {
-            backgroundColor: colors.backgroundColors.secondary,
-            borderColor: colors.borderColors.light,
+            backgroundColor: colors.surface.muted,
+            borderColor: colors.border.subtle,
         },
         categoryIcon: {
             marginRight: Spacing.md,
@@ -152,12 +152,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
         },
         categoryName: {
             ...Typography.bodyText.large,
-            color: colors.textColors.primary,
+            color: colors.content.primary,
             fontWeight: "500",
         },
         categoryDescription: {
             ...Typography.bodyText.small,
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
             marginTop: 2,
         },
         checkIcon: {
@@ -166,7 +166,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
         dragHandle: {
             width: 40,
             height: 4,
-            backgroundColor: colors.borderColors.medium,
+            backgroundColor: colors.border.default,
             borderRadius: BorderRadius.sm,
             alignSelf: "center",
             marginBottom: Spacing.md,
@@ -195,7 +195,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
                             <View style={styles.header}>
                                 <Text style={styles.headerTitle}>Filter Categories</Text>
                                 <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
-                                    <Ionicons name="close" size={20} color={colors.textColors.secondary} />
+                                    <Ionicons name="close" size={20} color={colors.content.secondary} />
                                 </TouchableOpacity>
                             </View>
 
@@ -236,7 +236,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
                                             <Ionicons
                                                 name={getCategoryIcon(category) as any}
                                                 size={22}
-                                                color={isSelected ? colors.primary[600] : colors.textColors.secondary}
+                                                color={isSelected ? colors.interactive.primary.idle : colors.content.secondary}
                                                 style={styles.categoryIcon}
                                             />
                                             <View style={styles.categoryContent}>
@@ -247,7 +247,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
                                                 <Ionicons
                                                     name="checkmark-circle"
                                                     size={20}
-                                                    color={colors.primary[600]}
+                                                    color={colors.interactive.primary.idle}
                                                     style={styles.checkIcon}
                                                 />
                                             )}

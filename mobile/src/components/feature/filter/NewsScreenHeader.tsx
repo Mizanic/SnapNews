@@ -61,11 +61,11 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: colors.backgroundColors.primary,
+            backgroundColor: colors.surface.base,
             paddingHorizontal: Spacing.md,
             paddingVertical: Spacing.sm,
             borderBottomWidth: 1,
-            borderBottomColor: colors.borderColors.light,
+            borderBottomColor: colors.border.subtle,
         },
         header: {
             flexDirection: "row",
@@ -77,7 +77,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
         },
         title: {
             ...Typography.heading.h2,
-            color: colors.textColors.primary,
+            color: colors.content.primary,
             fontWeight: "600",
         },
         actionsContainer: {
@@ -91,9 +91,9 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             paddingVertical: Spacing.sm,
             paddingHorizontal: Spacing.md,
             borderRadius: BorderRadius.md,
-            backgroundColor: colors.backgroundColors.secondary,
+            backgroundColor: colors.surface.muted,
             borderWidth: 1,
-            borderColor: colors.borderColors.light,
+            borderColor: colors.border.subtle,
         },
         filterButton: {
             minWidth: 60,
@@ -102,8 +102,8 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             minWidth: 55,
         },
         activeFilterButton: {
-            backgroundColor: colors.primary[50],
-            borderColor: colors.primary[200],
+            backgroundColor: colors.interactive.primary.selected,
+            borderColor: colors.border.accent,
         },
         activeSortButton: {
             backgroundColor: colors.accent.orange + "20",
@@ -115,13 +115,13 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             marginLeft: 4,
         },
         filterButtonText: {
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
         },
         activeFilterButtonText: {
-            color: colors.primary[600],
+            color: colors.interactive.primary.idle,
         },
         sortButtonText: {
-            color: colors.textColors.secondary,
+            color: colors.content.secondary,
         },
         activeSortButtonText: {
             color: colors.accent.orange,
@@ -130,7 +130,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
             position: "absolute",
             top: -4,
             right: -4,
-            backgroundColor: colors.accent.red,
+            backgroundColor: colors.status.error,
             borderRadius: BorderRadius.full,
             minWidth: 16,
             height: 16,
@@ -182,7 +182,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                         <Ionicons
                             name="filter-outline"
                             size={18}
-                            color={hasActiveFilters ? colors.primary[600] : colors.textColors.secondary}
+                            color={hasActiveFilters ? colors.interactive.primary.idle : colors.content.secondary}
                         />
                         <Text style={[styles.actionButtonText, styles.filterButtonText, hasActiveFilters && styles.activeFilterButtonText]}>
                             Filter
@@ -200,7 +200,7 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
                         onPress={onSortPress}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="time-outline" size={18} color={hasActiveSort ? colors.accent.orange : colors.textColors.secondary} />
+                        <Ionicons name="time-outline" size={18} color={hasActiveSort ? colors.accent.orange : colors.content.secondary} />
                         <Text style={[styles.actionButtonText, styles.sortButtonText, hasActiveSort && styles.activeSortButtonText]}>
                             {getTimeFilterDisplayText(selectedTimeFilter)}
                         </Text>

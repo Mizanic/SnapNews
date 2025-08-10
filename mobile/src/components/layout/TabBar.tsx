@@ -66,7 +66,7 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                     style={[
                         StyleSheet.absoluteFill,
                         {
-                            backgroundColor: colors.backgroundColors.primary,
+                            backgroundColor: colors.surface.base,
                         },
                     ]}
                 />
@@ -108,7 +108,7 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                                 <IconComponent
                                     name={name}
                                     size={isFocused ? 24 : 22}
-                                    color={isFocused ? colors.accent.redditRed : colors.gray[500]}
+                                    color={isFocused ? colors.accent.redditRed : colors.content.tertiary}
                                 />
                             </Animated.View>
                             {isFocused && <View style={[styles.focusedIndicator, { backgroundColor: colors.accent.redditRed }]} />}

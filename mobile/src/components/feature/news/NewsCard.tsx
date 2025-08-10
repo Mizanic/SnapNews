@@ -147,7 +147,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             marginBottom: Spacing.xs,
         },
         sourceChip: {
-            backgroundColor: colors.backgroundColors.opaque,
+            backgroundColor: colors.surface.overlay,
             paddingHorizontal: Spacing.sm,
             paddingVertical: 4,
             borderRadius: BorderRadius.sm,
@@ -167,8 +167,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             style={[
                 styles.card,
                 {
-                    backgroundColor: colors.backgroundColors.primary,
-                    borderColor: colors.borderColors.light,
+                    backgroundColor: colors.surface.base,
+                    borderColor: colors.border.subtle,
                     shadowColor: colors.black,
                 },
             ]}
@@ -195,7 +195,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                                 styles.headlineText,
                                 {
                                     color: colors.white,
-                                    textShadowColor: colors.shadowColors.dark,
+                                    textShadowColor: colors.elevation.lg,
                                 },
                             ]}
                             numberOfLines={3}
@@ -212,7 +212,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                     style={[
                         styles.brandingInner,
                         {
-                            backgroundColor: colors.backgroundColors.primary,
+                            backgroundColor: colors.surface.base,
                         },
                     ]}
                 >
@@ -221,7 +221,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             </View>
 
             <View style={styles.shareContentContainer}>
-                <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                <Text style={[styles.summaryText, { color: colors.content.secondary }]} numberOfLines={19}>
                     {news.summary}
                 </Text>
             </View>
@@ -243,8 +243,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                 style={[
                     styles.card,
                     {
-                        backgroundColor: colors.backgroundColors.primary,
-                        borderColor: colors.borderColors.light,
+                        backgroundColor: colors.surface.base,
+                        borderColor: colors.border.subtle,
                         shadowColor: colors.black,
                     },
                 ]}
@@ -272,7 +272,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                                         styles.headlineText,
                                         {
                                             color: colors.white,
-                                            textShadowColor: colors.shadowColors.dark,
+                                            textShadowColor: colors.elevation.lg,
                                         },
                                     ]}
                                     numberOfLines={3}
@@ -284,7 +284,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                     </View>
 
                     <View style={styles.contentContainer}>
-                        <Text style={[styles.summaryText, { color: colors.textColors.secondary }]} numberOfLines={19}>
+                        <Text style={[styles.summaryText, { color: colors.content.secondary }]} numberOfLines={19}>
                             {news.summary}
                         </Text>
                     </View>
@@ -293,8 +293,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                     style={[
                         styles.actionBarWrapper,
                         {
-                            backgroundColor: colors.backgroundColors.primary,
-                            borderTopColor: colors.borderColors.light,
+                            backgroundColor: colors.surface.base,
+                            borderTopColor: colors.border.subtle,
                         },
                     ]}
                 >
