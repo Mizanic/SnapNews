@@ -32,35 +32,32 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
 
     useEffect(() => {
         if (visible) {
-            // Ensure we start from the bottom
-            slideAnim.setValue(screenHeight);
-            Animated.spring(slideAnim, {
+            // Use timing instead of spring for smoother initial animation
+            Animated.timing(slideAnim, {
                 toValue: 0,
+                duration: 300,
                 useNativeDriver: true,
-                tension: 100,
-                friction: 8,
             }).start();
         } else {
-            Animated.spring(slideAnim, {
+            Animated.timing(slideAnim, {
                 toValue: screenHeight,
+                duration: 250,
                 useNativeDriver: true,
-                tension: 100,
-                friction: 8,
             }).start();
         }
     }, [visible, slideAnim]);
 
-    // When modal opens, start with no categories selected
-    useEffect(() => {
-        if (visible) {
-            // Delay clearing to avoid interfering with animation
-            setTimeout(() => {
-                try {
-                    onClearAll();
-                } catch {}
-            }, 100);
-        }
-    }, [visible, onClearAll]);
+    // // When modal opens, start with no categories selected
+    // useEffect(() => {
+    //     if (visible) {
+    //         // Delay clearing to avoid interfering with animation
+    //         setTimeout(() => {
+    //             try {
+    //                 onClearAll();
+    //             } catch {}
+    //         }, 100);
+    //     }
+    // }, [visible, onClearAll]);
 
     // Display name, icon, and description are now sourced from shared constants
 
