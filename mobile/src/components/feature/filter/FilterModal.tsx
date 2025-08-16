@@ -32,6 +32,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
 
     useEffect(() => {
         if (visible) {
+            // Ensure we start from the bottom
+            slideAnim.setValue(screenHeight);
             Animated.spring(slideAnim, {
                 toValue: 0,
                 useNativeDriver: true,
@@ -51,9 +53,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
     // When modal opens, start with no categories selected
     useEffect(() => {
         if (visible) {
-            try {
-                onClearAll();
-            } catch {}
+            // Delay clearing to avoid interfering with animation
+            setTimeout(() => {
+                try {
+                    onClearAll();
+                } catch {}
+            }, 100);
         }
     }, [visible, onClearAll]);
 
