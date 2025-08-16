@@ -19,8 +19,6 @@ import { useTheme } from "@/contexts/ThemeContext";
  * color: colors.content.primary
  * borderColor: colors.border.subtle
  *
- * // Legacy usage (deprecated but supported)
- * backgroundColor: colors.backgroundColors.primary
  */
 export const useThemeColors = () => {
     const { colors } = useTheme();

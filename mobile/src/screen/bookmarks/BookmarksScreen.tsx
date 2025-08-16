@@ -43,9 +43,9 @@ const BookmarkScreen: React.FC = () => {
     const { isHeaderVisible, onScroll } = useScrollDirection();
 
     const renderEmptyState = () => (
-        <View style={[styles.emptyContainer, { backgroundColor: colors.backgroundColors.secondary }]}>
-            <Text style={[styles.emptyTitle, { color: colors.textColors.primary }]}>No Bookmarks Yet</Text>
-            <Text style={[styles.emptySubtitle, { color: colors.textColors.secondary }]}>
+        <View style={[styles.emptyContainer, { backgroundColor: colors.surface.base }]}>
+            <Text style={[styles.emptyTitle, { color: colors.content.primary }]}>No Bookmarks Yet</Text>
+            <Text style={[styles.emptySubtitle, { color: colors.content.secondary }]}>
                 Bookmark articles you want to read later by tapping the save button on any news card.
             </Text>
         </View>
@@ -53,14 +53,14 @@ const BookmarkScreen: React.FC = () => {
 
     if (bookmarkedNews.length === 0) {
         return (
-            <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
+            <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.surface.base }]}>
                 {renderEmptyState()}
             </View>
         );
     }
 
     return (
-        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.backgroundColors.secondary }]}>
+        <View style={[styles.container, { paddingBottom: 60 + insets.bottom, backgroundColor: colors.surface.base }]}>
             <NewsScreenHeader
                 title="Bookmarks"
                 selectedCategoriesCount={selectedCategories.size}
@@ -78,7 +78,7 @@ const BookmarkScreen: React.FC = () => {
                 <FlatList
                     data={filteredNewsData}
                     renderItem={({ item }) => <NewsCard news={item} isBookmarked={true} isLiked={likes.hasOwnProperty(item.item_hash)} />}
-                    contentContainerStyle={[styles.listContainer, { backgroundColor: colors.backgroundColors.secondary }]}
+                    contentContainerStyle={[styles.listContainer, { backgroundColor: colors.surface.muted }]}
                     keyExtractor={(item) => item.item_hash}
                     showsVerticalScrollIndicator={false}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}

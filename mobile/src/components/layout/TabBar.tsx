@@ -1,16 +1,51 @@
+import React, { useRef, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View, Platform, Animated } from "react-native";
 import { BorderRadius, Spacing, Shadows } from "@/styles";
 import { BlurView } from "expo-blur";
-import React from "react";
 import { useHaptics } from "@/hooks/useHaptics";
+import { ImpactFeedbackStyle } from "expo-haptics";
 
-const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
+const TabBar: React.FC<{ state: any; navigation: any; colors: any; insets: any; colorScheme: any }> = ({
+    state,
+    navigation,
+    colors,
+    insets,
+    colorScheme,
+}) => {
     const icons: Record<string, { name: string; lib: any }> = {
         Hot: { name: "flame", lib: Ionicons },
         Latest: { name: "flash", lib: Ionicons },
         Bookmark: { name: "bookmark", lib: Ionicons },
     };
+
+    // Create refs for all routes at the top level
+    const scaleAnimRefs = useRef<Record<string, Animated.Value>>({});
+
+    // Initialize animation values for each route
+    state.routes.forEach((route: any, index: number) => {
+        if (!scaleAnimRefs.current[route.key]) {
+            const isFocused = state.index === index;
+            scaleAnimRefs.current[route.key] = new Animated.Value(isFocused ? 1.1 : 1);
+        }
+    });
+
+    const { triggerHaptic } = useHaptics();
+
+    // Handle animations for all tabs in a single useEffect
+    useEffect(() => {
+        state.routes.forEach((route: any, index: number) => {
+            const isFocused = state.index === index;
+            const scaleAnimRef = scaleAnimRefs.current[route.key];
+            if (scaleAnimRef) {
+                Animated.timing(scaleAnimRef, {
+                    toValue: isFocused ? 1.1 : 1,
+                    duration: 200,
+                    useNativeDriver: true,
+                }).start();
+            }
+        });
+    }, [state.index, state.routes]);
 
     const styles = StyleSheet.create({
         tabBarContainer: {
@@ -75,8 +110,7 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                 {state.routes.map((route: any, index: number) => {
                     const isFocused = state.index === index;
                     const { name, lib: IconComponent } = icons[route.name];
-                    const scaleAnimRef = React.useRef(new Animated.Value(isFocused ? 1.1 : 1)).current;
-                    const { triggerHaptic } = useHaptics();
+                    const scaleAnimRef = scaleAnimRefs.current[route.key];
 
                     const onPress = () => {
                         const event = navigation.emit({
@@ -90,17 +124,9 @@ const TabBar = ({ state, navigation, colors, insets, colorScheme }: any) => {
                         }
                         // Subtle haptic feedback on tab press (if enabled in settings)
                         try {
-                            triggerHaptic && triggerHaptic((require("expo-haptics") as any).ImpactFeedbackStyle.Light);
+                            triggerHaptic && triggerHaptic(ImpactFeedbackStyle.Light);
                         } catch {}
                     };
-
-                    React.useEffect(() => {
-                        Animated.timing(scaleAnimRef, {
-                            toValue: isFocused ? 1.1 : 1,
-                            duration: 200,
-                            useNativeDriver: true,
-                        }).start();
-                    }, [isFocused, scaleAnimRef]);
 
                     return (
                         <TouchableOpacity key={route.key} onPress={onPress} activeOpacity={0.7}>

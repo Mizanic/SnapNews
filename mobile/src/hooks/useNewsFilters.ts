@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { useFilterContext } from "@/contexts/FilterContext";
 import { NewsItem } from "@/lib/types/newsTypes";
@@ -55,33 +55,33 @@ export const useNewsFilters = (
         }
     })();
 
-    const [localSelectedCategories, setLocalSelectedCategories] = React.useState<Set<string>>(initialCategories || DEFAULT_CATEGORIES);
-    const [localSelectedTimeFilter, setLocalSelectedTimeFilter] = React.useState<TimeFilter>(initialTimeFilter);
+    const [localSelectedCategories, setLocalSelectedCategories] = useState<Set<string>>(initialCategories || DEFAULT_CATEGORIES);
+    const [localSelectedTimeFilter, setLocalSelectedTimeFilter] = useState<TimeFilter>(initialTimeFilter);
 
     const selectedCategories = filterCtx?.selectedCategories ?? localSelectedCategories;
     const setSelectedCategories = filterCtx?.setSelectedCategories ?? setLocalSelectedCategories;
     // Keep time filter LOCAL to the screen to avoid cross-tab conflicts (e.g., Hot should default to "today")
     const selectedTimeFilter = localSelectedTimeFilter;
     const setSelectedTimeFilter = setLocalSelectedTimeFilter;
-    const [filterModalVisible, setFilterModalVisible] = React.useState(false);
-    const [sortModalVisible, setSortModalVisible] = React.useState(false);
+    const [filterModalVisible, setFilterModalVisible] = useState(false);
+    const [sortModalVisible, setSortModalVisible] = useState(false);
 
     // Keep selected categories in sync when initialCategories changes (e.g., from navigation params)
-    React.useEffect(() => {
+    useEffect(() => {
         if (initialCategories) {
             setSelectedCategories(new Set(initialCategories));
         }
     }, [initialCategories]);
 
     // Keep time filter in sync if initialTimeFilter changes (from navigation params)
-    React.useEffect(() => {
+    useEffect(() => {
         if (initialTimeFilter) {
             setSelectedTimeFilter(initialTimeFilter);
         }
     }, [initialTimeFilter]);
 
     // Memoized cutoff time to prevent infinite re-renders
-    const cutoffTime = React.useMemo(() => {
+    const cutoffTime = useMemo(() => {
         if (selectedTimeFilter === "all") return null;
 
         const now = new Date();
@@ -110,7 +110,7 @@ export const useNewsFilters = (
     }, [selectedTimeFilter]);
 
     // Filter the news data
-    const filteredNewsData = React.useMemo(() => {
+    const filteredNewsData = useMemo(() => {
         if (!newsData.length) {
             return [];
         }
@@ -146,7 +146,7 @@ export const useNewsFilters = (
     }, [newsData, selectedCategories, cutoffTime]);
 
     // Category actions
-    const toggleCategory = React.useCallback(
+    const toggleCategory = useCallback(
         (category: string) => {
             const next = new Set<string>(selectedCategories);
             if (next.has(category)) {
@@ -159,26 +159,26 @@ export const useNewsFilters = (
         [selectedCategories, setSelectedCategories]
     );
 
-    const clearAllCategories = React.useCallback(() => {
+    const clearAllCategories = useCallback(() => {
         setSelectedCategories(new Set<string>());
     }, [setSelectedCategories]);
 
-    const selectAllCategories = React.useCallback(() => {
+    const selectAllCategories = useCallback(() => {
         setSelectedCategories(createFullCategoriesSet());
     }, [setSelectedCategories]);
 
     // Modal actions
-    const openFilterModal = React.useCallback(() => setFilterModalVisible(true), []);
-    const closeFilterModal = React.useCallback(() => setFilterModalVisible(false), []);
-    const openSortModal = React.useCallback(() => setSortModalVisible(true), []);
-    const closeSortModal = React.useCallback(() => setSortModalVisible(false), []);
+    const openFilterModal = useCallback(() => setFilterModalVisible(true), []);
+    const closeFilterModal = useCallback(() => setFilterModalVisible(false), []);
+    const openSortModal = useCallback(() => setSortModalVisible(true), []);
+    const closeSortModal = useCallback(() => setSortModalVisible(false), []);
 
     // Computed states (memoized to prevent unnecessary re-renders)
-    const hasActiveFilters = React.useMemo(
+    const hasActiveFilters = useMemo(
         () => selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length,
         [selectedCategories.size]
     );
-    const hasActiveSort = React.useMemo(() => selectedTimeFilter !== "all", [selectedTimeFilter]);
+    const hasActiveSort = useMemo(() => selectedTimeFilter !== "all", [selectedTimeFilter]);
 
     return {
         // Filtered data

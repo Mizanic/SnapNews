@@ -5,7 +5,6 @@ import "react-native-reanimated";
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FilterProvider } from "@/contexts/FilterContext";
@@ -17,7 +16,6 @@ import store, { persistor } from "@/lib/state/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { sharedQueryClient } from "@/lib/sharedQueryClient";
-import { Spacing } from "@/styles";
 
 SplashScreen.preventAutoHideAsync();
 

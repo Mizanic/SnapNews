@@ -1,5 +1,3 @@
-import { ThemedView } from "@/components/feature/settings/ThemedView";
-import { ThemedText } from "@/components/feature/settings/ThemedText";
 import { useSettingsStore } from "@/lib/state/settingStore";
 import { View, Switch, StyleSheet, Pressable, Text, ScrollView, Modal, FlatList, TouchableOpacity, Alert } from "react-native";
 import { useThemeColors } from "@/hooks/useThemeColor";
@@ -8,7 +6,6 @@ import { Theme, COUNTRIES, LANGUAGES, Country, Language } from "@/lib/types/sett
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { detectDeviceLocale, getLocaleDetectionSummary } from "@/lib/utils/localeDetection";
 import * as Localization from "expo-localization";
 
 export default function SettingsScreen() {
@@ -18,7 +15,6 @@ export default function SettingsScreen() {
 
     const [showCountryModal, setShowCountryModal] = useState(false);
     const [showLanguageModal, setShowLanguageModal] = useState(false);
-    const [showDebugInfo, setShowDebugInfo] = useState(false);
 
     const themeOptions: { label: string; value: Theme }[] = [
         { label: "Light", value: "light" },
@@ -86,8 +82,8 @@ export default function SettingsScreen() {
             style={[
                 styles.modalItem,
                 {
-                    backgroundColor: item.code === country.code ? colors.primary[100] : colors.backgroundColors.primary,
-                    borderBottomColor: colors.borderColors.light,
+                    backgroundColor: item.code === country.code ? colors.palette.brand[500] : colors.surface.base,
+                    borderBottomColor: colors.border.subtle,
                 },
             ]}
             onPress={() => {
@@ -103,14 +99,16 @@ export default function SettingsScreen() {
                 style={[
                     styles.modalItemText,
                     {
-                        color: colors.textColors.primary,
+                        color: colors.content.primary,
                         fontWeight: item.code === country.code ? "600" : "400",
                     },
                 ]}
             >
                 {item.name}
             </Text>
-            {item.code === country.code && <Ionicons name="checkmark" size={20} color={colors.primary[600]} style={{ marginLeft: "auto" }} />}
+            {item.code === country.code && (
+                <Ionicons name="checkmark" size={20} color={colors.palette.brand[600]} style={{ marginLeft: "auto" }} />
+            )}
         </TouchableOpacity>
     );
 
@@ -119,8 +117,8 @@ export default function SettingsScreen() {
             style={[
                 styles.modalItem,
                 {
-                    backgroundColor: item.code === language.code ? colors.primary[100] : colors.backgroundColors.primary,
-                    borderBottomColor: colors.borderColors.light,
+                    backgroundColor: item.code === language.code ? colors.palette.brand[500] : colors.surface.base,
+                    borderBottomColor: colors.border.subtle,
                 },
             ]}
             onPress={() => {
@@ -136,40 +134,40 @@ export default function SettingsScreen() {
                     style={[
                         styles.modalItemText,
                         {
-                            color: colors.textColors.primary,
+                            color: colors.content.primary,
                             fontWeight: item.code === language.code ? "600" : "400",
                         },
                     ]}
                 >
                     {item.name}
                 </Text>
-                <Text style={[styles.modalItemSubtext, { color: colors.textColors.secondary }]}>{item.nativeName}</Text>
+                <Text style={[styles.modalItemSubtext, { color: colors.content.secondary }]}>{item.nativeName}</Text>
             </View>
-            {item.code === language.code && <Ionicons name="checkmark" size={20} color={colors.primary[600]} />}
+            {item.code === language.code && <Ionicons name="checkmark" size={20} color={colors.palette.brand[600]} />}
         </TouchableOpacity>
     );
 
     return (
-        <ScrollView style={[{ flex: 1 }, { backgroundColor: colors.backgroundColors.primary }]}>
-            <ThemedView style={styles.container}>
+        <ScrollView style={[{ flex: 1 }, { backgroundColor: colors.surface.base }]}>
+            <View style={styles.container}>
                 {/* Theme Setting */}
                 <View style={styles.settingContainer}>
-                    <ThemedText style={styles.label}>Theme</ThemedText>
-                    <View style={[styles.segmentedControl, { backgroundColor: colors.backgroundColors.secondary }]}>
+                    <Text style={[styles.label, { color: colors.content.primary }]}>Theme</Text>
+                    <View style={[styles.segmentedControl, { backgroundColor: colors.surface.muted }]}>
                         {themeOptions.map((option) => (
                             <Pressable
                                 key={option.value}
                                 style={[
                                     styles.segment,
                                     {
-                                        backgroundColor: theme === option.value ? colors.primary[500] : "transparent",
+                                        backgroundColor: theme === option.value ? colors.palette.brand[500] : "transparent",
                                     },
                                 ]}
                                 onPress={() => handleThemeChange(option.value)}
                             >
                                 <Text
                                     style={{
-                                        color: theme === option.value ? colors.white : colors.textColors.primary,
+                                        color: theme === option.value ? colors.white : colors.content.primary,
                                     }}
                                 >
                                     {option.label}
@@ -181,98 +179,98 @@ export default function SettingsScreen() {
 
                 {/* Haptic Feedback Setting */}
                 <View style={styles.settingContainer}>
-                    <ThemedText style={styles.label}>Haptic Feedback</ThemedText>
+                    <Text style={[styles.label, { color: colors.content.primary }]}>Haptic Feedback</Text>
                     <Switch value={hapticFeedback === "enabled"} onValueChange={(value) => handleHapticFeedbackChange(value)} />
                 </View>
 
                 {/* Country Setting */}
                 <View style={styles.settingContainer}>
-                    <ThemedText style={styles.label}>Country</ThemedText>
+                    <Text style={[styles.label, { color: colors.content.primary }]}>Country</Text>
                     <Pressable
                         style={[
                             styles.selector,
                             {
-                                backgroundColor: colors.backgroundColors.secondary,
-                                borderColor: colors.borderColors.medium,
+                                backgroundColor: colors.surface.muted,
+                                borderColor: colors.border.default,
                             },
                         ]}
                         onPress={() => setShowCountryModal(true)}
                     >
                         <Text style={[styles.flag, { marginRight: Spacing.sm }]}>{country.flag}</Text>
-                        <Text style={[styles.selectorText, { color: colors.textColors.primary }]}>{country.name}</Text>
-                        <Ionicons name="chevron-down" size={20} color={colors.textColors.secondary} />
+                        <Text style={[styles.selectorText, { color: colors.content.primary }]}>{country.name}</Text>
+                        <Ionicons name="chevron-down" size={20} color={colors.content.secondary} />
                     </Pressable>
                 </View>
 
                 {/* Language Setting */}
                 <View style={styles.settingContainer}>
-                    <ThemedText style={styles.label}>Language</ThemedText>
+                    <Text style={[styles.label, { color: colors.content.primary }]}>Language</Text>
                     <Pressable
                         style={[
                             styles.selector,
                             {
-                                backgroundColor: colors.backgroundColors.secondary,
-                                borderColor: colors.borderColors.medium,
+                                backgroundColor: colors.surface.muted,
+                                borderColor: colors.border.default,
                             },
                         ]}
                         onPress={() => setShowLanguageModal(true)}
                     >
                         <View style={{ flex: 1 }}>
-                            <Text style={[styles.selectorText, { color: colors.textColors.primary }]}>{language.name}</Text>
-                            <Text style={[styles.selectorSubtext, { color: colors.textColors.secondary }]}>{language.nativeName}</Text>
+                            <Text style={[styles.selectorText, { color: colors.content.primary }]}>{language.name}</Text>
+                            <Text style={[styles.selectorSubtext, { color: colors.content.secondary }]}>{language.nativeName}</Text>
                         </View>
-                        <Ionicons name="chevron-down" size={20} color={colors.textColors.secondary} />
+                        <Ionicons name="chevron-down" size={20} color={colors.content.secondary} />
                     </Pressable>
                 </View>
 
                 {/* Locale Detection Info */}
                 <View style={styles.settingContainer}>
-                    <ThemedText style={styles.label}>Locale Detection</ThemedText>
+                    <Text style={[styles.label, { color: colors.content.primary }]}>Locale Detection</Text>
                     <Pressable
                         style={[
                             styles.selector,
                             {
-                                backgroundColor: colors.backgroundColors.secondary,
-                                borderColor: colors.borderColors.medium,
+                                backgroundColor: colors.surface.muted,
+                                borderColor: colors.border.default,
                             },
                         ]}
                         onPress={handleDetectLocale}
                     >
                         <View style={{ flex: 1 }}>
-                            <Text style={[styles.selectorText, { color: colors.textColors.primary }]}>Auto-detect from device</Text>
-                            <Text style={[styles.selectorSubtext, { color: colors.textColors.secondary }]}>
+                            <Text style={[styles.selectorText, { color: colors.content.primary }]}>Auto-detect from device</Text>
+                            <Text style={[styles.selectorSubtext, { color: colors.content.secondary }]}>
                                 Tap to re-detect country & language
                             </Text>
                         </View>
-                        <Ionicons name="refresh" size={20} color={colors.textColors.secondary} />
+                        <Ionicons name="refresh" size={20} color={colors.content.secondary} />
                     </Pressable>
                 </View>
 
                 {/* Debug Info Button */}
                 <View style={styles.settingContainer}>
-                    <ThemedText style={styles.label}>Debug Locale Info</ThemedText>
+                    <Text style={[styles.label, { color: colors.content.primary }]}>Debug Locale Info</Text>
                     <Pressable
                         style={[
                             styles.selector,
                             {
-                                backgroundColor: colors.backgroundColors.secondary,
-                                borderColor: colors.borderColors.medium,
+                                backgroundColor: colors.surface.muted,
+                                borderColor: colors.border.default,
                             },
                         ]}
                         onPress={showDebugData}
                     >
-                        <Text style={[styles.selectorText, { color: colors.textColors.primary }]}>Show Raw Locale Data</Text>
-                        <Ionicons name="bug" size={20} color={colors.textColors.secondary} />
+                        <Text style={[styles.selectorText, { color: colors.content.primary }]}>Show Raw Locale Data</Text>
+                        <Ionicons name="bug" size={20} color={colors.content.secondary} />
                     </Pressable>
                 </View>
 
                 {/* Country Selection Modal */}
                 <Modal visible={showCountryModal} animationType="slide" presentationStyle="pageSheet">
-                    <View style={[styles.modalContainer, { backgroundColor: colors.backgroundColors.primary }]}>
-                        <View style={[styles.modalHeader, { borderBottomColor: colors.borderColors.light }]}>
-                            <Text style={[styles.modalTitle, { color: colors.textColors.primary }]}>Select Country</Text>
+                    <View style={[styles.modalContainer, { backgroundColor: colors.surface.base }]}>
+                        <View style={[styles.modalHeader, { borderBottomColor: colors.border.subtle }]}>
+                            <Text style={[styles.modalTitle, { color: colors.content.primary }]}>Select Country</Text>
                             <TouchableOpacity onPress={() => setShowCountryModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textColors.primary} />
+                                <Ionicons name="close" size={24} color={colors.content.primary} />
                             </TouchableOpacity>
                         </View>
                         <FlatList data={COUNTRIES} renderItem={renderCountryItem} keyExtractor={(item) => item.code} style={{ flex: 1 }} />
@@ -281,17 +279,17 @@ export default function SettingsScreen() {
 
                 {/* Language Selection Modal */}
                 <Modal visible={showLanguageModal} animationType="slide" presentationStyle="pageSheet">
-                    <View style={[styles.modalContainer, { backgroundColor: colors.backgroundColors.primary }]}>
-                        <View style={[styles.modalHeader, { borderBottomColor: colors.borderColors.light }]}>
-                            <Text style={[styles.modalTitle, { color: colors.textColors.primary }]}>Select Language</Text>
+                    <View style={[styles.modalContainer, { backgroundColor: colors.surface.base }]}>
+                        <View style={[styles.modalHeader, { borderBottomColor: colors.border.subtle }]}>
+                            <Text style={[styles.modalTitle, { color: colors.content.primary }]}>Select Language</Text>
                             <TouchableOpacity onPress={() => setShowLanguageModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textColors.primary} />
+                                <Ionicons name="close" size={24} color={colors.content.primary} />
                             </TouchableOpacity>
                         </View>
                         <FlatList data={LANGUAGES} renderItem={renderLanguageItem} keyExtractor={(item) => item.code} style={{ flex: 1 }} />
                     </View>
                 </Modal>
-            </ThemedView>
+            </View>
         </ScrollView>
     );
 }

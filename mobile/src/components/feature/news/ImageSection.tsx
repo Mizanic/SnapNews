@@ -1,25 +1,17 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Spacing, BorderRadius, Shadows, Typography } from "@/styles";
 import { useThemeColors } from "@/hooks/useThemeColor";
+import { Image } from "expo-image";
 
 interface ImageSectionProps {
     image: string;
-    sourceName?: string;
     timeLabel?: string;
     categories?: string[];
 }
 
-const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabel, categories }) => {
+const ImageSection: React.FC<ImageSectionProps> = ({ image, timeLabel, categories }) => {
     const colors = useThemeColors();
-    const foregroundOpacity = React.useRef(new Animated.Value(0)).current;
-    const handleImageLoaded = React.useCallback(() => {
-        Animated.timing(foregroundOpacity, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-        }).start();
-    }, [foregroundOpacity]);
 
     const styles = StyleSheet.create({
         imageContainer: {
@@ -66,7 +58,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
             alignItems: "flex-end",
         },
         categoryChip: {
-            backgroundColor: colors.backgroundColors.opaque,
+            backgroundColor: colors.surface.overlay,
             paddingHorizontal: Spacing.sm,
             paddingVertical: 4,
             borderRadius: BorderRadius.sm,
@@ -81,7 +73,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
             fontSize: 11,
         },
         timeChip: {
-            backgroundColor: colors.backgroundColors.opaque,
+            backgroundColor: colors.surface.overlay,
             paddingHorizontal: Spacing.sm,
             paddingVertical: 4,
             borderRadius: BorderRadius.sm,
@@ -98,16 +90,13 @@ const ImageSection: React.FC<ImageSectionProps> = ({ image, sourceName, timeLabe
     return (
         <View style={styles.imageContainer}>
             {/* Background blurred image */}
-            <Image source={{ uri: image }} style={styles.backgroundImage} resizeMode="cover" blurRadius={25} />
+            <Image source={{ uri: image }} style={styles.backgroundImage} contentFit="cover" blurRadius={25} />
+
+            {/* Background overlay */}
             <View style={styles.backgroundOverlay} />
 
-            {/* Foreground image with subtle fade-in */}
-            <Animated.Image
-                source={{ uri: image }}
-                style={[styles.foregroundImage, { opacity: foregroundOpacity }]}
-                resizeMode="contain"
-                onLoadEnd={handleImageLoaded}
-            />
+            {/* Foreground sharp image */}
+            <Image source={{ uri: image }} style={styles.foregroundImage} contentFit="contain" />
 
             {/* Top overlay with categories on left and time on right */}
             <View style={styles.overlayContainer}>

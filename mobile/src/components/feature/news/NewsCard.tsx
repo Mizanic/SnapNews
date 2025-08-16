@@ -9,6 +9,7 @@ import { useThemeColors } from "@/hooks/useThemeColor";
 import * as WebBrowser from "expo-web-browser";
 import ViewShot from "react-native-view-shot";
 import Share from "react-native-share";
+import formatRelativeTime from "@/hooks/useTime";
 
 interface NewsCardProps {
     news: NewsItem;
@@ -174,12 +175,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             ]}
         >
             <View style={styles.imageWrapper}>
-                <ImageSection
-                    image={news.media.image_url}
-                    timeLabel={formatRelativeTime(news.published)}
-                    sourceName={news.source_name}
-                    categories={news.categories}
-                />
+                <ImageSection image={news.media.image_url} timeLabel={formatRelativeTime(news.published)} categories={news.categories} />
                 <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
                     {/* Source name above headline */}
                     {news.source_name && (
@@ -254,7 +250,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
                         <ImageSection
                             image={news.media.image_url}
                             timeLabel={formatRelativeTime(news.published)}
-                            sourceName={news.source_name}
                             categories={news.categories}
                         />
                         <LinearGradient colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8)"]} style={styles.gradientOverlay}>
@@ -303,25 +298,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ news, isBookmarked, isLiked }) => {
             </View>
         </View>
     );
-};
-
-const formatRelativeTime = (dateValue: string | number) => {
-    const publishedDate =
-        !isNaN(Number(dateValue)) && String(dateValue).length === 10 ? new Date(parseInt(String(dateValue)) * 1000) : new Date(dateValue);
-
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - publishedDate.getTime()) / 1000);
-
-    const minute = 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-    const week = day * 7;
-
-    if (diffInSeconds < minute) return "just now";
-    if (diffInSeconds < hour) return `${Math.floor(diffInSeconds / minute)}m ago`;
-    if (diffInSeconds < day) return `${Math.floor(diffInSeconds / hour)}h ago`;
-    if (diffInSeconds < week) return `${Math.floor(diffInSeconds / day)}d ago`;
-    return `${Math.floor(diffInSeconds / week)}w ago`;
 };
 
 export default NewsCard;

@@ -132,59 +132,10 @@ type ColorSystem = {
         slate: ColorScale;
     };
 
-    // Legacy compatibility (deprecated - use semantic tokens above)
-    /** @deprecated Use colors.surface.* instead */
-    backgroundColors: {
-        primary: string;
-        secondary: string;
-        tertiary: string;
-        opaque: string;
-    };
-    /** @deprecated Use colors.content.* instead */
-    textColors: {
-        primary: string;
-        secondary: string;
-        tertiary: string;
-        inverse: string;
-        accent: string;
-    };
-    /** @deprecated Use colors.border.* instead */
-    borderColors: {
-        light: string;
-        medium: string;
-        dark: string;
-    };
-    /** @deprecated Use colors.elevation.* instead */
-    shadowColors: {
-        light: string;
-        medium: string;
-        dark: string;
-    };
-
     // Simple values (commonly used)
     white: string;
     black: string;
     accent: AccentColors;
-
-    // Legacy individual tokens (deprecated)
-    /** @deprecated Use colors.content.primary instead */
-    text: string;
-    /** @deprecated Use colors.surface.base instead */
-    background: string;
-    /** @deprecated Use colors.interactive.primary.idle instead */
-    tint: string;
-    /** @deprecated Use colors.content.tertiary instead */
-    icon: string;
-    /** @deprecated Use colors.content.tertiary instead */
-    tabIconDefault: string;
-    /** @deprecated Use colors.interactive.primary.idle instead */
-    tabIconSelected: string;
-    /** @deprecated Use colors.palette.brand instead */
-    primary: ColorScale;
-    /** @deprecated Use colors.palette.slate instead */
-    secondary: ColorScale;
-    /** @deprecated Use colors.palette.neutral instead */
-    gray: ColorScale;
 };
 
 /**
@@ -459,40 +410,6 @@ const createColorSystem = (mode: "light" | "dark"): ColorSystem => {
         white: Palette.white,
         black: Palette.black,
         accent: Palette.accent,
-
-        // Legacy compatibility (deprecated)
-        backgroundColors: {
-            primary: surface.base,
-            secondary: surface.muted,
-            tertiary: surface.raised,
-            opaque: surface.overlay,
-        },
-        textColors: {
-            primary: content.primary,
-            secondary: content.secondary,
-            tertiary: content.tertiary,
-            inverse: content.inverse,
-            accent: content.accent,
-        },
-        borderColors: {
-            light: border.subtle,
-            medium: border.default,
-            dark: border.strong,
-        },
-        shadowColors: {
-            light: elevation.sm,
-            medium: elevation.md,
-            dark: elevation.lg,
-        },
-        text: isDark ? "#ECEDEE" : "#11181C",
-        background: surface.base,
-        tint: isDark ? Palette.white : Palette.brand[600],
-        icon: isDark ? neutral[400] : neutral[500],
-        tabIconDefault: isDark ? neutral[400] : neutral[500],
-        tabIconSelected: isDark ? Palette.white : Palette.brand[600],
-        primary: Palette.brand,
-        secondary: Palette.slate,
-        gray: neutral,
     };
 };
 

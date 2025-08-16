@@ -21,29 +21,29 @@ export default function Settings() {
                     headerShown: false,
                 }}
             />
-            <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} backgroundColor={colors.backgroundColors.primary} />
-            <View style={{ flex: 1, backgroundColor: colors.backgroundColors.primary }}>
+            <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} backgroundColor={colors.surface.base} />
+            <View style={{ flex: 1, backgroundColor: colors.surface.base }}>
                 {/* Custom Header */}
                 <View
                     style={{
                         paddingTop: insets.top,
                         paddingHorizontal: Spacing.md,
                         paddingBottom: Spacing.md,
-                        backgroundColor: colors.backgroundColors.primary,
+                        backgroundColor: colors.surface.base,
                         borderBottomWidth: 1,
-                        borderBottomColor: colors.borderColors.light,
+                        borderBottomColor: colors.border.subtle,
                         flexDirection: "row",
                         alignItems: "center",
                     }}
                 >
                     <TouchableOpacity onPress={() => router.back()} style={{ padding: 8, marginRight: Spacing.md }} activeOpacity={0.7}>
-                        <Ionicons name="arrow-back" size={24} color={colors.textColors.primary} />
+                        <Ionicons name="arrow-back" size={24} color={colors.content.primary} />
                     </TouchableOpacity>
                     <Text
                         style={{
                             fontSize: 18,
                             fontWeight: "600",
-                            color: colors.textColors.primary,
+                            color: colors.content.primary,
                             flex: 1,
                         }}
                     >
