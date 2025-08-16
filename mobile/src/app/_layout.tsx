@@ -19,7 +19,7 @@ import { sharedQueryClient } from "@/lib/sharedQueryClient";
 
 SplashScreen.preventAutoHideAsync();
 
-function AppContent() {
+const AppContent: React.FC = () => {
     const { colorScheme } = useTheme();
 
     return (
@@ -43,9 +43,9 @@ function AppContent() {
             </SafeAreaProvider>
         </GestureHandlerRootView>
     );
-}
+};
 
-export default function RootLayout() {
+const RootLayout: React.FC = () => {
     const [loaded] = useFonts({
         SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
     });
@@ -71,4 +71,6 @@ export default function RootLayout() {
             </Provider>
         </QueryClientProvider>
     );
-}
+};
+
+export default RootLayout;

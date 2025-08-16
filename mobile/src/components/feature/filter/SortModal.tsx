@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions, ScrollView } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,7 +19,7 @@ const { height: screenHeight } = Dimensions.get("window");
 const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFilter, onTimeFilterSelect }) => {
     const colors = useThemeColors();
     const insets = useSafeAreaInsets();
-    const slideAnim = React.useRef(new Animated.Value(screenHeight)).current;
+    const slideAnim = useRef(new Animated.Value(screenHeight)).current;
 
     // Calculate available height for modal content - more conservative approach
     const statusBarBuffer = 60; // Buffer for status bar and some spacing from top
@@ -28,7 +28,7 @@ const SortModal: React.FC<SortModalProps> = ({ visible, onClose, selectedTimeFil
     const headerHeight = 100; // Header + drag handle
     const availableScrollHeight = modalMaxHeight - headerHeight - bottomBuffer;
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (visible) {
             Animated.spring(slideAnim, {
                 toValue: 0,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
@@ -30,9 +30,9 @@ const NewsScreenHeader: React.FC<NewsScreenHeaderProps> = ({
 }) => {
     const colors = useThemeColors();
     const { colorScheme } = useTheme();
-    const translateYAnim = React.useRef(new Animated.Value(0)).current;
+    const translateYAnim = useRef(new Animated.Value(0)).current;
 
-    React.useEffect(() => {
+    useEffect(() => {
         Animated.timing(translateYAnim, {
             toValue: isVisible ? 0 : -60, // Slide up by most of header height
             duration: 250,

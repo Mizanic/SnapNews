@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Spacing } from "@/styles";
 
-export default function Settings() {
+const Settings: React.FC = () => {
     const router = useRouter();
     const colors = useThemeColors();
     const insets = useSafeAreaInsets();
@@ -56,4 +56,6 @@ export default function Settings() {
             </View>
         </>
     );
-}
+};
+
+export default Settings;

@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as Localization from "expo-localization";
 
-export default function SettingsScreen() {
+const SettingsScreen: React.FC = () => {
     const { theme, hapticFeedback, country, language, setTheme, setHapticFeedback, setCountry, setLanguage, forceDetectLocale } =
         useSettingsStore();
     const colors = useThemeColors();
@@ -292,7 +292,9 @@ export default function SettingsScreen() {
             </View>
         </ScrollView>
     );
-}
+};
+
+export default SettingsScreen;
 
 const styles = StyleSheet.create({
     container: {

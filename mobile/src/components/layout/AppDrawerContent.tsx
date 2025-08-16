@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/hooks/useThemeColor";
@@ -18,7 +18,7 @@ const AppDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
     const insets = useSafeAreaInsets();
 
     // Only highlight a single category if exactly one is selected; otherwise highlight none
-    const activeCategory: string | null = React.useMemo(() => {
+    const activeCategory: string | null = useMemo(() => {
         if (selectedCategories.size === 1) {
             return Array.from(selectedCategories)[0];
         }

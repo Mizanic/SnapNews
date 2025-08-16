@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Animated, Dimensions } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +21,7 @@ const { height: screenHeight } = Dimensions.get("window");
 const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCategories, onCategoryToggle, onClearAll, onSelectAll }) => {
     const colors = useThemeColors();
     const insets = useSafeAreaInsets();
-    const slideAnim = React.useRef(new Animated.Value(screenHeight)).current;
+    const slideAnim = useRef(new Animated.Value(screenHeight)).current;
 
     // Calculate available height for modal content - more conservative approach
     const statusBarBuffer = 60; // Buffer for status bar and some spacing from top
@@ -30,7 +30,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
     const headerHeight = 140; // Header + action buttons + drag handle
     const availableScrollHeight = modalMaxHeight - headerHeight - bottomBuffer;
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (visible) {
             Animated.spring(slideAnim, {
                 toValue: 0,
@@ -49,7 +49,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, selectedCat
     }, [visible, slideAnim]);
 
     // When modal opens, start with no categories selected
-    React.useEffect(() => {
+    useEffect(() => {
         if (visible) {
             try {
                 onClearAll();

@@ -1,3 +1,4 @@
+import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Typography } from "@/styles";
 import { NewsItem } from "@/lib/types/newsTypes";

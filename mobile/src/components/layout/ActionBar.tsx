@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { NewsItem } from "@/lib/types/newsTypes";
@@ -19,9 +19,9 @@ const HIT_SLOP = { top: 8, right: 8, bottom: 8, left: 8 } as const;
 
 const ActionBar: React.FC<ActionBarProps> = ({ news, isBookmarked, isLiked, onShare }) => {
     const colors = useThemeColors();
-    const likeScale = React.useRef(new Animated.Value(1)).current;
-    const bookmarkScale = React.useRef(new Animated.Value(1)).current;
-    const shareScale = React.useRef(new Animated.Value(1)).current;
+    const likeScale = useRef(new Animated.Value(1)).current;
+    const bookmarkScale = useRef(new Animated.Value(1)).current;
+    const shareScale = useRef(new Animated.Value(1)).current;
     const bounce = (anim: Animated.Value) => {
         Animated.sequence([
             Animated.timing(anim, { toValue: 0.9, duration: 80, useNativeDriver: true }),

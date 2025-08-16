@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useCallback, useState } from "react";
+import { useEffect, useMemo, useCallback, useState, useContext } from "react";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
-import { useFilterContext } from "@/contexts/FilterContext";
+import { FilterContext } from "@/contexts/FilterContext";
 import { NewsItem } from "@/lib/types/newsTypes";
 import { TimeFilter } from "@/lib/types/timeFilter";
 
@@ -46,14 +46,8 @@ export const useNewsFilters = (
     initialTimeFilter: TimeFilter = "today",
     initialCategories?: Set<string>
 ): UseNewsFiltersReturn => {
-    // Prefer global context if available; fallback to local init
-    const filterCtx = (() => {
-        try {
-            return useFilterContext();
-        } catch {
-            return undefined;
-        }
-    })();
+    // Get global context if available; will be undefined if not within FilterProvider
+    const filterCtx = useContext(FilterContext);
 
     const [localSelectedCategories, setLocalSelectedCategories] = useState<Set<string>>(initialCategories || DEFAULT_CATEGORIES);
     const [localSelectedTimeFilter, setLocalSelectedTimeFilter] = useState<TimeFilter>(initialTimeFilter);

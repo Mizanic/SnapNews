@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { addLike, removeLike } from "@/lib/state/likeStore";
 import { useHaptics } from "@/hooks/useHaptics";
-import * as Haptics from "expo-haptics";
+import { ImpactFeedbackStyle } from "expo-haptics";
 import { NewsItem } from "@/lib/types/newsTypes";
 
 export const useLikeAction = (news: NewsItem, isLiked: boolean) => {
@@ -16,10 +16,10 @@ export const useLikeAction = (news: NewsItem, isLiked: boolean) => {
         };
         if (!isLiked) {
             dispatch(addLike(payload));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Medium);
+            triggerHaptic(ImpactFeedbackStyle.Medium);
         } else {
             dispatch(removeLike(payload));
-            triggerHaptic(Haptics.ImpactFeedbackStyle.Light);
+            triggerHaptic(ImpactFeedbackStyle.Light);
         }
     };
 
