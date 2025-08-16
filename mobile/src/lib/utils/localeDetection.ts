@@ -72,48 +72,6 @@ export const detectDeviceLocale = () => {
 };
 
 /**
- * Maps timezone to country code
- */
-const getCountryFromTimezone = (timezone: string): string | null => {
-    const timezoneToCountry: Record<string, string> = {
-        // Asia
-        "Asia/Kolkata": "IN",
-        "Asia/Mumbai": "IN",
-        "Asia/Delhi": "IN",
-        "Asia/Tokyo": "JP",
-        "Asia/Shanghai": "CN",
-        "Asia/Hong_Kong": "CN",
-        "Asia/Seoul": "KR",
-        "Asia/Dubai": "AE",
-
-        // Europe
-        "Europe/London": "GB",
-        "Europe/Paris": "FR",
-        "Europe/Berlin": "DE",
-        "Europe/Rome": "IT",
-        "Europe/Madrid": "ES",
-        "Europe/Moscow": "RU",
-
-        // Americas
-        "America/New_York": "US",
-        "America/Los_Angeles": "US",
-        "America/Chicago": "US",
-        "America/Denver": "US",
-        "America/Toronto": "CA",
-        "America/Vancouver": "CA",
-        "America/Mexico_City": "MX",
-        "America/Sao_Paulo": "BR",
-
-        // Australia
-        "Australia/Sydney": "AU",
-        "Australia/Melbourne": "AU",
-        "Australia/Perth": "AU",
-    };
-
-    return timezoneToCountry[timezone] || null;
-};
-
-/**
  * Maps currency code to country code
  */
 const getCountryFromCurrency = (currencyCode: string): string | null => {

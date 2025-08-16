@@ -11,7 +11,7 @@ import { useScrollDirection } from "@/hooks/useScrollDirection";
 import NewsScreenHeader from "@/components/feature/filter/NewsScreenHeader";
 import FilterModal from "@/components/feature/filter/FilterModal";
 import SortModal from "@/components/feature/filter/SortModal";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { SUPPORTED_CATEGORIES } from "@/lib/constants/categories";
 import { TimeFilter } from "@/lib/types/timeFilter";
 
@@ -22,7 +22,6 @@ const HotNewsScreen: React.FC = () => {
     const colors = useThemeColors();
 
     const { data, isLoading, isError, error, refetch, isRefetching, fetchNextPage, hasNextPage, isFetchingNextPage } = useHotNews();
-    const router = useRouter();
     const params = useLocalSearchParams<{ category?: string; time?: TimeFilter }>();
 
     const initialCategories = React.useMemo(() => {

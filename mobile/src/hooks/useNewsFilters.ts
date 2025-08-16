@@ -65,14 +65,14 @@ export const useNewsFilters = (
         if (initialCategories) {
             setSelectedCategories(new Set(initialCategories));
         }
-    }, [initialCategories]);
+    }, [initialCategories, setSelectedCategories]);
 
     // Keep time filter in sync if initialTimeFilter changes (from navigation params)
     useEffect(() => {
         if (initialTimeFilter) {
             setSelectedTimeFilter(initialTimeFilter);
         }
-    }, [initialTimeFilter]);
+    }, [initialTimeFilter, setSelectedTimeFilter]);
 
     // Memoized cutoff time to prevent infinite re-renders
     const cutoffTime = useMemo(() => {
@@ -113,7 +113,6 @@ export const useNewsFilters = (
 
         // Filter by categories (if not all categories are selected)
         if (selectedCategories.size > 0 && selectedCategories.size < SUPPORTED_CATEGORIES.length) {
-            const beforeLength = filtered.length;
             filtered = filtered.filter((news) => {
                 const hasMatchingCategory = news.categories.some((category) => selectedCategories.has(category.toUpperCase()));
                 return hasMatchingCategory;
@@ -123,7 +122,6 @@ export const useNewsFilters = (
 
         // Filter by time if cutoff time exists
         if (cutoffTime) {
-            const beforeLength = filtered.length;
             filtered = filtered.filter((news) => {
                 try {
                     const publishedTime = new Date(news.published);
